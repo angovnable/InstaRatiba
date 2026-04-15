@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
+import { signInWithRedirect, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { auth, googleProvider } from '@/lib/firebase'
 import { X, Mail, Lock, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -16,12 +16,11 @@ export function AuthModal({ onClose }: Props) {
   async function handleGoogle() {
     setGoogleLoading(true)
     try {
-      await signInWithPopup(auth, googleProvider)
-      toast.success('Welcome!', { icon: '🎉' })
-      onClose()
+      // Use redirect instead of popup - works perfectly in PWAs
+      await signInWithRedirect(auth, googleProvider)
+      // Note: User will be redirected, so code after this won't execute
     } catch (e: any) {
       if (e.code !== 'auth/popup-closed-by-user') toast.error(e.message)
-    } finally {
       setGoogleLoading(false)
     }
   }
