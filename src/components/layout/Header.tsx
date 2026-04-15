@@ -9,7 +9,8 @@ export function Header() {
   const {
     isDark, toggleTheme, userId, userEmail, userDisplayName, userPhoto,
     signOut, isSaving, saveTimetable, savedTimetables, loadTimetable,
-    deleteTimetable, lang, setLang, isSyncing, lastSynced
+    deleteTimetable, lang, setLang, isSyncing, lastSynced,
+    authReady  // ← new
   } = useStore()
   const t = T[lang]
 
@@ -84,7 +85,7 @@ export function Header() {
               {lang === 'en' ? 'SW' : 'EN'}
             </button>
 
-            {/* Save */}
+            {/* Save — only shown when logged in */}
             {userId && (
               <button className="btn btn-secondary" style={{ padding: '6px 12px', fontSize: 12 }} onClick={() => saveTimetable()} disabled={isSaving}>
                 {isSaving ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
@@ -92,8 +93,12 @@ export function Header() {
               </button>
             )}
 
-            {/* User menu */}
-            {userId ? (
+            {/* Auth section — wait for redirect check before rendering */}
+            {!authReady ? (
+              // Placeholder keeps header layout stable while Firebase resolves
+              <div style={{ width: 80, height: 34 }} />
+            ) : userId ? (
+              /* ── User menu ── */
               <div style={{ position: 'relative' }}>
                 <button
                   className="btn btn-secondary"
@@ -174,6 +179,7 @@ export function Header() {
                 )}
               </div>
             ) : (
+              /* ── Sign in button ── */
               <button className="btn btn-gold" style={{ padding: '6px 14px', fontSize: 12 }} onClick={() => setShowAuth(true)}>
                 <User size={13} /> {t.signIn}
               </button>

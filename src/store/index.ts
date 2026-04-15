@@ -15,6 +15,7 @@ interface AppState {
   userEmail: string | null
   userDisplayName: string | null
   userPhoto: string | null
+  authReady: boolean
 
   // Navigation
   currentStep: AppStep
@@ -50,6 +51,7 @@ interface AppState {
 
   // Actions — auth
   setUser: (userId: string | null, email: string | null, displayName: string | null, photo: string | null) => void
+  setAuthReady: (ready: boolean) => void
   signOut: () => Promise<void>
 
   // Actions — school
@@ -91,10 +93,12 @@ const DEFAULT_SCHOOL: School = {
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+      // --- Initial State ---
       userId: null,
       userEmail: null,
       userDisplayName: null,
       userPhoto: null,
+      authReady: false,
       currentStep: 0,
       currentView: 'class',
       selectedClassId: null,
@@ -113,22 +117,34 @@ export const useStore = create<AppState>()(
       savedTimetables: [],
       lastSynced: null,
 
+      // --- Actions ---
       setStep: (step) => set({ currentStep: step }),
       setView: (view) => set({ currentView: view }),
       setSelectedClass: (id) => set({ selectedClassId: id }),
       toggleTheme: () => {
         const isDark = !get().isDark
         set({ isDark })
-        document.documentElement.classList.toggle('dark', isDark)
+        if (typeof window !== 'undefined') {
+          document.documentElement.classList.toggle('dark', isDark)
+        }
       },
       setLang: (lang) => set({ lang }),
 
       setUser: (userId, userEmail, userDisplayName, userPhoto) =>
         set({ userId, userEmail, userDisplayName, userPhoto }),
 
+      setAuthReady: (ready) => set({ authReady: ready }),
+
       signOut: async () => {
         await auth.signOut()
-        set({ userId: null, userEmail: null, userDisplayName: null, userPhoto: null, savedTimetables: [], timetableId: null })
+        set({ 
+          userId: null, 
+          userEmail: null, 
+          userDisplayName: null, 
+          userPhoto: null, 
+          savedTimetables: [], 
+          timetableId: null 
+        })
       },
 
       updateSchool: (patch) => set(s => ({ school: { ...s.school, ...patch } })),
@@ -156,11 +172,9 @@ export const useStore = create<AppState>()(
       }),
       clearGenerated: () => set({ generatedTimetable: null, conflicts: [], warnings: [], compliance: {} }),
 
-      // ── Firebase: Save ──────────────────────────────────────────────────────
       saveTimetable: async (name) => {
         const { userId, school, classes, teachers, generatedTimetable, conflicts, warnings, compliance, timetableId } = get()
         if (!userId) {
-          // Save locally (already in Zustand persist) — will sync when online & logged in
           toast.success('Saved locally (sign in to sync)', { icon: '💾' })
           return
         }
@@ -195,7 +209,6 @@ export const useStore = create<AppState>()(
         }
       },
 
-      // ── Firebase: Load list ─────────────────────────────────────────────────
       loadTimetables: async () => {
         const { userId } = get()
         if (!userId) return
@@ -210,7 +223,7 @@ export const useStore = create<AppState>()(
           const records: DbTimetableRecord[] = snap.docs.map(d => ({ ...d.data(), id: d.id } as DbTimetableRecord))
           set({ savedTimetables: records, lastSynced: Date.now() })
         } catch (_e) {
-          // Offline — use cached data silently
+          // Offline — use cached data
         } finally {
           set({ isSyncing: false })
         }
@@ -241,7 +254,6 @@ export const useStore = create<AppState>()(
         }
       },
 
-      // Auto-sync when coming back online
       syncIfOnline: async () => {
         if (!navigator.onLine) return
         const { userId, timetableId } = get()
@@ -252,6 +264,7 @@ export const useStore = create<AppState>()(
     {
       name: 'instaratiba-store-v3',
       partialize: (s) => ({
+        // We exclude authReady here so it defaults to false on refresh
         isDark: s.isDark,
         lang: s.lang,
         school: s.school,
