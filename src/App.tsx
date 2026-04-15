@@ -9,7 +9,11 @@ import { StepSchool } from '@/components/steps/StepSchool'
 import { StepClasses } from '@/components/steps/StepClasses'
 import { StepTeachers } from '@/components/steps/StepTeachers'
 import { StepGenerate } from '@/components/steps/StepGenerate'
+import Privacy from '@/pages/Privacy'
+import Terms from '@/pages/Terms'
 import { solveAllClasses } from '@/lib/solver'
+
+const path = window.location.pathname
 
 export default function App() {
   useAuth()
@@ -37,6 +41,11 @@ export default function App() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [currentStep, classes, teachers])
+
+  // ── Static pages ──────────────────────────────────────────────
+  if (path === '/privacy') return <Privacy />
+  if (path === '/terms')   return <Terms />
+  // ─────────────────────────────────────────────────────────────
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
