@@ -1,103 +1,78 @@
-export type SchoolLevel = 'jss' | 'upper_primary' | 'lower_primary'
+// src/types/index.ts
+
+export type SchoolLevel = 'primary' | 'jss' | 'both';
 
 export interface School {
-  id?: string
-  name: string
-  county: string
-  term: string
-  level: 'jss' | 'primary' | 'both'
-  startTime: string
-  endTime: string
-  lessonDurationJSS: number
-  lessonDurationPrimary: number
+  name: string;
+  county: string;
+  term: string;
+  level: SchoolLevel;
+  startTime: string; // e.g., "08:20"
+  // Scheduling fields
+  lessonDuration: number; 
+  breakDuration: number;  
+  lunchDuration: number;  
 }
 
 export interface Subject {
-  id: string
-  name: string
-  periods: number
-  color: string
-  isCore?: boolean
-  isOptional?: boolean
-  morning?: boolean
-  daily?: boolean
-  beforeLunch?: boolean
-  doubleCount?: number
-  doubleMandatory?: boolean
-  locked?: string
-  teacherId?: string
-}
-
-export interface SchoolClass {
-  id: string
-  grade: string
-  stream: string
-  level: SchoolLevel
-  subjects: Subject[]
-  roomName?: string
-}
-
-export interface UnavailSlot {
-  day: string
-  start: string
+  id: string;
+  name: string;
+  periods: number;
+  color: string;
+  teacherId?: string;
+  isCore?: boolean;
+  daily?: boolean;
+  locked?: string;         // e.g., "friday_last"
+  doubleCount?: number;    // Number of double lessons allowed
+  doubleMandatory?: boolean; 
+  // Custom Logic Flags
+  beforeLunch?: boolean;   // For morning priority (Maths, Science, etc.)
+  isOptional?: boolean;    // For elective subjects
 }
 
 export interface Teacher {
-  id: string
-  name: string
-  tsc?: string
-  maxWeek: number
-  maxDay: number
-  isBOM: boolean
-  bomDays: string[]
-  unavailSlots: UnavailSlot[]
-  currentLoad?: number
-  substituteFor?: string
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  tsc?: string;
+  maxWeek: number;
+  maxDay: number;
+  isBOM: boolean;
+  bomDays: string[];
+  unavailSlots: Array<{day: number, slot: number}>;
+}
+
+export interface SchoolClass {
+  id: string;
+  grade: string;
+  stream: string;
+  level: SchoolLevel;
+  subjects: Subject[];
 }
 
 export interface LessonCell {
-  subjectId: string
-  subjectName: string
-  teacherId?: string
-  color?: string
-  isDouble?: boolean
-  locked?: boolean
-  label?: string
-  isRemedial?: boolean
+  subjectId: string;
+  subjectName: string;
+  teacherId?: string;
+  color?: string;
+  isDouble?: boolean;
 }
 
-export type DayGrid = Record<number, LessonCell | null>
-export type ClassGrid = Record<number, DayGrid>
-export type Timetable = Record<string, ClassGrid>
+export type ClassGrid = Record<number, Record<number, LessonCell | null>>;
+export type Timetable = Record<string, ClassGrid>;
 
 export interface ComplianceItem {
-  name: string
-  placed: number
-  required: number
+  name: string;
+  placed: number;
+  required: number;
 }
 
 export interface GenerateResult {
-  timetable: Timetable
-  conflicts: Array<{ class: string; msg: string }>
-  warnings: Array<{ class: string; msg: string }>
-  compliance: Record<string, Record<string, ComplianceItem>>
+  timetable: Timetable;
+  conflicts: Array<{ class: string; msg: string }>;
+  warnings: Array<{ class: string; msg: string }>;
+  compliance: Record<string, Record<string, ComplianceItem>>;
 }
 
-export interface DbTimetableRecord {
-  id: string
-  userId: string
-  name: string
-  school: School
-  classes: SchoolClass[]
-  teachers: Teacher[]
-  generatedTimetable?: Timetable
-  conflicts?: GenerateResult['conflicts']
-  warnings?: GenerateResult['warnings']
-  compliance?: GenerateResult['compliance']
-  createdAt: any
-  updatedAt: any
-}
-
-export type AppStep = 0 | 1 | 2 | 3
-export type TimetableView = 'class' | 'teacher'
-export type Language = 'en' | 'sw'
+export type Language = 'en' | 'sw';
