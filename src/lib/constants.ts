@@ -1,138 +1,161 @@
-// src/lib/constants.ts
-import { School, Subject } from '../types';
+import type { Subject, SchoolLevel } from '@/types'
 
-export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+export const DAYS_SW = ['Jumatatu', 'Jumanne', 'Jumatano', 'Alhamisi', 'Ijumaa']
 
-export const LESSON_SLOTS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9'];
+export interface TimeSlot {
+  type: 'lesson' | 'break' | 'pre'
+  time?: string
+  label?: string
+}
 
-export const GRADES = [
-  'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
-  'Grade 7', 'Grade 8', 'Grade 9'
-];
+export const JSS_SLOTS: TimeSlot[] = [
+  { type: 'pre',   label: 'Assembly' },
+  { type: 'lesson', time: '8:20–9:00',   label: 'L1' },
+  { type: 'lesson', time: '9:00–9:40',   label: 'L2' },
+  { type: 'break',  time: '9:40–10:00',  label: 'Tea Break' },
+  { type: 'lesson', time: '10:00–10:40', label: 'L3' },
+  { type: 'lesson', time: '10:40–11:20', label: 'L4' },
+  { type: 'lesson', time: '11:20–12:00', label: 'L5' },
+  { type: 'break',  time: '12:00–12:40', label: 'Lunch' },
+  { type: 'lesson', time: '12:40–13:20', label: 'L6' },
+  { type: 'lesson', time: '13:20–14:00', label: 'L7' },
+  { type: 'lesson', time: '14:00–14:40', label: 'L8' },
+  { type: 'lesson', time: '14:40–15:20', label: 'L9' },
+]
 
-export const STREAMS = ['Blue', 'Green', 'Red', 'Yellow', 'East', 'West', 'North', 'South'];
+export const LESSON_SLOTS = JSS_SLOTS.filter(s => s.type === 'lesson')
 
-/**
- * Generates time strings (e.g., "8:20 AM – 9:00 AM") based on School settings.
- * Respects tea break after L2 and lunch after L5.
- */
-export const calculateTimeLabels = (school: School): string[] => {
-  const labels: string[] = [];
-  const start = school.startTime || "08:20";
-  const [startH, startM] = start.split(':').map(Number);
-  let currentMinutes = startH * 60 + startM;
-
-  const formatTime = (totalMin: number) => {
-    const h = Math.floor(totalMin / 60);
-    const m = totalMin % 60;
-    const period = h >= 12 ? 'PM' : 'AM';
-    const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h;
-    return `${displayH}:${m.toString().padStart(2, '0')} ${period}`;
-  };
-
-  for (let i = 0; i < LESSON_SLOTS.length; i++) {
-    const lessonStart = currentMinutes;
-    const lessonEnd = currentMinutes + (school.lessonDuration || 40);
-    labels.push(`${formatTime(lessonStart)} – ${formatTime(lessonEnd)}`);
-    currentMinutes = lessonEnd;
-    
-    if (i === 1) currentMinutes += (school.breakDuration || 20); // Tea Break
-    if (i === 4) currentMinutes += (school.lunchDuration || 40); // Lunch
+export const CBC_PRESETS: Record<SchoolLevel, { label: string; totalPeriods: number; subjects: Omit<Subject, 'id'>[] }> = {
+  lower_primary: {
+    label: 'Lower Primary (Grades 1–3)',
+    totalPeriods: 30,
+    subjects: [
+      { name: 'Indigenous Language',       periods: 2, color: '#5D4037', isCore: false },
+      { name: 'Kiswahili / KSL',           periods: 4, color: '#2E7D32', isCore: true },
+      { name: 'Mathematics',               periods: 5, color: '#C0392B', isCore: true, morning: true },
+      { name: 'English',                   periods: 5, color: '#1565C0', isCore: true, morning: true },
+      { name: 'Religious Education',       periods: 3, color: '#4E342E', isCore: false },
+      { name: 'Environmental Activities',  periods: 4, color: '#558B2F', isCore: false },
+      { name: 'Creative Activities',       periods: 6, color: '#AD1457', isCore: false },
+      { name: 'Pastoral Programme (PPI)',  periods: 1, color: '#6A1B9A', locked: 'friday_last', isCore: false },
+    ]
+  },
+  upper_primary: {
+    label: 'Upper Primary (Grades 4–6)',
+    totalPeriods: 35,
+    subjects: [
+      { name: 'English',                   periods: 5, color: '#1565C0', isCore: true, morning: true },
+      { name: 'Mathematics',               periods: 5, color: '#C0392B', isCore: true, morning: true },
+      { name: 'Kiswahili / KSL',           periods: 4, color: '#2E7D32', isCore: true },
+      { name: 'Religious Education',       periods: 3, color: '#4E342E', isCore: false },
+      { name: 'Social Studies',            periods: 3, color: '#6A1B9A', isCore: false },
+      { name: 'Integrated Science',        periods: 4, color: '#E65100', isCore: false },
+      { name: 'Agriculture & Nutrition',   periods: 4, color: '#558B2F', isCore: false },
+      { name: 'Creative Arts',             periods: 6, color: '#AD1457', isCore: false },
+      { name: 'Pastoral Programme (PPI)',  periods: 1, color: '#6A1B9A', locked: 'friday_last', isCore: false },
+    ]
+  },
+  jss: {
+    label: 'Junior Secondary (Grades 7–9)',
+    totalPeriods: 45,
+    subjects: [
+      { name: 'English',                        periods: 5, color: '#1565C0', isCore: true, daily: true },
+      { name: 'Mathematics',                    periods: 5, color: '#C0392B', isCore: true, daily: true },
+      { name: 'Pre-Technical Studies',          periods: 4, color: '#BF360C', isCore: false, doubleCount: 2, doubleMandatory: true },
+      { name: 'Kiswahili / KSL',               periods: 4, color: '#2E7D32', isCore: true },
+      { name: 'Integrated Science',             periods: 4, color: '#E65100', isCore: false, doubleCount: 1 },
+      { name: 'Social Studies',                 periods: 3, color: '#6A1B9A', isCore: false },
+      { name: 'Business Studies',               periods: 3, color: '#37474F', isCore: false },
+      { name: 'Agriculture & Nutrition',        periods: 3, color: '#558B2F', isCore: false, doubleCount: 1 },
+      { name: 'Religious Education',            periods: 3, color: '#4E342E', isCore: false },
+      { name: 'Health Education',               periods: 2, color: '#00838F', isCore: false },
+      { name: 'Sports & PE',                    periods: 2, color: '#0277BD', isCore: false, beforeLunch: true },
+      { name: 'Life Skills Education',          periods: 1, color: '#00695C', isCore: false },
+      { name: 'Computer Science (Optional)',    periods: 3, color: '#1A237E', isCore: false, isOptional: true, doubleCount: 1 },
+      { name: 'Home Science (Optional)',        periods: 3, color: '#FF6F00', isCore: false, isOptional: true, doubleCount: 1 },
+    ]
   }
-  return labels;
-};
+}
 
-export const SUBJECT_COLORS = [
-  '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', 
-  '#06b6d4', '#ec4899', '#71717a', '#0ea5e9', '#f97316', 
-  '#1e293b', '#64748b', '#a855f7', '#14b8a6', '#f43f5e'
-];
+export const SUBJECT_COLORS: Record<string, string> = {
+  Mathematics: '#C0392B',
+  English: '#1565C0',
+  'Kiswahili / KSL': '#2E7D32',
+  'Integrated Science': '#E65100',
+  'Pre-Technical Studies': '#BF360C',
+  'Social Studies': '#6A1B9A',
+  'Business Studies': '#37474F',
+  'Agriculture & Nutrition': '#558B2F',
+  'Religious Education': '#4E342E',
+  'Health Education': '#00838F',
+  'Sports & PE': '#0277BD',
+  'Life Skills Education': '#00695C',
+  'Computer Science (Optional)': '#1A237E',
+  'Home Science (Optional)': '#FF6F00',
+}
 
-/**
- * JSS Template: 
- * - Maths/English/Science/KSL marked with beforeLunch: true
- * - Science/Pre-Tech/Agri marked with doubleMandatory: true
- */
-export const JSS_SUBJECTS_TEMPLATE: Omit<Subject, 'id'>[] = [
-  { name: 'Mathematics', periods: 5, color: '#3b82f6', isCore: true, beforeLunch: true },
-  { name: 'English', periods: 5, color: '#ef4444', isCore: true, beforeLunch: true },
-  { name: 'Kiswahili / KSL', periods: 4, color: '#10b981', isCore: true, beforeLunch: true },
-  { name: 'Integrated Science', periods: 4, color: '#8b5cf6', isCore: true, doubleMandatory: true, beforeLunch: true },
-  { name: 'Pre-Technical Studies', periods: 4, color: '#ec4899', doubleMandatory: true },
-  { name: 'Social Studies', periods: 3, color: '#f59e0b' },
-  { name: 'Religious Education', periods: 3, color: '#06b6d4' },
-  { name: 'Agriculture & Nutrition', periods: 4, color: '#0ea5e9', doubleMandatory: true },
-  { name: 'Creative Arts & Sports', periods: 5, color: '#f97316' },
-  { name: 'Life Skills', periods: 1, color: '#71717a' },
-  { name: 'Optional Subject', periods: 3, color: '#64748b', isOptional: true },
-  { name: 'PPI', periods: 1, color: '#1e293b', locked: 'friday_last' }
-];
+export function getSubjectColor(name: string): string {
+  return SUBJECT_COLORS[name] || '#455A64'
+}
 
-export const PRIMARY_SUBJECTS_TEMPLATE: Omit<Subject, 'id'>[] = [
-  { name: 'Mathematics', periods: 5, color: '#3b82f6', isCore: true, beforeLunch: true },
-  { name: 'English', periods: 5, color: '#ef4444', isCore: true, beforeLunch: true },
-  { name: 'Kiswahili', periods: 4, color: '#10b981', isCore: true, beforeLunch: true },
-  { name: 'Science & Technology', periods: 4, color: '#8b5cf6', isCore: true, beforeLunch: true },
-  { name: 'Social Studies', periods: 3, color: '#f59e0b' },
-  { name: 'CRE / IRE / HRE', periods: 3, color: '#06b6d4' },
-  { name: 'Agriculture', periods: 3, color: '#0ea5e9' },
-  { name: 'Home Science', periods: 3, color: '#ec4899' },
-  { name: 'Creative Arts', periods: 3, color: '#f97316' },
-  { name: 'Physical Education', periods: 5, color: '#71717a' },
-  { name: 'PPI', periods: 1, color: '#1e293b', locked: 'friday_last' }
-];
+export function uid(): string {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
+}
 
-export const KENYA_COUNTIES = [
-  "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo Marakwet", "Embu", "Garissa", "Homa Bay",
-  "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii",
-  "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera",
-  "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi",
-  "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita Taveta", "Tana River",
-  "Tharaka Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
-];
+export function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
-export const TRANSLATIONS = {
+// i18n strings
+export const T = {
   en: {
-    school: 'School',
-    teachers: 'Teachers',
-    classes: 'Classes',
-    generate: 'Generate',
-    addTeacher: 'Add Teacher',
-    addClass: 'Add Class',
-    save: 'Save Changes',
-    export: 'Export PDF',
-    streamPDF: 'Class Timetable',
-    teacherPDF: 'Teacher Timetable',
-    masterPDF: 'Master Timetable',
-    compliance: 'MoE Compliance',
-    lessonDur: 'Lesson Duration',
-    breakDur: 'Break Duration',
-    lunchDur: 'Lunch Duration',
+    appName: 'InstaRatiba',
+    tagline: 'CBC-Compliant Timetables in Minutes',
+    school: 'School', classes: 'Classes', teachers: 'Teachers', generate: 'Generate',
+    signIn: 'Sign In', signOut: 'Sign Out', save: 'Save', loading: 'Loading…',
+    offline: 'Offline', online: 'Online',
+    schoolSetup: 'School Setup', classesSubjects: 'Classes & Subjects',
+    teachersStaff: 'Teachers & Staff', generateTimetable: 'Generate Timetable',
+    export: 'Export', print: 'Print', regenerate: 'Regenerate',
+    classView: 'Class View', teacherView: 'Teacher View', masterView: 'Master',
+    exportPDF: 'Export PDF', exportExcel: 'Export Excel',
+    teacherPDF: 'Teacher PDF', streamPDF: 'Stream PDF', masterPDF: 'Master PDF',
+    complianceReport: 'MoE Report',
+    whatsappShare: 'Share via WhatsApp',
+    roomAllocation: 'Room Allocation',
+    substituteTeacher: 'Assign Substitute',
+    analytics: 'Analytics',
+    onlineSaved: 'Synced to cloud ✓',
+    offlineSaved: 'Saved offline',
+    welcome: 'Welcome back!',
+    signInWithGoogle: 'Continue with Google',
   },
   sw: {
-    school: 'Shule',
-    teachers: 'Walimu',
-    classes: 'Madarasa',
-    generate: 'Tengeneza',
-    addTeacher: 'Ongeza Mwalimu',
-    addClass: 'Ongeza Darasa',
-    save: 'Hifadhi',
-    export: 'Pakua PDF',
-    streamPDF: 'Ratiba ya Darasa',
-    teacherPDF: 'Ratiba ya Mwalimu',
-    masterPDF: 'Ratiba Kuu',
-    compliance: 'Ripoti ya MoE',
-    lessonDur: 'Muda wa Somo',
-    breakDur: 'Mapumziko',
-    lunchDur: 'Muda wa Chakula',
+    appName: 'InstaRatiba',
+    tagline: 'Ratiba ya CBC kwa Dakika Chache',
+    school: 'Shule', classes: 'Madarasa', teachers: 'Walimu', generate: 'Tengeneza',
+    signIn: 'Ingia', signOut: 'Toka', save: 'Hifadhi', loading: 'Inasubiri…',
+    offline: 'Nje ya Mtandao', online: 'Mtandaoni',
+    schoolSetup: 'Mpangilio wa Shule', classesSubjects: 'Madarasa & Masomo',
+    teachersStaff: 'Walimu & Wafanyakazi', generateTimetable: 'Tengeneza Ratiba',
+    export: 'Toa', print: 'Chapisha', regenerate: 'Tengeneza Upya',
+    classView: 'Darasa', teacherView: 'Mwalimu', masterView: 'Kuu',
+    exportPDF: 'Toa PDF', exportExcel: 'Toa Excel',
+    teacherPDF: 'PDF ya Mwalimu', streamPDF: 'PDF ya Darasa', masterPDF: 'PDF Kuu',
+    complianceReport: 'Ripoti ya MoE',
+    whatsappShare: 'Shiriki WhatsApp',
+    roomAllocation: 'Mgao wa Vyumba',
+    substituteTeacher: 'Mwalimu Mbadala',
+    analytics: 'Takwimu',
+    onlineSaved: 'Imehifadhiwa ✓',
+    offlineSaved: 'Imehifadhiwa nje ya mtandao',
+    welcome: 'Karibu tena!',
+    signInWithGoogle: 'Endelea na Google',
   }
-};
-
-export const shuffle = <T>(array: T[]): T[] => {
-  const newArr = [...array];
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  return newArr;
-};
+}
