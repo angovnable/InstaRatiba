@@ -44,37 +44,39 @@ export const CBC_PRESETS: Record<SchoolLevel, { label: string; totalPeriods: num
   upper_primary: {
     label: 'Upper Primary (Grades 4–6)',
     totalPeriods: 35,
-    subjects: [
-      { name: 'English',                   periods: 5, color: '#1565C0', isCore: true, morning: true },
-      { name: 'Mathematics',               periods: 5, color: '#C0392B', isCore: true, morning: true },
-      { name: 'Kiswahili / KSL',           periods: 4, color: '#2E7D32', isCore: true },
-      { name: 'Religious Education',       periods: 3, color: '#4E342E', isCore: false },
-      { name: 'Social Studies',            periods: 3, color: '#6A1B9A', isCore: false },
-      { name: 'Integrated Science',        periods: 4, color: '#E65100', isCore: false },
-      { name: 'Agriculture & Nutrition',   periods: 4, color: '#558B2F', isCore: false },
-      { name: 'Creative Arts',             periods: 6, color: '#AD1457', isCore: false },
-      { name: 'Pastoral Programme (PPI)',  periods: 1, color: '#6A1B9A', locked: 'friday_last', isCore: false },
-    ]
+    // REPLACE the upper_primary subjects array:
+subjects: [
+  { name: 'English',                   periods: 5, color: '#1565C0', isCore: true, morning: true },
+  { name: 'Mathematics',               periods: 5, color: '#C0392B', isCore: true, morning: true },
+  { name: 'Kiswahili / KSL',           periods: 4, color: '#2E7D32', isCore: true, morning: true },
+  { name: 'Integrated Science',        periods: 4, color: '#E65100', isCore: false, morning: true, doubleCount: 1 },
+  { name: 'Religious Education',       periods: 3, color: '#4E342E', isCore: false },
+  { name: 'Social Studies',            periods: 3, color: '#6A1B9A', isCore: false },
+  { name: 'Agriculture & Nutrition',   periods: 4, color: '#558B2F', isCore: false, doubleCount: 1 },
+  { name: 'Creative Arts',             periods: 6, color: '#AD1457', isCore: false },
+  { name: 'Pastoral Programme (PPI)',  periods: 1, color: '#6A1B9A', locked: 'friday_last', isCore: false },
+]
   },
   jss: {
     label: 'Junior Secondary (Grades 7–9)',
     totalPeriods: 45,
-    subjects: [
-      { name: 'English',                        periods: 5, color: '#1565C0', isCore: true, daily: true },
-      { name: 'Mathematics',                    periods: 5, color: '#C0392B', isCore: true, daily: true },
-      { name: 'Pre-Technical Studies',          periods: 4, color: '#BF360C', isCore: false, doubleCount: 2, doubleMandatory: true },
-      { name: 'Kiswahili / KSL',               periods: 4, color: '#2E7D32', isCore: true },
-      { name: 'Integrated Science',             periods: 4, color: '#E65100', isCore: false, doubleCount: 1 },
-      { name: 'Social Studies',                 periods: 3, color: '#6A1B9A', isCore: false },
-      { name: 'Business Studies',               periods: 3, color: '#37474F', isCore: false },
-      { name: 'Agriculture & Nutrition',        periods: 3, color: '#558B2F', isCore: false, doubleCount: 1 },
-      { name: 'Religious Education',            periods: 3, color: '#4E342E', isCore: false },
-      { name: 'Health Education',               periods: 2, color: '#00838F', isCore: false },
-      { name: 'Sports & PE',                    periods: 2, color: '#0277BD', isCore: false, beforeLunch: true },
-      { name: 'Life Skills Education',          periods: 1, color: '#00695C', isCore: false },
-      { name: 'Computer Science (Optional)',    periods: 3, color: '#1A237E', isCore: false, isOptional: true, doubleCount: 1 },
-      { name: 'Home Science (Optional)',        periods: 3, color: '#FF6F00', isCore: false, isOptional: true, doubleCount: 1 },
-    ]
+   // REPLACE the jss subjects array:
+subjects: [
+  { name: 'English',                        periods: 5, color: '#1565C0', isCore: true, daily: true, morning: true },
+  { name: 'Mathematics',                    periods: 5, color: '#C0392B', isCore: true, daily: true, morning: true },
+  { name: 'Kiswahili / KSL',               periods: 4, color: '#2E7D32', isCore: true, morning: true },
+  { name: 'Integrated Science',             periods: 4, color: '#E65100', isCore: false, morning: true, doubleCount: 1 },
+  { name: 'Pre-Technical Studies',          periods: 4, color: '#BF360C', isCore: false, doubleCount: 2, doubleMandatory: true },
+  { name: 'Social Studies',                 periods: 3, color: '#6A1B9A', isCore: false },
+  { name: 'Business Studies',               periods: 3, color: '#37474F', isCore: false },
+  { name: 'Agriculture & Nutrition',        periods: 3, color: '#558B2F', isCore: false, doubleCount: 1 },
+  { name: 'Religious Education',            periods: 3, color: '#4E342E', isCore: false },
+  { name: 'Health Education',               periods: 2, color: '#00838F', isCore: false },
+  { name: 'Sports & PE',                    periods: 2, color: '#0277BD', isCore: false, beforeLunch: true },
+  { name: 'Life Skills Education',          periods: 1, color: '#00695C', isCore: false },
+  { name: 'Computer Science (Optional)',    periods: 3, color: '#1A237E', isCore: false, isOptional: true, doubleCount: 1 },
+  { name: 'Home Science (Optional)',        periods: 3, color: '#FF6F00', isCore: false, isOptional: true, doubleCount: 1 },
+]
   }
 }
 

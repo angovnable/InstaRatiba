@@ -1,15 +1,30 @@
 export type SchoolLevel = 'jss' | 'upper_primary' | 'lower_primary'
 
+// REPLACE the School interface with this:
 export interface School {
   id?: string
   name: string
   county: string
   term: string
   level: 'jss' | 'primary' | 'both'
+
+  // JSS timing
   startTime: string
   endTime: string
   lessonDurationJSS: number
+  teaBreakStartJSS: string
+  teaBreakEndJSS: string
+  lunchStartJSS: string
+  lunchEndJSS: string
+
+  // Upper Primary timing
+  startTimePrimary: string
+  endTimePrimary: string
   lessonDurationPrimary: number
+  teaBreakStartPrimary: string
+  teaBreakEndPrimary: string
+  lunchStartPrimary: string
+  lunchEndPrimary: string
 }
 
 export interface Subject {

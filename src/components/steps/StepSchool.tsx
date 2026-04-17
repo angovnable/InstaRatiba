@@ -99,57 +99,131 @@ export function StepSchool() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
           <div style={{ width: 6, height: 20, borderRadius: 3, background: 'var(--skyblue)' }} />
           <h3 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-            {lang === 'sw' ? 'Muundo wa Wakati' : 'Time Structure'}
+            {lang === 'sw' ? 'Muundo wa Wakati' : 'Schedule & Timing'}
           </h3>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 14 }}>
-          <div>
-            {lbl('JSS Start')}
-            <input type="time" className="input-field" value={school.startTime} onChange={e => updateSchool({ startTime: e.target.value })} />
-          </div>
-          <div>
-            {lbl('JSS End')}
-            <input type="time" className="input-field" value={school.endTime} onChange={e => updateSchool({ endTime: e.target.value })} />
-          </div>
-          <div>
-            {lbl('JSS Lesson Duration')}
-            <select className="input-field" value={school.lessonDurationJSS} onChange={e => updateSchool({ lessonDurationJSS: +e.target.value })}>
-              <option value={35}>35 min</option>
-              <option value={40}>40 min (MoE standard)</option>
-              <option value={45}>45 min</option>
-            </select>
-          </div>
-          <div>
-            {lbl('Primary Lesson')}
-            <select className="input-field" value={school.lessonDurationPrimary} onChange={e => updateSchool({ lessonDurationPrimary: +e.target.value })}>
-              <option value={30}>30 min</option>
-              <option value={35}>35 min (MoE standard)</option>
-              <option value={40}>40 min</option>
-            </select>
-          </div>
-        </div>
 
-        {/* Live preview bar */}
+        {/* JSS Schedule */}
+        {(school.level === 'jss' || school.level === 'both') && (
+          <div style={{ marginBottom: 20 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--skyblue)', marginBottom: 10 }}>
+              JSS (Grades 7–9)
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+              <div>
+                {lbl('Start Time')}
+                <input type="time" className="input-field" value={school.startTime}
+                  onChange={e => updateSchool({ startTime: e.target.value })} />
+              </div>
+              <div>
+                {lbl('End Time')}
+                <input type="time" className="input-field" value={school.endTime}
+                  onChange={e => updateSchool({ endTime: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lesson Duration')}
+                <select className="input-field" value={school.lessonDurationJSS}
+                  onChange={e => updateSchool({ lessonDurationJSS: +e.target.value })}>
+                  <option value={35}>35 min</option>
+                  <option value={40}>40 min (MoE standard)</option>
+                  <option value={45}>45 min</option>
+                </select>
+              </div>
+              <div>
+                {lbl('Tea Break Start')}
+                <input type="time" className="input-field" value={school.teaBreakStartJSS}
+                  onChange={e => updateSchool({ teaBreakStartJSS: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Tea Break End')}
+                <input type="time" className="input-field" value={school.teaBreakEndJSS}
+                  onChange={e => updateSchool({ teaBreakEndJSS: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lunch Start')}
+                <input type="time" className="input-field" value={school.lunchStartJSS}
+                  onChange={e => updateSchool({ lunchStartJSS: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lunch End')}
+                <input type="time" className="input-field" value={school.lunchEndJSS}
+                  onChange={e => updateSchool({ lunchEndJSS: e.target.value })} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Upper/Lower Primary Schedule */}
+        {(school.level === 'primary' || school.level === 'both') && (
+          <div style={{ borderTop: school.level === 'both' ? '1px solid var(--border-subtle)' : 'none', paddingTop: school.level === 'both' ? 16 : 0 }}>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 10 }}>
+              Primary (Grades 1–6)
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+              <div>
+                {lbl('Start Time')}
+                <input type="time" className="input-field" value={school.startTimePrimary ?? '08:00'}
+                  onChange={e => updateSchool({ startTimePrimary: e.target.value })} />
+              </div>
+              <div>
+                {lbl('End Time')}
+                <input type="time" className="input-field" value={school.endTimePrimary ?? '15:30'}
+                  onChange={e => updateSchool({ endTimePrimary: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lesson Duration')}
+                <select className="input-field" value={school.lessonDurationPrimary}
+                  onChange={e => updateSchool({ lessonDurationPrimary: +e.target.value })}>
+                  <option value={30}>30 min</option>
+                  <option value={35}>35 min (MoE standard)</option>
+                  <option value={40}>40 min</option>
+                </select>
+              </div>
+              <div>
+                {lbl('Tea Break Start')}
+                <input type="time" className="input-field" value={school.teaBreakStartPrimary ?? '10:00'}
+                  onChange={e => updateSchool({ teaBreakStartPrimary: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Tea Break End')}
+                <input type="time" className="input-field" value={school.teaBreakEndPrimary ?? '10:20'}
+                  onChange={e => updateSchool({ teaBreakEndPrimary: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lunch Start')}
+                <input type="time" className="input-field" value={school.lunchStartPrimary ?? '12:30'}
+                  onChange={e => updateSchool({ lunchStartPrimary: e.target.value })} />
+              </div>
+              <div>
+                {lbl('Lunch End')}
+                <input type="time" className="input-field" value={school.lunchEndPrimary ?? '13:00'}
+                  onChange={e => updateSchool({ lunchEndPrimary: e.target.value })} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Live preview */}
         <div style={{ marginTop: 14, padding: '10px 14px', borderRadius: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
           <Clock size={13} style={{ color: 'var(--skyblue)', flexShrink: 0 }} />
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            <strong style={{ color: 'var(--text-primary)' }}>School day: </strong>
-            {school.startTime || '08:20'} → {school.endTime || '16:00'}
-          </span>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            <strong style={{ color: 'var(--text-primary)' }}>JSS lesson: </strong>
-            {school.lessonDurationJSS} min
-          </span>
-          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            <strong style={{ color: 'var(--text-primary)' }}>Term: </strong>
-            {school.term}
-          </span>
+          {(school.level === 'jss' || school.level === 'both') && (
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              <strong style={{ color: 'var(--text-primary)' }}>JSS: </strong>
+              {school.startTime}–{school.endTime} · Tea {school.teaBreakStartJSS}–{school.teaBreakEndJSS} · Lunch {school.lunchStartJSS}–{school.lunchEndJSS}
+            </span>
+          )}
+          {(school.level === 'primary' || school.level === 'both') && (
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              <strong style={{ color: 'var(--text-primary)' }}>Primary: </strong>
+              {school.startTimePrimary ?? '08:00'}–{school.endTimePrimary ?? '15:30'} · Tea {school.teaBreakStartPrimary ?? '10:00'}–{school.teaBreakEndPrimary ?? '10:20'} · Lunch {school.lunchStartPrimary ?? '12:30'}–{school.lunchEndPrimary ?? '13:00'}
+            </span>
+          )}
         </div>
 
         <div style={{ marginTop: 12, padding: '11px 14px', borderRadius: 10, background: 'var(--accent-glow)', border: '1px solid color-mix(in srgb, var(--skyblue) 25%, transparent)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <Info size={14} style={{ color: 'var(--skyblue)', flexShrink: 0, marginTop: 1 }} />
           <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            <strong>MoE Standard (JSS):</strong> 9 lessons/day × 5 days = 45 periods/week (§4.2.1). Tea break: 9:40–10:00 · Lunch: 12:00–12:40. PPI locked to Friday last slot.
+            <strong>Morning priority:</strong> Maths, English, Kiswahili/KSL & Integrated Science are scheduled in morning slots. Double consecutive lessons applied to Pre-Technical, Integrated Science & Agriculture.
           </p>
         </div>
       </div>

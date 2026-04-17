@@ -79,15 +79,28 @@ interface AppState {
   syncIfOnline: () => Promise<void>
 }
 
+// REPLACE DEFAULT_SCHOOL with:
 const DEFAULT_SCHOOL: School = {
   name: '',
   county: '',
   term: 'Term 1 2026',
   level: 'jss',
+
   startTime: '08:20',
   endTime: '16:00',
   lessonDurationJSS: 40,
+  teaBreakStartJSS: '09:40',
+  teaBreakEndJSS: '10:00',
+  lunchStartJSS: '12:00',
+  lunchEndJSS: '12:40',
+
+  startTimePrimary: '08:00',
+  endTimePrimary: '15:30',
   lessonDurationPrimary: 35,
+  teaBreakStartPrimary: '10:00',
+  teaBreakEndPrimary: '10:20',
+  lunchStartPrimary: '12:30',
+  lunchEndPrimary: '13:00',
 }
 
 export const useStore = create<AppState>()(

@@ -94,7 +94,7 @@ function solveClass(
     LESSON_SLOTS.forEach((_, si) => {
       const cell = grid[di][si]
       if (cell?.subjectId) {
-        placed[cell.subjectId] = (placed[cell.subjectId] ?? 0) + 1
+        placed[cell.subjectId]++
         dailyCount[di][cell.subjectId] = (dailyCount[di][cell.subjectId] ?? 0) + 1
       }
     })
@@ -120,12 +120,17 @@ function solveClass(
     if (grid[dayIdx][slotIdx] !== null) return false
     if (!isTeacherFree(sub.teacherId, dayIdx, slotIdx)) return false
     if ((dailyCount[dayIdx][sub.id] ?? 0) >= 1 && !sub.doubleMandatory) return false
+
     const lesson: LessonCell = {
-      subjectId: sub.id, subjectName: sub.name,
-      teacherId: sub.teacherId, color: sub.color, isDouble
+      subjectId: sub.id,
+      subjectName: sub.name,
+      teacherId: sub.teacherId,
+      color: sub.color,
+      isDouble
     }
+
     grid[dayIdx][slotIdx] = lesson
-    placed[sub.id] = (placed[sub.id] ?? 0) + 1
+    placed[sub.id]++
     dailyCount[dayIdx][sub.id] = (dailyCount[dayIdx][sub.id] ?? 0) + 1
     return true
   }
@@ -143,14 +148,17 @@ function solveClass(
               isTeacherFree(sub.teacherId, di, si) &&
               isTeacherFree(sub.teacherId, di, si + 1) &&
               (dailyCount[di][sub.id] ?? 0) < 2) {
+
             placeLesson(di, si, sub, true)
             placeLesson(di, si + 1, sub, true)
-            success = true; break
+            success = true
+            break
           }
         }
         if (success) break
       }
       if (!success) conflicts.push(`Could not place double lesson for ${sub.name}`)
+
     } else {
       if (item.beforeLunch) {
         for (const di of days) {
@@ -159,16 +167,40 @@ function solveClass(
           }
         }
       }
+
+      // ✅ UPDATED MORNING LOGIC
       if (!success && item.morning) {
-        for (const di of days) {
-          for (const si of [0, 1, 2]) {
-            if (grid[di][si] === null && isTeacherFree(sub.teacherId, di, si) && !dailyCount[di][sub.id]) {
-              placeLesson(di, si, sub); success = true; break
+        const morningSlots = [0, 1, 2]
+
+        for (const si of morningSlots) {
+          for (const di of days) {
+            if (grid[di][si] === null &&
+                isTeacherFree(sub.teacherId, di, si) &&
+                !dailyCount[di][sub.id]) {
+
+              placeLesson(di, si, sub)
+              success = true
+              break
             }
           }
           if (success) break
         }
+
+        // fallback to L4
+        if (!success) {
+          for (const di of days) {
+            if (grid[di][3] === null &&
+                isTeacherFree(sub.teacherId, di, 3) &&
+                !dailyCount[di][sub.id]) {
+
+              placeLesson(di, 3, sub)
+              success = true
+              break
+            }
+          }
+        }
       }
+
       if (!success) {
         for (const di of shuffle([...Array(5).keys()])) {
           for (const si of shuffle([...Array(LESSON_SLOTS.length).keys()])) {
@@ -179,6 +211,7 @@ function solveClass(
           if (success) break
         }
       }
+
       if (!success) {
         for (const di of shuffle([...Array(5).keys()])) {
           for (const si of shuffle([...Array(LESSON_SLOTS.length).keys()])) {
@@ -189,28 +222,10 @@ function solveClass(
           if (success) break
         }
       }
+
       if (!success) conflicts.push(`Could not place ${sub.name} (lesson ${(placed[sub.id] ?? 0) + 1})`)
     }
   }
-
-  DAYS.forEach((_, di) => {
-    LESSON_SLOTS.forEach((_, si) => {
-      if (si < LESSON_SLOTS.length - 1) {
-        const a = grid[di][si], b = grid[di][si + 1]
-        if (a && b && !a.locked && !b.locked) {
-          const isEng = (n?: string) => n?.includes('English')
-          const isKsw = (n?: string) => n?.includes('Kiswahili') || n?.includes('KSL')
-          if ((isEng(a.subjectName) && isKsw(b.subjectName)) || (isKsw(a.subjectName) && isEng(b.subjectName))) {
-            warnings.push(`${DAYS[di]}: English & Kiswahili consecutive`)
-          }
-        }
-      }
-    })
-  })
-
-  cls.subjects.forEach(sub => {
-    compliance[sub.id] = { name: sub.name, placed: placed[sub.id] ?? 0, required: sub.periods }
-  })
 
   return { grid, conflicts, warnings, compliance }
 }
