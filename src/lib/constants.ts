@@ -9,20 +9,78 @@ export interface TimeSlot {
   label?: string
 }
 
-export const JSS_SLOTS: TimeSlot[] = [
-  { type: 'pre',   label: 'Assembly' },
-  { type: 'lesson', time: '8:20–9:00',   label: 'L1' },
-  { type: 'lesson', time: '9:00–9:40',   label: 'L2' },
-  { type: 'break',  time: '9:40–10:00',  label: 'Tea Break' },
-  { type: 'lesson', time: '10:00–10:40', label: 'L3' },
-  { type: 'lesson', time: '10:40–11:20', label: 'L4' },
-  { type: 'lesson', time: '11:20–12:00', label: 'L5' },
-  { type: 'break',  time: '12:00–12:40', label: 'Lunch' },
-  { type: 'lesson', time: '12:40–13:20', label: 'L6' },
-  { type: 'lesson', time: '13:20–14:00', label: 'L7' },
-  { type: 'lesson', time: '14:00–14:40', label: 'L8' },
-  { type: 'lesson', time: '14:40–15:20', label: 'L9' },
-]
+/** Build time slots dynamically from school timing settings */
+export function buildSlots(opts: {
+  startTime: string         // e.g. '08:20'
+  lessonDuration: number    // minutes
+  teaBreakStart: string
+  teaBreakEnd: string
+  lunchStart: string
+  lunchEnd: string
+  endTime: string
+}): TimeSlot[] {
+  const toMins = (t: string) => {
+    const [h, m] = t.split(':').map(Number)
+    return h * 60 + m
+  }
+  const toStr = (mins: number) => {
+    const h = Math.floor(mins / 60)
+    const m = mins % 60
+    return `${h}:${String(m).padStart(2, '0')}`
+  }
+
+  const slots: TimeSlot[] = []
+  let cursor = toMins(opts.startTime)
+  const end = toMins(opts.endTime)
+  const teaStart = toMins(opts.teaBreakStart)
+  const teaEnd = toMins(opts.teaBreakEnd)
+  const lunchStart = toMins(opts.lunchStart)
+  const lunchEnd = toMins(opts.lunchEnd)
+  let lessonNum = 1
+
+  while (cursor < end) {
+    // Insert tea break?
+    if (cursor === teaStart) {
+      slots.push({ type: 'break', time: `${toStr(teaStart)}–${toStr(teaEnd)}`, label: 'Tea Break' })
+      cursor = teaEnd
+      continue
+    }
+    // Insert lunch break?
+    if (cursor === lunchStart) {
+      slots.push({ type: 'break', time: `${toStr(lunchStart)}–${toStr(lunchEnd)}`, label: 'Lunch' })
+      cursor = lunchEnd
+      continue
+    }
+    // Will this lesson slot overlap a break?
+    const lessonEnd = cursor + opts.lessonDuration
+    if ((teaStart > cursor && teaStart < lessonEnd) || (lunchStart > cursor && lunchStart < lessonEnd)) {
+      // Snap to break start
+      const snapTo = teaStart > cursor && teaStart < lessonEnd ? teaStart : lunchStart
+      slots.push({ type: 'lesson', time: `${toStr(cursor)}–${toStr(snapTo)}`, label: `L${lessonNum++}` })
+      cursor = snapTo
+      continue
+    }
+    if (lessonEnd > end) break
+    slots.push({ type: 'lesson', time: `${toStr(cursor)}–${toStr(lessonEnd)}`, label: `L${lessonNum++}` })
+    cursor = lessonEnd
+  }
+
+  return slots
+}
+
+export const JSS_SLOTS: TimeSlot[] = buildSlots({
+  startTime: '08:20', lessonDuration: 40,
+  teaBreakStart: '09:40', teaBreakEnd: '10:00',
+  lunchStart: '12:00', lunchEnd: '12:40',
+  endTime: '15:20',
+})
+
+export const UPPER_PRIMARY_SLOTS: TimeSlot[] = buildSlots({
+  startTime: '08:00', lessonDuration: 35,
+  teaBreakStart: '10:00', teaBreakEnd: '10:20',
+  lunchStart: '12:30', lunchEnd: '13:00',
+  endTime: '15:30',
+})
 
 export const LESSON_SLOTS = JSS_SLOTS.filter(s => s.type === 'lesson')
 

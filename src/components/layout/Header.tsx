@@ -38,22 +38,22 @@ export function Header() {
         paddingTop: 'max(0px, env(safe-area-inset-top))'
       }}>
         {/* Gold accent bar */}
-        <div style={{ height: 2, background: 'linear-gradient(90deg, var(--gold), var(--orange), var(--skyblue))' }} />
+        <div style={{ height: 2, background: 'var(--gold)' }} />
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           {/* Wordmark */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 9, background: 'linear-gradient(135deg, var(--accent), var(--skyblue))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(26,58,92,0.3)' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 5, background: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
                 <path d="M6 8h20M6 14h13M6 20h15" stroke="white" strokeWidth="2.8" strokeLinecap="round"/>
                 <rect x="20" y="17" width="8" height="10" rx="2" fill="white" opacity="0.9"/>
               </svg>
             </div>
             <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.1 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
                 InstaRatiba
               </div>
-              <div style={{ fontSize: 9, fontWeight: 600, color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'none' }} className="header-tagline">
+              <div style={{ fontSize: 9, fontWeight: 500, color: 'var(--text-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' }} className="header-tagline">
                 CBC Timetables
               </div>
             </div>

@@ -79,19 +79,29 @@ export function StepTeachers() {
     const store = useStore.getState()
     const cls = classes.find(c => c.id === classId)
     if (!cls) return
-    if (subjectId) {
-      const sub = cls.subjects.find(s => s.id === subjectId)
-      const te = teachers.find(t => t.id === tid)
-      if (sub && te) {
-        const currentSubLoad = cls.subjects.find(s => s.teacherId === tid)?.periods ?? 0
-        if (getLoad(tid) - currentSubLoad + sub.periods > te.maxWeek) {
-          toast.error(`${te.name} would exceed ${te.maxWeek} lessons/week`); return
-        }
+
+    // If deassigning (none selected), just remove this teacher from whatever subject they had
+    if (!subjectId) {
+      const updated = cls.subjects.map(s => s.teacherId === tid ? { ...s, teacherId: undefined } : s)
+      store.updateClass(classId, { subjects: updated })
+      return
+    }
+
+    const sub = cls.subjects.find(s => s.id === subjectId)
+    const te = teachers.find(t => t.id === tid)
+    if (sub && te) {
+      const currentSubLoad = cls.subjects.find(s => s.id === subjectId)?.periods ?? 0
+      const previousLoad = cls.subjects.find(s => s.teacherId === tid && s.id !== subjectId)?.periods ?? 0
+      if (getLoad(tid) - previousLoad - currentSubLoad + sub.periods > te.maxWeek) {
+        toast.error(`${te.name} would exceed ${te.maxWeek} lessons/week`); return
       }
     }
+
+    // Find if this teacher already teaches another subject in this class — only clear that one
+    const previousSubject = cls.subjects.find(s => s.teacherId === tid && s.id !== subjectId)
     const updated = cls.subjects
-      .map(s => s.teacherId === tid ? { ...s, teacherId: undefined } : s)
-      .map(s => s.id === subjectId ? { ...s, teacherId: tid } : s)
+      .map(s => s.id === previousSubject?.id ? { ...s, teacherId: undefined } : s)
+      .map(s => s.id === subjectId ? { ...s, teacherId: subjectId ? tid : undefined } : s)
     store.updateClass(classId, { subjects: updated })
   }
 

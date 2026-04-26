@@ -1,7 +1,5 @@
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { getRedirectResult } from 'firebase/auth'          // ← add
-import { auth } from '@/lib/firebase'                       // ← add (adjust path if needed)
 import { useStore } from '@/store'
 import { useAuth } from '@/hooks/useAuth'
 import { Header } from '@/components/layout/Header'
@@ -21,18 +19,6 @@ export default function App() {
   useAuth()
 
   const { currentStep, isDark, classes, teachers, setGenerateResult } = useStore()
-
-  // ── Handle Google redirect sign-in result ─────────────────────
-  useEffect(() => {
-    getRedirectResult(auth).catch((err) => {
-      // getRedirectResult resolves to null when there's no pending redirect,
-      // so we only need to handle genuine errors here.
-      console.error('Redirect sign-in error:', err)
-    })
-    // Runs once on mount — the onAuthStateChanged listener in useAuth()
-    // will pick up the signed-in user automatically once the result lands.
-  }, [])
-  // ─────────────────────────────────────────────────────────────
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark)

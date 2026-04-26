@@ -1,6 +1,69 @@
 import { Home, ChevronRight, Info, MapPin, Clock } from 'lucide-react'
 import { useStore } from '@/store'
-import { T } from '@/lib/constants'
+import { T, buildSlots } from '@/lib/constants'
+
+import type { TimeSlot } from '@/lib/constants'
+
+function SchedulePreview({ label, accentColor, slots, lessonDuration }: {
+  label: string
+  accentColor: string
+  slots: TimeSlot[]
+  lessonDuration: number
+}) {
+  const lessons = slots.filter(s => s.type === 'lesson')
+  return (
+    <div style={{ border: '1px solid var(--border-default)', borderRadius: 8, overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{ padding: '8px 12px', borderBottom: `2px solid ${accentColor}`, background: 'var(--bg-elevated)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: accentColor }}>{label}</span>
+        <span style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500 }}>{lessonDuration} min · {lessons.length} lessons/day</span>
+      </div>
+      {/* Slots */}
+      <div style={{ background: 'var(--bg-surface)' }}>
+        {slots.map((slot, i) => {
+          const isBreak = slot.type === 'break'
+          return (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center',
+              padding: isBreak ? '5px 12px' : '4px 12px',
+              background: isBreak ? 'var(--break-bg)' : 'transparent',
+              borderBottom: i < slots.length - 1 ? '1px solid var(--border-subtle)' : 'none',
+              gap: 10,
+            }}>
+              {/* Time */}
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                color: isBreak ? 'var(--text-muted)' : 'var(--text-primary)',
+                fontWeight: isBreak ? 400 : 500,
+                minWidth: 100,
+                flexShrink: 0,
+              }}>
+                {slot.time}
+              </span>
+              {/* Label pill */}
+              {isBreak ? (
+                <span style={{ fontSize: 10, color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  — {slot.label} —
+                </span>
+              ) : (
+                <span style={{
+                  fontSize: 10, fontWeight: 600,
+                  padding: '1px 7px', borderRadius: 3,
+                  background: `color-mix(in srgb, ${accentColor} 12%, transparent)`,
+                  color: accentColor,
+                  border: `1px solid color-mix(in srgb, ${accentColor} 25%, transparent)`,
+                }}>
+                  {slot.label}
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1, CURRENT_YEAR + 2]
@@ -203,21 +266,48 @@ export function StepSchool() {
           </div>
         )}
 
-        {/* Live preview */}
-        <div style={{ marginTop: 14, padding: '10px 14px', borderRadius: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-          <Clock size={13} style={{ color: 'var(--skyblue)', flexShrink: 0 }} />
-          {(school.level === 'jss' || school.level === 'both') && (
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--text-primary)' }}>JSS: </strong>
-              {school.startTime}–{school.endTime} · Tea {school.teaBreakStartJSS}–{school.teaBreakEndJSS} · Lunch {school.lunchStartJSS}–{school.lunchEndJSS}
+        {/* Live Schedule Preview */}
+        <div style={{ marginTop: 18, borderTop: '1px solid var(--border-subtle)', paddingTop: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <Clock size={13} style={{ color: 'var(--skyblue)' }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              Daily Schedule Preview
             </span>
-          )}
-          {(school.level === 'primary' || school.level === 'both') && (
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              <strong style={{ color: 'var(--text-primary)' }}>Primary: </strong>
-              {school.startTimePrimary ?? '08:00'}–{school.endTimePrimary ?? '15:30'} · Tea {school.teaBreakStartPrimary ?? '10:00'}–{school.teaBreakEndPrimary ?? '10:20'} · Lunch {school.lunchStartPrimary ?? '12:30'}–{school.lunchEndPrimary ?? '13:00'}
-            </span>
-          )}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: (school.level === 'both') ? '1fr 1fr' : '1fr', gap: 12 }}>
+            {(school.level === 'jss' || school.level === 'both') && (
+              <SchedulePreview
+                label="JSS (Grades 7–9)"
+                accentColor="var(--skyblue)"
+                lessonDuration={school.lessonDurationJSS}
+                slots={buildSlots({
+                  startTime: school.startTime,
+                  lessonDuration: school.lessonDurationJSS,
+                  teaBreakStart: school.teaBreakStartJSS,
+                  teaBreakEnd: school.teaBreakEndJSS,
+                  lunchStart: school.lunchStartJSS,
+                  lunchEnd: school.lunchEndJSS,
+                  endTime: school.endTime,
+                })}
+              />
+            )}
+            {(school.level === 'primary' || school.level === 'both') && (
+              <SchedulePreview
+                label="Upper Primary (Grades 4–6)"
+                accentColor="var(--gold)"
+                lessonDuration={school.lessonDurationPrimary}
+                slots={buildSlots({
+                  startTime: school.startTimePrimary ?? '08:00',
+                  lessonDuration: school.lessonDurationPrimary,
+                  teaBreakStart: school.teaBreakStartPrimary ?? '10:00',
+                  teaBreakEnd: school.teaBreakEndPrimary ?? '10:20',
+                  lunchStart: school.lunchStartPrimary ?? '12:30',
+                  lunchEnd: school.lunchEndPrimary ?? '13:00',
+                  endTime: school.endTimePrimary ?? '15:30',
+                })}
+              />
+            )}
+          </div>
         </div>
 
         <div style={{ marginTop: 12, padding: '11px 14px', borderRadius: 10, background: 'var(--accent-glow)', border: '1px solid color-mix(in srgb, var(--skyblue) 25%, transparent)', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
