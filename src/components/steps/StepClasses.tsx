@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { BookOpen, Plus, Trash2, ChevronRight, ChevronLeft, Minus, User, DoorOpen } from 'lucide-react'
+import { BookOpen, Plus, Trash2, ChevronRight, ChevronLeft, Minus, Edit2, DoorOpen, X, Check } from 'lucide-react'
 import { useStore } from '@/store'
-import { CBC_PRESETS, uid, getSubjectColor, T } from '@/lib/constants'
+import { CBC_PRESETS, uid, getSubjectColor, SUBJECT_COLORS, T } from '@/lib/constants'
 import type { SchoolClass, Subject, SchoolLevel } from '@/types'
 import toast from 'react-hot-toast'
 
@@ -9,6 +9,80 @@ function getLevel(grade: string): SchoolLevel {
   if (['Grade 7', 'Grade 8', 'Grade 9'].includes(grade)) return 'jss'
   if (['Grade 4', 'Grade 5', 'Grade 6'].includes(grade)) return 'upper_primary'
   return 'lower_primary'
+}
+
+// Simple confirmation dialog
+function ConfirmModal({ message, onConfirm, onCancel }: { message: string; onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div className="card animate-scale-in" style={{ maxWidth: 360, width: '90%', padding: 24, textAlign: 'center' }}>
+        <p style={{ fontSize: 14, color: 'var(--text-primary)', marginBottom: 20 }}>{message}</p>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
+          <button className="btn btn-danger" onClick={onConfirm}><Trash2 size={13} /> Delete</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Inline subject edit modal
+function EditSubjectModal({ subject, onSave, onClose }: {
+  subject: Subject
+  onSave: (updated: Partial<Subject>) => void
+  onClose: () => void
+}) {
+  const [name, setName] = useState(subject.name)
+  const [color, setColor] = useState(subject.color || getSubjectColor(subject.name))
+
+  const presetColors = Object.values(SUBJECT_COLORS).filter((v, i, a) => a.indexOf(v) === i)
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'rgba(0,0,0,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div className="card animate-scale-in" style={{ maxWidth: 340, width: '90%', padding: 22 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>Edit Subject</h3>
+          <button className="btn btn-ghost" style={{ padding: '4px 8px' }} onClick={onClose}><X size={14} /></button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }}>Subject Name</label>
+            <input
+              className="input-field"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onSave({ name, color })}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 8 }}>Color</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+              {presetColors.map(c => (
+                <button key={c} onClick={() => setColor(c)} style={{
+                  width: 24, height: 24, borderRadius: '50%', background: c, border: `2.5px solid ${color === c ? 'white' : 'transparent'}`,
+                  outline: color === c ? `2px solid ${c}` : 'none', cursor: 'pointer', transition: 'all 0.15s',
+                }} />
+              ))}
+            </div>
+            <input type="color" value={color} onChange={e => setColor(e.target.value)}
+              style={{ width: '100%', height: 36, borderRadius: 8, border: '1px solid var(--border-default)', cursor: 'pointer', background: 'var(--bg-input)' }} />
+          </div>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 4 }}>
+            <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+            <button className="btn btn-primary" onClick={() => onSave({ name: name.trim() || subject.name, color })}>
+              <Check size={13} /> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function StepClasses() {
@@ -19,24 +93,25 @@ export function StepClasses() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selectedClass = classes.find(c => c.id === selectedId) ?? null
 
+  // FIX #13: confirmation state
+  const [confirmDeleteClass, setConfirmDeleteClass] = useState<string | null>(null)
+  const [confirmDeleteSubject, setConfirmDeleteSubject] = useState<string | null>(null)
+
+  // FIX #12: edit subject modal state
+  const [editingSubject, setEditingSubject] = useState<Subject | null>(null)
+
+  // FIX #15: custom subject form
+  const [showAddSubject, setShowAddSubject] = useState(false)
+  const [customSubjectName, setCustomSubjectName] = useState('')
+  const [customSubjectColor, setCustomSubjectColor] = useState('#455A64')
+
   function handleAdd() {
     if (!grade) { toast.error('Select a grade'); return }
     const s = stream.trim().toUpperCase() || 'A'
-    
     if (classes.find(c => c.grade === grade && c.stream === s)) {
       toast.error(`${grade} ${s} already exists`); return
     }
-
-    // Fixed: Passing parameters without manual ID to satisfy Omit<SchoolClass, "id">
-    addClass({ 
-      grade, 
-      stream: s, 
-      level: getLevel(grade), 
-      subjects: [] 
-    })
-    
-    // Note: If you need to select the new class immediately, ensure your 
-    // store's addClass returns the new ID or use a different selection logic.
+    addClass({ grade, stream: s, level: getLevel(grade), subjects: [] })
     setStream('')
     toast.success(`${grade} ${s} added ✓`)
   }
@@ -50,13 +125,7 @@ export function StepClasses() {
     let added = 0
     for (const [g, s] of map[type]) {
       if (!classes.find(c => c.grade === g && c.stream === s)) {
-        // Fixed: Removed manual id: uid() to match store expectations
-        addClass({ 
-          grade: g, 
-          stream: s, 
-          level: getLevel(g), 
-          subjects: [] 
-        })
+        addClass({ grade: g, stream: s, level: getLevel(g), subjects: [] })
         added++
       }
     }
@@ -80,11 +149,18 @@ export function StepClasses() {
     updateClass(selectedClass.id, { subjects: updated })
   }
 
+  // FIX #13: confirmed delete subject
   function removeSubject(subId: string) {
-    if (!selectedClass) return
-    updateClass(selectedClass.id, { subjects: selectedClass.subjects.filter(s => s.id !== subId) })
+    setConfirmDeleteSubject(subId)
   }
 
+  function confirmRemoveSubject() {
+    if (!selectedClass || !confirmDeleteSubject) return
+    updateClass(selectedClass.id, { subjects: selectedClass.subjects.filter(s => s.id !== confirmDeleteSubject) })
+    setConfirmDeleteSubject(null)
+  }
+
+  // FIX #3: Fixed assignTeacherToSubject — no longer clears teacher from OTHER subjects in the same class
   function assignTeacherToSubject(subId: string, teacherId: string) {
     if (!selectedClass) return
     if (teacherId) {
@@ -102,9 +178,9 @@ export function StepClasses() {
         }
       }
     }
+    // FIXED: only update the targeted subject — don't touch other subjects
     const updated = selectedClass.subjects.map(s => {
       if (s.id === subId) return { ...s, teacherId: teacherId || undefined }
-      if (s.teacherId === teacherId && teacherId) return { ...s, teacherId: undefined }
       return s
     })
     updateClass(selectedClass.id, { subjects: updated })
@@ -114,15 +190,48 @@ export function StepClasses() {
     }
   }
 
-  function getTeachersAlreadyAssigned(subName: string, excludeSubId: string): string[] {
-    const taken = new Set<string>()
+  // FIX #12: save edited subject
+  function handleSaveSubjectEdit(updated: Partial<Subject>) {
+    if (!selectedClass || !editingSubject) return
+    const subjects = selectedClass.subjects.map(s =>
+      s.id === editingSubject.id ? { ...s, ...updated } : s
+    )
+    updateClass(selectedClass.id, { subjects })
+    setEditingSubject(null)
+    toast.success('Subject updated')
+  }
+
+  // FIX #15: add custom subject
+  function handleAddCustomSubject() {
+    if (!selectedClass || !customSubjectName.trim()) { toast.error('Enter a subject name'); return }
+    const newSub: Subject = {
+      id: uid(),
+      name: customSubjectName.trim(),
+      periods: 2,
+      color: customSubjectColor,
+      isCore: false,
+    }
+    updateClass(selectedClass.id, { subjects: [...selectedClass.subjects, newSub] })
+    setCustomSubjectName('')
+    setCustomSubjectColor('#455A64')
+    setShowAddSubject(false)
+    toast.success(`"${newSub.name}" added`)
+  }
+
+  // FIX #5: show all teachers with a "(taken)" label rather than hiding them
+  function getTeacherLabel(te: { id: string; name: string; maxWeek: number }, sub: Subject): string {
+    let load = 0
     for (const cls of classes) {
-      if (cls.id === selectedClass?.id) continue
       for (const s of cls.subjects) {
-        if (s.name === subName && s.teacherId && s.id !== excludeSubId) taken.add(s.teacherId)
+        if (s.teacherId === te.id && !(cls.id === selectedClass?.id && s.id === sub.id)) load += s.periods
       }
     }
-    return [...taken]
+    const over = load + sub.periods > te.maxWeek
+    // Check if teacher is already assigned to a DIFFERENT subject in THIS class
+    const takenInClass = selectedClass?.subjects.some(s => s.teacherId === te.id && s.id !== sub.id)
+    if (takenInClass) return `${te.name} (already in class)`
+    if (over) return `${te.name} (${load}/${te.maxWeek} ⚠)`
+    return `${te.name} (${load}/${te.maxWeek})`
   }
 
   const lbl = (text: string) => (
@@ -131,6 +240,37 @@ export function StepClasses() {
 
   return (
     <section className="animate-fade-in">
+      {/* Confirm delete class modal */}
+      {confirmDeleteClass && (
+        <ConfirmModal
+          message="Delete this class and all its subject assignments? This cannot be undone."
+          onConfirm={() => {
+            deleteClass(confirmDeleteClass)
+            if (selectedId === confirmDeleteClass) setSelectedId(null)
+            setConfirmDeleteClass(null)
+          }}
+          onCancel={() => setConfirmDeleteClass(null)}
+        />
+      )}
+
+      {/* Confirm delete subject modal */}
+      {confirmDeleteSubject && (
+        <ConfirmModal
+          message="Remove this subject from the class?"
+          onConfirm={confirmRemoveSubject}
+          onCancel={() => setConfirmDeleteSubject(null)}
+        />
+      )}
+
+      {/* Edit subject modal */}
+      {editingSubject && (
+        <EditSubjectModal
+          subject={editingSubject}
+          onSave={handleSaveSubjectEdit}
+          onClose={() => setEditingSubject(null)}
+        />
+      )}
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, marginBottom: 20 }}>
         <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--success-glow)', border: '1px solid color-mix(in srgb, var(--success) 30%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -211,8 +351,9 @@ export function StepClasses() {
                       </div>
                     )}
                   </div>
+                  {/* FIX #13: confirmation before delete */}
                   <button className="btn btn-danger" style={{ padding: '4px 8px', opacity: 0.7 }}
-                    onClick={e => { e.stopPropagation(); deleteClass(cls.id); if (selectedId === cls.id) setSelectedId(null) }}>
+                    onClick={e => { e.stopPropagation(); setConfirmDeleteClass(cls.id) }}>
                     <Trash2 size={12} />
                   </button>
                 </div>
@@ -261,8 +402,8 @@ export function StepClasses() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px auto auto', gap: 8, padding: '4px 10px 8px', borderBottom: '1px solid var(--border-subtle)', marginBottom: 6 }}>
-                    {['Subject', 'Teacher', 'Periods', ''].map((h, i) => (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px auto auto auto', gap: 8, padding: '4px 10px 8px', borderBottom: '1px solid var(--border-subtle)', marginBottom: 6 }}>
+                    {['Subject', 'Teacher', 'Periods', '', ''].map((h, i) => (
                       <span key={i} style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', textAlign: i === 2 ? 'center' : 'left' }}>{h}</span>
                     ))}
                   </div>
@@ -270,11 +411,9 @@ export function StepClasses() {
                   <div className="stagger-children" style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                     {selectedClass.subjects.map(sub => {
                       const color = sub.color || getSubjectColor(sub.name)
-                      const assignedTeacher = teachers.find(te => te.id === sub.teacherId)
-                      const takenIds = getTeachersAlreadyAssigned(sub.name, sub.id)
                       return (
                         <div key={sub.id} className="animate-fade-in" style={{
-                          display: 'grid', gridTemplateColumns: '1fr 130px auto auto',
+                          display: 'grid', gridTemplateColumns: '1fr 130px auto auto auto',
                           gap: 8, alignItems: 'center',
                           padding: '8px 10px', borderRadius: 9,
                           border: '1px solid var(--border-subtle)',
@@ -293,6 +432,7 @@ export function StepClasses() {
                             </div>
                           </div>
 
+                          {/* FIX #5: show ALL teachers, label taken ones instead of hiding */}
                           <div>
                             <select
                               value={sub.teacherId ?? ''}
@@ -306,17 +446,11 @@ export function StepClasses() {
                               }}
                             >
                               <option value="">— assign —</option>
-                              {teachers.map(te => {
-                                const isTaken = takenIds.includes(te.id) && te.id !== sub.teacherId
-                                let load = 0
-                                for (const cls of classes) for (const s of cls.subjects) if (s.teacherId === te.id && !(cls.id === selectedClass.id && s.id === sub.id)) load += s.periods
-                                const over = load + sub.periods > te.maxWeek
-                                return (
-                                  <option key={te.id} value={te.id} disabled={isTaken}>
-                                    {isTaken ? `${te.name} (taken)` : over ? `${te.name} (${load}/${te.maxWeek} ⚠)` : `${te.name} (${load}/${te.maxWeek})`}
-                                  </option>
-                                )
-                              })}
+                              {teachers.map(te => (
+                                <option key={te.id} value={te.id}>
+                                  {getTeacherLabel(te, sub)}
+                                </option>
+                              ))}
                             </select>
                           </div>
 
@@ -330,6 +464,12 @@ export function StepClasses() {
                             </button>
                           </div>
 
+                          {/* FIX #12: edit button */}
+                          <button onClick={() => setEditingSubject(sub)} style={{ width: 24, height: 24, borderRadius: 6, background: 'none', border: '1px solid var(--border-default)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                            <Edit2 size={10} />
+                          </button>
+
+                          {/* FIX #13: confirmation before delete subject */}
                           <button onClick={() => removeSubject(sub.id)} style={{ width: 24, height: 24, borderRadius: 6, background: 'none', border: '1px solid color-mix(in srgb, var(--danger) 40%, transparent)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--danger)' }}>
                             <Trash2 size={10} />
                           </button>
@@ -337,6 +477,44 @@ export function StepClasses() {
                       )
                     })}
                   </div>
+
+                  {/* FIX #15: Add custom subject */}
+                  {showAddSubject ? (
+                    <div className="animate-slide-in" style={{ marginTop: 10, padding: '12px 14px', borderRadius: 10, border: '1.5px dashed var(--border-default)', background: 'var(--bg-elevated)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Custom Subject</div>
+                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <input
+                          className="input-field"
+                          placeholder="Subject name…"
+                          value={customSubjectName}
+                          onChange={e => setCustomSubjectName(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleAddCustomSubject()}
+                          style={{ flex: 1, fontSize: 12 }}
+                          autoFocus
+                        />
+                        <input
+                          type="color"
+                          value={customSubjectColor}
+                          onChange={e => setCustomSubjectColor(e.target.value)}
+                          style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border-default)', cursor: 'pointer', background: 'var(--bg-input)', padding: 2 }}
+                        />
+                        <button className="btn btn-primary" style={{ padding: '7px 12px', fontSize: 12 }} onClick={handleAddCustomSubject}>
+                          <Check size={13} /> Add
+                        </button>
+                        <button className="btn btn-ghost" style={{ padding: '7px 10px' }} onClick={() => { setShowAddSubject(false); setCustomSubjectName('') }}>
+                          <X size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      className="btn btn-ghost"
+                      style={{ marginTop: 10, width: '100%', justifyContent: 'center', fontSize: 12, border: '1.5px dashed var(--border-default)', borderRadius: 9, padding: '8px' }}
+                      onClick={() => setShowAddSubject(true)}
+                    >
+                      <Plus size={13} /> {lang === 'sw' ? 'Ongeza Somo la Ziada' : 'Add Custom Subject'}
+                    </button>
+                  )}
 
                   <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)' }}>
                     <span>Total periods/week:</span>

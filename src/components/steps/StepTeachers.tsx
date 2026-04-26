@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Users, Plus, Trash2, Edit2, ChevronLeft, ChevronRight, X, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react'
 import { useStore } from '@/store'
 import { DAYS, T } from '@/lib/constants'
-import type { Teacher } from '@/types'
+import type { Teacher, UnavailSlot } from '@/types'
 import toast from 'react-hot-toast'
 
 const EMPTY: Omit<Teacher, 'id'> = {
@@ -34,16 +34,31 @@ export function StepTeachers() {
   const t = T[lang]
   const [form, setForm] = useState<Omit<Teacher, 'id'>>(EMPTY)
   const [editId, setEditId] = useState<string | null>(null)
-  const [unavailDay, setUnavailDay] = useState('')
-  const [unavailStart, setUnavailStart] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  // FIX #6: support multiple unavailability slots in the form
+  const [pendingDay, setPendingDay] = useState('')
+  const [pendingStart, setPendingStart] = useState('')
 
   const patch = (p: Partial<Omit<Teacher, 'id'>>) => setForm(f => ({ ...f, ...p }))
 
+  function addUnavailSlot() {
+    if (!pendingDay || !pendingStart) { toast.error('Select both a day and time'); return }
+    const already = form.unavailSlots.some(u => u.day === pendingDay && u.start === pendingStart)
+    if (already) { toast.error('Slot already added'); return }
+    patch({ unavailSlots: [...form.unavailSlots, { day: pendingDay, start: pendingStart }] })
+    setPendingDay('')
+    setPendingStart('')
+  }
+
+  function removeUnavailSlot(slot: UnavailSlot) {
+    patch({ unavailSlots: form.unavailSlots.filter(u => !(u.day === slot.day && u.start === slot.start)) })
+  }
+
   function handleSave() {
     if (!form.name.trim()) { toast.error('Teacher name required'); return }
-    const unavailSlots = (unavailDay && unavailStart) ? [{ day: unavailDay, start: unavailStart }] : []
-    const data = { ...form, unavailSlots }
+    // FIX #6: use form.unavailSlots directly (already an array, no longer overwritten with one slot)
+    const data = { ...form }
     if (editId) {
       updateTeacher(editId, data)
       toast.success(`${form.name} updated`)
@@ -52,13 +67,13 @@ export function StepTeachers() {
       addTeacher(data)
       toast.success(`${form.name} added ✓`)
     }
-    setForm(EMPTY); setUnavailDay(''); setUnavailStart('')
+    setForm(EMPTY); setPendingDay(''); setPendingStart('')
   }
 
   function handleEdit(te: Teacher) {
     setForm({ name: te.name, tsc: te.tsc ?? '', maxWeek: te.maxWeek, maxDay: te.maxDay, isBOM: te.isBOM, bomDays: te.bomDays, unavailSlots: te.unavailSlots })
-    setUnavailDay(te.unavailSlots[0]?.day ?? '')
-    setUnavailStart(te.unavailSlots[0]?.start ?? '')
+    setPendingDay('')
+    setPendingStart('')
     setEditId(te.id)
   }
 
@@ -80,7 +95,6 @@ export function StepTeachers() {
     const cls = classes.find(c => c.id === classId)
     if (!cls) return
 
-    // If deassigning (none selected), just remove this teacher from whatever subject they had
     if (!subjectId) {
       const updated = cls.subjects.map(s => s.teacherId === tid ? { ...s, teacherId: undefined } : s)
       store.updateClass(classId, { subjects: updated })
@@ -97,7 +111,6 @@ export function StepTeachers() {
       }
     }
 
-    // Find if this teacher already teaches another subject in this class — only clear that one
     const previousSubject = cls.subjects.find(s => s.teacherId === tid && s.id !== subjectId)
     const updated = cls.subjects
       .map(s => s.id === previousSubject?.id ? { ...s, teacherId: undefined } : s)
@@ -165,15 +178,40 @@ export function StepTeachers() {
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-              <div>{lbl(lang === 'sw' ? 'Siku Haipatikani' : 'Unavail Day')}
-                <select className="input-field" value={unavailDay} onChange={e => setUnavailDay(e.target.value)}>
-                  <option value="">— none —</option>
+            {/* FIX #6: Multiple unavail slots with add/remove UI */}
+            <div>
+              {lbl(lang === 'sw' ? 'Wakati Asiopatikana' : 'Unavailable Slots')}
+
+              {/* Existing slots */}
+              {form.unavailSlots.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 8 }}>
+                  {form.unavailSlots.map((slot, i) => (
+                    <span key={i} style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5,
+                      fontSize: 11, fontWeight: 600, padding: '3px 8px',
+                      borderRadius: 100, background: 'var(--warning-glow)',
+                      border: '1px solid color-mix(in srgb, var(--warning) 30%, transparent)',
+                      color: 'var(--warning-dark)',
+                    }}>
+                      {slot.day.slice(0, 3)} {slot.start}
+                      <button onClick={() => removeUnavailSlot(slot)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'inherit', opacity: 0.7 }}>
+                        <X size={10} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new slot */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 6 }}>
+                <select className="input-field" value={pendingDay} onChange={e => setPendingDay(e.target.value)} style={{ fontSize: 12 }}>
+                  <option value="">— day —</option>
                   {DAYS.map(d => <option key={d}>{d}</option>)}
                 </select>
-              </div>
-              <div>{lbl(lang === 'sw' ? 'Kuanzia' : 'From Time')}
-                <input type="time" className="input-field" value={unavailStart} onChange={e => setUnavailStart(e.target.value)} />
+                <input type="time" className="input-field" value={pendingStart} onChange={e => setPendingStart(e.target.value)} style={{ fontSize: 12 }} />
+                <button className="btn btn-secondary" style={{ padding: '6px 10px', fontSize: 12 }} onClick={addUnavailSlot}>
+                  <Plus size={12} />
+                </button>
               </div>
             </div>
 
@@ -217,6 +255,7 @@ export function StepTeachers() {
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
                       {load}/{te.maxWeek} lessons · {assigned.length} assignment{assigned.length !== 1 ? 's' : ''}
                       {te.tsc ? ` · TSC ${te.tsc}` : ''}
+                      {te.unavailSlots.length > 0 ? ` · ${te.unavailSlots.length} unavail slot${te.unavailSlots.length !== 1 ? 's' : ''}` : ''}
                     </div>
                     {assigned.length > 0 && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 6 }}>

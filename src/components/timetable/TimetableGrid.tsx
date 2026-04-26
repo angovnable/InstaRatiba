@@ -1,5 +1,6 @@
 import { useStore } from '@/store'
-import { JSS_SLOTS, DAYS, getSubjectColor } from '@/lib/constants'
+import { buildSlots, JSS_SLOTS, UPPER_PRIMARY_SLOTS, DAYS, getSubjectColor } from '@/lib/constants'
+import type { TimeSlot } from '@/lib/constants'
 
 interface Props {
   view: 'class' | 'teacher'
@@ -7,11 +8,40 @@ interface Props {
 }
 
 export function TimetableGrid({ view, selectedId }: Props) {
-  const { classes, teachers, generatedTimetable } = useStore()
+  const { classes, teachers, generatedTimetable, school } = useStore()
 
   if (!generatedTimetable) return null
 
-  const lessonSlots = JSS_SLOTS.filter(s => s.type === 'lesson')
+  // FIX #2: Build slots dynamically from school settings, not hardcoded JSS_SLOTS
+  function getSlotsForLevel(level: 'jss' | 'upper_primary' | 'lower_primary'): TimeSlot[] {
+    if (level === 'jss') {
+      if (school?.startTime) {
+        return buildSlots({
+          startTime: school.startTime,
+          lessonDuration: school.lessonDurationJSS,
+          teaBreakStart: school.teaBreakStartJSS,
+          teaBreakEnd: school.teaBreakEndJSS,
+          lunchStart: school.lunchStartJSS,
+          lunchEnd: school.lunchEndJSS,
+          endTime: school.endTime,
+        })
+      }
+      return JSS_SLOTS
+    } else {
+      if (school?.startTimePrimary) {
+        return buildSlots({
+          startTime: school.startTimePrimary,
+          lessonDuration: school.lessonDurationPrimary,
+          teaBreakStart: school.teaBreakStartPrimary,
+          teaBreakEnd: school.teaBreakEndPrimary,
+          lunchStart: school.lunchStartPrimary,
+          lunchEnd: school.lunchEndPrimary,
+          endTime: school.endTimePrimary,
+        })
+      }
+      return UPPER_PRIMARY_SLOTS
+    }
+  }
 
   if (view === 'class') {
     const cls = classes.find(c => c.id === selectedId)
@@ -20,6 +50,7 @@ export function TimetableGrid({ view, selectedId }: Props) {
       <p style={{ color: 'var(--text-muted)', padding: '24px', textAlign: 'center' }}>No timetable for this class.</p>
     )
 
+    const allSlots = getSlotsForLevel(cls.level)
     let lessonIdx = 0
     return (
       <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 12, border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
@@ -36,7 +67,7 @@ export function TimetableGrid({ view, selectedId }: Props) {
             </tr>
           </thead>
           <tbody>
-            {JSS_SLOTS.map((slot, rowIdx) => {
+            {allSlots.map((slot, rowIdx) => {
               if (slot.type === 'pre') {
                 return (
                   <tr key={rowIdx} className="tt-break-row">
@@ -118,6 +149,16 @@ export function TimetableGrid({ view, selectedId }: Props) {
   const teacher = teachers.find(t => t.id === selectedId)
   if (!teacher) return null
 
+  // For teacher view, use JSS slots by default (or detect from first class they teach)
+  const firstTaughtClass = classes.find(cls =>
+    Object.values(generatedTimetable[cls.id] ?? {}).some(day =>
+      Object.values(day).some(cell => cell?.teacherId === selectedId)
+    )
+  )
+  const teacherSlots = firstTaughtClass
+    ? getSlotsForLevel(firstTaughtClass.level)
+    : getSlotsForLevel('jss')
+
   let lessonIdx2 = 0
   return (
     <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--border-subtle)', boxShadow: 'var(--shadow-card)' }}>
@@ -129,7 +170,7 @@ export function TimetableGrid({ view, selectedId }: Props) {
           </tr>
         </thead>
         <tbody>
-          {JSS_SLOTS.map((slot, rowIdx) => {
+          {teacherSlots.map((slot, rowIdx) => {
             if (slot.type === 'pre') return (
               <tr key={rowIdx} className="tt-break-row">
                 <td className="tt-td" style={{ paddingLeft: 12 }}><span style={{ fontSize: 10, fontWeight: 700, color: 'var(--gold)' }}>Assembly</span></td>

@@ -1,9 +1,44 @@
 import type { SchoolClass, Teacher, GenerateResult, LessonCell, ClassGrid } from '@/types'
-import { DAYS, LESSON_SLOTS, shuffle } from './constants'
+import { DAYS, LESSON_SLOTS, JSS_SLOTS, UPPER_PRIMARY_SLOTS, buildSlots, shuffle } from './constants'
+import type { TimeSlot } from './constants'
+import type { School } from '@/types'
+
+// Returns the correct lesson slots for a given class level, using school's custom timing if provided
+function getSlotsForClass(cls: SchoolClass, school?: School): TimeSlot[] {
+  if (cls.level === 'jss') {
+    if (school) {
+      return buildSlots({
+        startTime: school.startTime,
+        lessonDuration: school.lessonDurationJSS,
+        teaBreakStart: school.teaBreakStartJSS,
+        teaBreakEnd: school.teaBreakEndJSS,
+        lunchStart: school.lunchStartJSS,
+        lunchEnd: school.lunchEndJSS,
+        endTime: school.endTime,
+      })
+    }
+    return JSS_SLOTS
+  } else {
+    // upper_primary or lower_primary
+    if (school) {
+      return buildSlots({
+        startTime: school.startTimePrimary,
+        lessonDuration: school.lessonDurationPrimary,
+        teaBreakStart: school.teaBreakStartPrimary,
+        teaBreakEnd: school.teaBreakEndPrimary,
+        lunchStart: school.lunchStartPrimary,
+        lunchEnd: school.lunchEndPrimary,
+        endTime: school.endTimePrimary,
+      })
+    }
+    return UPPER_PRIMARY_SLOTS
+  }
+}
 
 export function solveAllClasses(
   classes: SchoolClass[],
-  teachers: Teacher[]
+  teachers: Teacher[],
+  school?: School
 ): GenerateResult {
   const timetable: GenerateResult['timetable'] = {}
   const conflicts: GenerateResult['conflicts'] = []
@@ -11,8 +46,13 @@ export function solveAllClasses(
   const compliance: GenerateResult['compliance'] = {}
   const teacherOccupancy: Record<string, boolean> = {}
 
-  for (const cls of classes) {
-    const result = solveClass(cls, teachers, teacherOccupancy)
+  // FIX #7: Shuffle class order so no single class always gets the best slots
+  const shuffledClasses = shuffle([...classes])
+
+  for (const cls of shuffledClasses) {
+    const slots = getSlotsForClass(cls, school)
+    const lessonSlots = slots.filter(s => s.type === 'lesson')
+    const result = solveClass(cls, teachers, teacherOccupancy, lessonSlots)
     timetable[cls.id] = result.grid
     conflicts.push(...result.conflicts.map(msg => ({ class: `${cls.grade} ${cls.stream}`, msg })))
     warnings.push(...result.warnings.map(msg => ({ class: `${cls.grade} ${cls.stream}`, msg })))
@@ -33,20 +73,29 @@ export function solveAllClasses(
 function solveClass(
   cls: SchoolClass,
   teachers: Teacher[],
-  globalTeacherOccupancy: Record<string, boolean>
+  globalTeacherOccupancy: Record<string, boolean>,
+  lessonSlots: ReturnType<typeof getSlotsForClass>
 ) {
   const grid: ClassGrid = {}
   DAYS.forEach((_, di) => {
     grid[di] = {}
-    LESSON_SLOTS.forEach((_, si) => { grid[di][si] = null })
+    lessonSlots.forEach((_, si) => { grid[di][si] = null })
   })
 
   const conflicts: string[] = []
   const warnings: string[] = []
+  // FIX #8: compliance is now populated below
   const compliance: Record<string, { name: string; placed: number; required: number }> = {}
 
   if (cls.subjects.length === 0) {
     return { grid, conflicts: ['No subjects configured'], warnings, compliance }
+  }
+
+  // Initialize compliance tracking for every subject
+  for (const sub of cls.subjects) {
+    if (sub.periods > 0) {
+      compliance[sub.id] = { name: sub.name, placed: 0, required: sub.periods }
+    }
   }
 
   interface QueueItem {
@@ -73,10 +122,12 @@ function solveClass(
     }
 
     if (sub.locked === 'friday_last') {
-      grid[4][LESSON_SLOTS.length - 1] = {
+      grid[4][lessonSlots.length - 1] = {
         subjectId: sub.id, subjectName: sub.name,
         teacherId: sub.teacherId, color: sub.color, locked: true
       }
+      // FIX #8: count this locked placement toward compliance
+      if (compliance[sub.id]) compliance[sub.id].placed++
       const idx = queue.findIndex(q => q.sub.id === sub.id && q.type === 'single')
       if (idx >= 0) queue.splice(idx, 1)
     }
@@ -91,7 +142,7 @@ function solveClass(
   cls.subjects.forEach(s => { placed[s.id] = 0 })
 
   DAYS.forEach((_, di) => {
-    LESSON_SLOTS.forEach((_, si) => {
+    lessonSlots.forEach((_, si) => {
       const cell = grid[di][si]
       if (cell?.subjectId) {
         placed[cell.subjectId]++
@@ -106,7 +157,7 @@ function solveClass(
     if (!t) return true
     if (t.isBOM && t.bomDays?.length > 0 && !t.bomDays.includes(DAYS[dayIdx])) return false
     if (t.unavailSlots?.length > 0) {
-      const slot = LESSON_SLOTS[slotIdx]
+      const slot = lessonSlots[slotIdx]
       for (const u of t.unavailSlots) {
         if (u.day === DAYS[dayIdx] && slot?.time?.startsWith(u.start)) return false
       }
@@ -132,6 +183,10 @@ function solveClass(
     grid[dayIdx][slotIdx] = lesson
     placed[sub.id]++
     dailyCount[dayIdx][sub.id] = (dailyCount[dayIdx][sub.id] ?? 0) + 1
+
+    // FIX #8: update compliance count on each successful placement
+    if (compliance[sub.id]) compliance[sub.id].placed++
+
     return true
   }
 
@@ -143,7 +198,7 @@ function solveClass(
     if (item.type === 'double') {
       const preferredDays = [1, 2, 3, 0, 4]
       for (const di of preferredDays) {
-        for (let si = 0; si < LESSON_SLOTS.length - 1; si++) {
+        for (let si = 0; si < lessonSlots.length - 1; si++) {
           if (grid[di][si] === null && grid[di][si + 1] === null &&
               isTeacherFree(sub.teacherId, di, si) &&
               isTeacherFree(sub.teacherId, di, si + 1) &&
@@ -168,7 +223,6 @@ function solveClass(
         }
       }
 
-      // ✅ UPDATED MORNING LOGIC
       if (!success && item.morning) {
         const morningSlots = [0, 1, 2]
 
@@ -186,7 +240,6 @@ function solveClass(
           if (success) break
         }
 
-        // fallback to L4
         if (!success) {
           for (const di of days) {
             if (grid[di][3] === null &&
@@ -203,7 +256,7 @@ function solveClass(
 
       if (!success) {
         for (const di of shuffle([...Array(5).keys()])) {
-          for (const si of shuffle([...Array(LESSON_SLOTS.length).keys()])) {
+          for (const si of shuffle([...Array(lessonSlots.length).keys()])) {
             if (grid[di][si] === null && isTeacherFree(sub.teacherId, di, si) && !dailyCount[di][sub.id]) {
               placeLesson(di, si, sub); success = true; break
             }
@@ -214,7 +267,7 @@ function solveClass(
 
       if (!success) {
         for (const di of shuffle([...Array(5).keys()])) {
-          for (const si of shuffle([...Array(LESSON_SLOTS.length).keys()])) {
+          for (const si of shuffle([...Array(lessonSlots.length).keys()])) {
             if (grid[di][si] === null && isTeacherFree(sub.teacherId, di, si)) {
               placeLesson(di, si, sub); success = true; break
             }

@@ -55,7 +55,7 @@ export function StepGenerate() {
     setGenerating(true)
     setTimeout(() => {
       try {
-        const result = solveAllClasses(classes, teachers)
+        const result = solveAllClasses(classes, teachers, school)
         setGenerateResult(result)
         if (!selectedId && classes.length > 0) setSelectedId(classes[0].id)
         const hasConflicts = result.conflicts.length > 0
