@@ -1,0 +1,60 @@
+{
+  "name": "InstaRatiba — School Timetable Generator",
+  "short_name": "InstaRatiba",
+  "description": "Automated CBC-compliant school timetable generator for Kenyan comprehensive schools. By AG Computer Solutions.",
+  "theme_color": "#2E7D32",
+  "background_color": "#F5F5F5",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "orientation": "any",
+  "lang": "en-KE",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/pwa-64x64.png",             "sizes": "64x64",   "type": "image/png" },
+    { "src": "icons/pwa-192x192.png",            "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/pwa-512x512.png",            "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/pwa-512x512-maskable.png",   "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your timetable dashboard",
+      "url": "/dashboard?source=shortcut",
+      "icons": [{ "src": "icons/shortcut-dashboard.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Generate Timetable",
+      "short_name": "Generate",
+      "description": "Start timetable generation",
+      "url": "/review?source=shortcut",
+      "icons": [{ "src": "icons/shortcut-generate.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Teachers",
+      "short_name": "Teachers",
+      "description": "Manage teaching staff",
+      "url": "/teachers?source=shortcut",
+      "icons": [{ "src": "icons/shortcut-teachers.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-dashboard.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "InstaRatiba Dashboard"
+    },
+    {
+      "src": "screenshots/mobile-timetable.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Class Timetable View"
+    }
+  ],
+  "prefer_related_applications": false
+}

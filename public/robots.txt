@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Share links are public — allow indexing
+Allow: /timetable/share/
+
+# App internals — no value indexing these
+Disallow: /dashboard
+Disallow: /setup
+Disallow: /login
+Disallow: /register
+Disallow: /teachers
+Disallow: /classes
+Disallow: /rooms
+Disallow: /allocation
+Disallow: /review
+Disallow: /timetable
+Disallow: /export
+Disallow: /settings
+Disallow: /auth/callback
+
+Sitemap: https://instaratiba.vercel.app/sitemap.xml

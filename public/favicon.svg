@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background pill -->
+  <rect width="32" height="32" rx="8" fill="#2E7D32"/>
+  <!-- Calendar grid lines (white) -->
+  <rect x="6" y="10" width="20" height="16" rx="2" fill="white" opacity="0.15"/>
+  <!-- Calendar top bar -->
+  <rect x="6" y="8" width="20" height="5" rx="2" fill="white" opacity="0.9"/>
+  <!-- Grid cells — simplified IR letterform -->
+  <!-- I -->
+  <rect x="8"  y="16" width="3" height="8" rx="1" fill="white"/>
+  <!-- R vertical -->
+  <rect x="13" y="16" width="3" height="8" rx="1" fill="white"/>
+  <!-- R bump -->
+  <path d="M16 16 Q21 16 21 19.5 Q21 23 16 23 L13 23" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- R leg -->
+  <line x1="18" y1="23" x2="21" y2="24" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</svg>

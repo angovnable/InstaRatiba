@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- ── Primary meta ───────────────────────────────────── -->
+    <title>InstaRatiba — CBC Timetable Generator</title>
+    <meta name="description"
+      content="InstaRatiba automates CBC-compliant school timetable generation for Kenyan comprehensive schools. Generate, validate, and export print-ready timetables in minutes. By AG Computer Solutions." />
+    <meta name="keywords"
+      content="CBC timetable, Kenya school timetable, MoE timetabling, InstaRatiba, AG Computer Solutions, JSS timetable" />
+    <meta name="author"  content="AG Computer Solutions" />
+    <meta name="robots"  content="index, follow" />
+
+    <!-- ── PWA / Theme ────────────────────────────────────── -->
+    <meta name="theme-color"               content="#2E7D32" />
+    <meta name="mobile-web-app-capable"    content="yes" />
+    <meta name="application-name"          content="InstaRatiba" />
+
+    <!-- ── Apple / iOS ────────────────────────────────────── -->
+    <meta name="apple-mobile-web-app-capable"         content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title"            content="InstaRatiba" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+    <!-- ── Apple Splash Screens (common sizes) ────────────── -->
+    <!-- iPhone 14 Pro Max -->
+    <link rel="apple-touch-startup-image"
+      media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)"
+      href="/icons/apple-splash-430-932.png" />
+    <!-- iPhone 14 / 13 / 12 -->
+    <link rel="apple-touch-startup-image"
+      media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)"
+      href="/icons/apple-splash-390-844.png" />
+    <!-- iPhone SE -->
+    <link rel="apple-touch-startup-image"
+      media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+      href="/icons/apple-splash-375-667.png" />
+    <!-- iPad Pro 12.9 -->
+    <link rel="apple-touch-startup-image"
+      media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+      href="/icons/apple-splash-1024-1366.png" />
+
+    <!-- ── Favicons ────────────────────────────────────────── -->
+    <link rel="icon"           type="image/svg+xml"  href="/favicon.svg" />
+    <link rel="icon"           type="image/png" sizes="64x64"   href="/icons/pwa-64x64.png" />
+    <link rel="shortcut icon"  type="image/x-icon"  href="/favicon.ico" />
+
+    <!-- ── Manifest ────────────────────────────────────────── -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ── Open Graph ──────────────────────────────────────── -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="InstaRatiba — CBC Timetable Generator" />
+    <meta property="og:description"
+      content="Automated CBC-compliant school timetable generator for Kenyan comprehensive schools." />
+    <meta property="og:image"       content="/icons/pwa-512x512.png" />
+    <meta property="og:url"         content="https://instaratiba.vercel.app" />
+    <meta property="og:site_name"   content="InstaRatiba" />
+    <meta property="og:locale"      content="en_KE" />
+
+    <!-- ── Twitter card ────────────────────────────────────── -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="InstaRatiba — CBC Timetable Generator" />
+    <meta name="twitter:description"
+      content="Automated CBC-compliant school timetable generator for Kenyan comprehensive schools." />
+    <meta name="twitter:image"       content="/icons/pwa-512x512.png" />
+
+    <!-- ── Fonts ────────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ── Bootstrap Icons ──────────────────────────────────── -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <!-- ── Safe-area CSS variable for footer ─────────────────── -->
+    <style>
+      :root {
+        --sat: env(safe-area-inset-top);
+        --sar: env(safe-area-inset-right);
+        --sab: env(safe-area-inset-bottom);
+        --sal: env(safe-area-inset-left);
+      }
+      /* Prevent flash of unstyled content */
+      body { background-color: #F5F5F5; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
