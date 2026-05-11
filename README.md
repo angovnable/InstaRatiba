@@ -473,3 +473,5 @@ GitHub: [@angovnable](https://github.com/angovnable)
 
 *InstaRatiba — Developed in strict compliance with the Kenya Ministry of Education CBC Timetabling & Curriculum Based Establishment Guidelines.*  
 *Document Version 1.1 — April 2026 | Confidential — AG Computer Solutions © 2026*
+#   I n s t a R a t i b a  
+ 
