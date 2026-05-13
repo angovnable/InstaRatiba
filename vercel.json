@@ -5,7 +5,7 @@
   "outputDirectory": "dist",
   "installCommand": "npm ci",
 
-  "regions": ["jnb1"],
+  "regions": ["bom1"],
 
   "rewrites": [
     {
