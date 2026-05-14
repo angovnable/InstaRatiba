@@ -40,8 +40,13 @@ export function useTimetable() {
     const load = async () => {
       setIsLoadingData(true)
       try {
+        // Slots: skip fetch if bootstrap already hydrated them for this timetable
+        const slotsPromise = store.slots.length > 0
+          ? Promise.resolve(store.slots)
+          : fetchSlots(store.current!.id)
+
         const [slots, conflicts, ovr] = await Promise.all([
-          fetchSlots(store.current!.id),
+          slotsPromise,
           fetchConflicts(store.current!.id),
           fetchOverrides(store.current!.id),
         ])

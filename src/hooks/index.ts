@@ -3,6 +3,7 @@
 // ============================================================
 
 export { useAuth }         from './useAuth'
+export { useBootstrap }    from './useBootstrap'
 export { useOnlineStatus } from './useOnlineStatus'
 export { useToast }        from './useToast'
 export { usePwaSync }      from './usePwaSync'

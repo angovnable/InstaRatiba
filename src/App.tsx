@@ -12,6 +12,7 @@ import { useAuthStore }                            from '@/store/authStore'
 import AppShell                                    from '@/components/layout/AppShell'
 import { PwaProvider }                             from '@/components/layout/PwaProvider'
 import { useAuth }                                 from '@/hooks/useAuth'
+import { useBootstrap }                            from '@/hooks/useBootstrap'
 
 // ── Segment 2: Auth ───────────────────────────────────────────
 import {
@@ -73,6 +74,7 @@ function GuestRoute({ children }: { children: React.ReactNode }) {
 // ── Root ──────────────────────────────────────────────────────
 function Root() {
   useAuth()
+  useBootstrap()
   const { isAuthenticated, hasCompletedSetup } = useAuthStore()
   const tour = useOnboardingTour()
 
