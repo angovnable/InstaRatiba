@@ -87,33 +87,16 @@ export function validateLessonCounts(
   const conflicts: Conflict[] = []
   const classMap = new Map(classes.map(c => [c.id, c]))
 
+  // ── Per-subject check: each subject must match its MoE-defined lesson count ──
+  // (applies to ALL levels — Upper Primary subjects have exact counts too)
   for (const alloc of allocations) {
     const subject = getSubjectByCode(alloc.subject_code)
     if (!subject) continue
 
     const cls = classMap.get(alloc.class_id)
-    const level = cls ? gradeToLevel(cls.grade) : null
+    const label = cls ? `Grade ${cls.grade}${cls.stream}` : alloc.class_id
 
-    // Upper Primary allows 38–40 lessons/week (§2.2) — validate against range, not exact value
-    if (level === 'upper_primary') {
-      const UP_MIN = 38
-      const UP_MAX = 40
-      if (alloc.lessons_per_week < UP_MIN || alloc.lessons_per_week > UP_MAX) {
-        const label = cls ? `Grade ${cls.grade}${cls.stream}` : alloc.class_id
-        conflicts.push(makeConflict(
-          timetableId,
-          'lesson_count_wrong',
-          'hard',
-          `${subject.name} for ${label} has ${alloc.lessons_per_week} lessons/week ` +
-          `(MoE Upper Primary: ${UP_MIN}–${UP_MAX}).`,
-        ))
-      }
-      continue
-    }
-
-    // All other levels: exact match
     if (alloc.lessons_per_week !== subject.lessons_per_week) {
-      const label = cls ? `Grade ${cls.grade}${cls.stream}` : alloc.class_id
       const diff = alloc.lessons_per_week - subject.lessons_per_week
       const directionWord = diff > 0 ? 'over' : 'under'
       conflicts.push(makeConflict(
@@ -125,6 +108,33 @@ export function validateLessonCounts(
       ))
     }
   }
+
+  // ── Class total check for Upper Primary: sum must be 38–40 (§2.2) ──
+  // Group allocations by class for Upper Primary only
+  const upClassTotals = new Map<string, number>()
+  for (const alloc of allocations) {
+    const cls = classMap.get(alloc.class_id)
+    if (!cls) continue
+    const level = gradeToLevel(cls.grade)
+    if (level !== 'upper_primary') continue
+    upClassTotals.set(alloc.class_id, (upClassTotals.get(alloc.class_id) ?? 0) + alloc.lessons_per_week)
+  }
+
+  for (const [classId, total] of upClassTotals.entries()) {
+    const cls = classMap.get(classId)
+    const label = cls ? `Grade ${cls.grade}${cls.stream}` : classId
+    const UP_MIN = 38
+    const UP_MAX = 40
+    if (total < UP_MIN || total > UP_MAX) {
+      conflicts.push(makeConflict(
+        timetableId,
+        'lesson_count_wrong',
+        'soft',
+        `${label} total lessons/week is ${total} (MoE Upper Primary target: ${UP_MIN}–${UP_MAX}).`,
+      ))
+    }
+  }
+
   return conflicts
 }
 
