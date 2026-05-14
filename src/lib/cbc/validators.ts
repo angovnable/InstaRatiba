@@ -23,10 +23,9 @@ import { buildDayLayout, countLessonSlots } from './timing'
 
 // Use crypto.randomUUID for collision-free conflict IDs across concurrent runs
 function nextId(): string {
-  return `conflict_${typeof crypto !== 'undefined' && crypto.randomUUID
+  return typeof crypto !== 'undefined' && crypto.randomUUID
     ? crypto.randomUUID()
-    : `${Date.now()}_${Math.random().toString(36).slice(2)}`
-  }`
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
 function makeConflict(
