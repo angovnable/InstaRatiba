@@ -6,7 +6,7 @@
 // deviation warnings, real-time total validation
 // ============================================================
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -24,13 +24,12 @@ import {
   CBC_SUBJECTS_BY_LEVEL,
   ALWAYS_MORNING_CODES,
   PREFERRED_MORNING_CODES,
-  DOUBLE_LESSON_CODES,
 } from '@/lib/cbc/subjects'
 import type {
   SchoolClass, SubjectAllocation, Teacher, TeacherSubject,
   SchoolLevel, CbcSubject,
 } from '@/types'
-import { Button, Card, CardHeader, CardBody, Badge, Modal, SkeletonLoader } from '@/components/ui'
+import { Button, Modal, SkeletonLoader } from '@/components/ui'
 import { WizardLayout } from '@/components/layout'
 
 // ── Helpers ──────────────────────────────────────────────────

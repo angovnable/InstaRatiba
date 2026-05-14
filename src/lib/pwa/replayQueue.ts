@@ -24,7 +24,7 @@ async function replay(mutation: QueuedMutation): Promise<boolean> {
     else if (mutation.type === 'delete' && mutation.table && mutation.filter) {
       let query = supabase.from(mutation.table as string).delete()
       for (const [col, val] of Object.entries(mutation.filter)) {
-        // @ts-ignore dynamic column filter
+        // @ts-expect-error dynamic column filter
         query = query.eq(col, val)
       }
       const { error } = await query

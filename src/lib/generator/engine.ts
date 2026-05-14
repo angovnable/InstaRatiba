@@ -248,7 +248,7 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
     const lastLessonIdx = getLastLessonSlotIndex(layout)
 
     let remaining = task.lessonCount
-    let doubleNeeded = task.requiresDouble ? 1 : 0  // one double required
+    const doubleNeeded = task.requiresDouble ? 1 : 0  // one double required
     let doubleUsed = 0
 
     // Build candidate placements in priority order
