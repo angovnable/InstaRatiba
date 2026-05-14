@@ -192,7 +192,7 @@ function buildTeacherTableHtml(
   const byDay = new Map<ExportDay, TimetableSlot[]>()
   for (const day of DAYS) byDay.set(day, [])
   for (const s of slots) {
-    if (s.teacher_id !== teacher.id) continue
+    if (s.teacher_id !== teacher.id || s.is_break || s.is_assembly || s.is_non_formal) continue
     const list = byDay.get(s.day as ExportDay)
     if (list) list.push(s)
   }

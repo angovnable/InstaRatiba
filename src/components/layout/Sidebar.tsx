@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useAuthStore, useUiStore } from '@/store'
+import { useAuthStore } from '@/store'
 
 interface NavItem {
   label: string
@@ -47,7 +47,6 @@ const NAV_SECTIONS: NavSection[] = [
 ]
 
 export default function Sidebar() {
-  const { sidebarOpen } = useUiStore()
   const { logout, user } = useAuthStore()
   const navigate = useNavigate()
 

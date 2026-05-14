@@ -1,6 +1,7 @@
 export { default as OfflineBanner }    from './OfflineBanner'
 export { default as PwaInstallBanner } from './PwaInstallBanner'
-export { PwaProvider, usePwaContext }   from './PwaProvider'
+export { PwaProvider } from './PwaProvider'
+export { usePwaContext } from './usePwaContext'
 export { default as AppShell }          from './AppShell'
 export { default as GlobalFooter }      from './GlobalFooter'
 export { ErrorBoundary }                from './ErrorBoundary'

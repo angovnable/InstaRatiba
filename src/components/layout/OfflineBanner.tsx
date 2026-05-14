@@ -6,7 +6,7 @@
 // ============================================================
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { usePwaContext }           from './PwaProvider'
+import { usePwaContext }           from './usePwaContext'
 
 export default function OfflineBanner() {
   const { isOnline, queueSize, syncState, syncMsg, manualSync } = usePwaContext()

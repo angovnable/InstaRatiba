@@ -12,7 +12,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { v4 as uuid } from 'uuid'
 import { useSchoolStore } from '@/store/schoolStore'
-import { useAuthStore }   from '@/store/authStore'
 import { useTeacherStore }    from '@/store/teacherStore'
 import { useAllocationStore } from '@/store/allocationStore'
 import {
@@ -66,9 +65,6 @@ function morningIcon(code: string): { icon: string; colour: string; tip: string 
   return null
 }
 
-function classLabel(sc: SchoolClass) {
-  return `Grade ${sc.grade}${sc.stream}`
-}
 
 // Build default allocations for a class from CBC catalogue
 function buildDefaultAllocations(
@@ -447,7 +443,6 @@ function ClassAllocationCard({
 export default function AllocationPage() {
   const navigate = useNavigate()
   const { school } = useSchoolStore()
-  const { user }   = useAuthStore()
   const {
     teachers, teacherSubjects,
     setTeachers, setTeacherSubjects,
@@ -466,7 +461,6 @@ export default function AllocationPage() {
   const [activeLevel, setActiveLevel]     = useState<SchoolLevel | 'all'>('all')
   const [guideOpen, setGuideOpen]         = useState(false)
   const [saving, setSaving]               = useState(false)
-  const [resetting, setResetting]         = useState(false)
   const [resetConfirmOpen, setResetConfirm] = useState(false)
 
   // Load everything on mount
@@ -495,7 +489,7 @@ export default function AllocationPage() {
       // Expand first class by default
       if (cls.length > 0) setExpanded(new Set([cls[0].id]))
     }).catch(err => {
-      toast.error('Failed to load data: ' + err.message)
+      toast.error('Failed to load data: ' + (err as Error).message)
     }).finally(() => setLoading(false))
   }, [schoolId]) // eslint-disable-line
 
@@ -521,8 +515,8 @@ export default function AllocationPage() {
       await bulkUpsertAllocations(allocations)
       markClean()
       toast.success('Allocations saved')
-    } catch (err: any) {
-      toast.error('Save failed: ' + err.message)
+    } catch (err) {
+      toast.error('Save failed: ' + (err as Error).message)
     } finally {
       setSaving(false)
     }

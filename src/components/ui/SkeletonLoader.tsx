@@ -15,7 +15,7 @@ export function Skeleton({ width = '100%', height = '1rem', className = '', roun
   )
 }
 
-export function SkeletonCard({ className = '', lines, height }: { className?: string; lines?: number; height?: string }) {
+export function SkeletonCard({ className = '', lines: _lines, height: _height }: { className?: string; lines?: number; height?: string }) {
   return (
     <div className={`bg-white rounded-lg border border-[#e4ece6] p-5 space-y-3 ${className}`}>
       <Skeleton height="1.1rem" width="60%" />

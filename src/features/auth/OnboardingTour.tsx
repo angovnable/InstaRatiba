@@ -3,7 +3,7 @@
 // (Shepherd.js-compatible API — install shepherd.js or use this built-in version)
 // Shown once after first login, skippable at any time.
 
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 
@@ -61,37 +61,6 @@ const STEPS = [
     anchor: null,
   },
 ]
-
-// ── Hook: controls tour state ────────────────────────────────
-export function useOnboardingTour() {
-  const [visible, setVisible] = useState(false)
-  const [step, setStep] = useState(0)
-
-  const start = useCallback(() => {
-    const done = localStorage.getItem(TOUR_STORAGE_KEY)
-    if (!done) {
-      setStep(0)
-      setVisible(true)
-    }
-  }, [])
-
-  const next = useCallback(() => {
-    setStep((s) => Math.min(s + 1, STEPS.length - 1))
-  }, [])
-
-  const prev = useCallback(() => {
-    setStep((s) => Math.max(s - 1, 0))
-  }, [])
-
-  const finish = useCallback(() => {
-    localStorage.setItem(TOUR_STORAGE_KEY, '1')
-    setVisible(false)
-  }, [])
-
-  const skip = finish
-
-  return { visible, step, start, next, prev, finish, skip, total: STEPS.length }
-}
 
 // ── OnboardingTour component ─────────────────────────────────
 interface OnboardingTourProps {

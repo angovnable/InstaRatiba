@@ -22,6 +22,7 @@ import {
 } from './csvExport'
 import { exportJson } from './jsonExport'
 import { supabase } from '@/lib/supabase/client'
+import { fetchSlots } from '@/lib/supabase/timetable'
 
 // ── Logo fetch ─────────────────────────────────────────────────
 async function fetchLogoAsDataUrl(logoUrl: string | undefined): Promise<string | null> {
@@ -54,17 +55,29 @@ export function useExport() {
     if (!school || !ttStore.current) return null
     const logoDataUrl = await fetchLogoAsDataUrl(school.logo_url)
 
-    // Load classes from store (populated by ClassManagerPage via supabase)
+    // Load classes from Supabase
     const { data: classRows } = await supabase
       .from('classes')
       .select('*')
       .eq('school_id', school.id)
     const classes = (classRows ?? []) as Parameters<typeof exportMasterPdf>[0]['classes']
 
+    // Hydrate slots from Supabase if the store is empty (e.g. user navigated
+    // directly to Export without visiting TimetablePage first)
+    let slots = ttStore.slots
+    if (slots.length === 0 && ttStore.current?.id) {
+      try {
+        slots = await fetchSlots(ttStore.current.id)
+        ttStore.setSlots(slots)
+      } catch {
+        // non-fatal — export will show empty grid
+      }
+    }
+
     return {
       school,
       timetable:  ttStore.current,
-      slots:      ttStore.slots,
+      slots,
       classes,
       teachers,
       logoDataUrl,
