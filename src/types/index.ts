@@ -53,6 +53,9 @@ export interface LevelTiming {
   lunch_duration_min?: number
   non_formal_start?: string
   non_formal_end?: string
+  /** 0=Mon…4=Fri. When set, a 10-min PPI slot is inserted after assembly on that day.
+   *  School-wide — same day for all levels. Undefined = no PPI slot rendered. */
+  ppi_day?: number
 }
 
 // ── Academic Term ──────────────────────────────────────────
@@ -134,7 +137,6 @@ export interface CbcSubject {
   requires_double: boolean        // §2.6
   morning_priority: 'always' | 'preferred' | 'flexible'  // §2.5
   similarity_group?: string       // §7.3 — cannot be back-to-back
-  is_ppi?: boolean
 }
 
 // ── Timetable ──────────────────────────────────────────────
@@ -199,7 +201,6 @@ export type ConflictType =
   | 'similar_subjects_consecutive'
   | 'unintended_double_lesson'
   | 'creative_arts_not_before_break'
-  | 'ppi_count_wrong'
   | 'no_teacher_assigned'
   | 'custom_schedule_slots_short'
   | 'morning_afternoon_imbalance'

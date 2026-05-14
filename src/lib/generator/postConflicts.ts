@@ -143,17 +143,7 @@ export function scanGeneratedSlots(input: PostScanInput): Conflict[] {
       }
     }
 
-    // ── P7: PPI in last slot ────────────────────────────────
-    const ppiSlots = daySlots.filter(s => s.is_ppi)
-    for (const ppi of ppiSlots) {
-      if (ppi.slot_index !== lastLessonSlotIndex) {
-        conflicts.push(makeConflict(
-          timetableId, 'ppi_count_wrong', 'hard',
-          `Grade ${cls?.grade}${cls?.stream}: PPI lesson on ${day} is not in the last slot ` +
-          `(found at slot ${ppi.slot_index}, expected ${lastLessonSlotIndex}).`,
-        ))
-      }
-    }
+    // PPI is now a fixed timing slot (not a generated lesson); no post-generation check needed.
   }
 
   // ── P8: Teacher max lessons/day exceeded ────────────────────

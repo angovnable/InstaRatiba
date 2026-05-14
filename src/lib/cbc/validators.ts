@@ -62,7 +62,7 @@ export function validateTeacherAssignments(
 
   for (const alloc of allocations) {
     const subject = getSubjectByCode(alloc.subject_code)
-    if (!subject?.is_ppi && !alloc.teacher_id) {
+    if (!alloc.teacher_id) {
       const cls = classMap.get(alloc.class_id)
       const label = cls ? `Grade ${cls.grade}${cls.stream}` : alloc.class_id
       conflicts.push(makeConflict(
@@ -298,51 +298,7 @@ export function validateRoomDemand(
 
 
 // ────────────────────────────────────────────────────────────
-// 6. PPI_COUNT_WRONG — must be exactly 1 per class per week
-// ────────────────────────────────────────────────────────────
-
-export function validatePpiCounts(
-  allocations: SubjectAllocation[],
-  classes: SchoolClass[],
-  timetableId: string,
-): Conflict[] {
-  const conflicts: Conflict[] = []
-  const classMap = new Map(classes.map(c => [c.id, c]))
-
-  // Group by class
-  const byClass = new Map<string, SubjectAllocation[]>()
-  for (const alloc of allocations) {
-    const arr = byClass.get(alloc.class_id) ?? []
-    arr.push(alloc)
-    byClass.set(alloc.class_id, arr)
-  }
-
-  for (const [classId, allocs] of byClass.entries()) {
-    const ppiAllocs = allocs.filter(a => {
-      const s = getSubjectByCode(a.subject_code)
-      return s?.is_ppi === true
-    })
-    const cls = classMap.get(classId)
-    const label = cls ? `Grade ${cls.grade}${cls.stream}` : classId
-
-    if (ppiAllocs.length === 0) {
-      conflicts.push(makeConflict(
-        timetableId, 'ppi_count_wrong', 'hard',
-        `${label} has no PPI / Religious Programme lesson assigned (required: 1/week).`,
-      ))
-    } else if (ppiAllocs.reduce((s, a) => s + a.lessons_per_week, 0) !== 1) {
-      conflicts.push(makeConflict(
-        timetableId, 'ppi_count_wrong', 'hard',
-        `${label} PPI lesson count must be exactly 1 per week.`,
-      ))
-    }
-  }
-
-  return conflicts
-}
-
-// ────────────────────────────────────────────────────────────
-// 7. Soft: MORNING_AFTERNOON_IMBALANCE
+// 6. Soft: MORNING_AFTERNOON_IMBALANCE
 //    Warn if always-morning subjects total < 2 per day (rough check)
 // ────────────────────────────────────────────────────────────
 
@@ -426,7 +382,6 @@ export function runFullValidation(input: ValidationInput): ValidationResult {
     ...validateTeacherCapacity(input.allocations, input.teachers, input.classes, input.timetableId),
     ...validateTimingSlots(input.timings, input.allocations, input.classes, input.timetableId),
     ...validateRoomDemand(input.rooms, input.allocations, input.classes, input.timetableId, input.timings),
-    ...validatePpiCounts(input.allocations, input.classes, input.timetableId),
     ...validateMorningBalance(input.allocations, input.classes, input.timetableId),
     ...validateClassTeachers(input.classes, input.timetableId),
   ]

@@ -213,9 +213,8 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
 
     const subject = getSubjectByCode(alloc.subject_code)
 
-    // PPI can proceed without a teacher (self-managed); all other subjects require one
-    if (!alloc.teacher_id && !subject?.is_ppi) {
-      // Non-PPI without teacher: validator caught this; record as unscheduled so it surfaces
+    // All subjects require a teacher; validator catches unassigned ones
+    if (!alloc.teacher_id) {
       unscheduled.push({ classId: alloc.class_id, subjectCode: alloc.subject_code, remaining: alloc.lessons_per_week })
       continue
     }
@@ -223,21 +222,20 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
       classId:        alloc.class_id,
       grade:          cls.grade,
       subjectCode:    alloc.subject_code,
-      teacherId:      alloc.teacher_id ?? '',
+      teacherId:      alloc.teacher_id,
       lessonCount:    alloc.lessons_per_week,
       requiresDouble: alloc.requires_double,
-      isPpi:          subject?.is_ppi === true,
+      isPpi:          false,
       level:          gradeToLevel(cls.grade),
     })
   }
 
   // ── Step 3: Sort tasks by constraint weight (most constrained first) ──
-  // P6 Creative Arts (double before break) → P7 PPI (last slot) → most lessons first
+  // Double-lesson subjects first, then by lesson count descending
   tasks.sort((a, b) => {
     const aIsCreative = DOUBLE_LESSON_CODES.has(a.subjectCode) ? 0 : 1
     const bIsCreative = DOUBLE_LESSON_CODES.has(b.subjectCode) ? 0 : 1
     if (aIsCreative !== bIsCreative) return aIsCreative - bIsCreative
-    if (a.isPpi !== b.isPpi) return a.isPpi ? -1 : 1
     return b.lessonCount - a.lessonCount
   })
 
@@ -318,31 +316,6 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
         // Double placement failed — fall through to single placement
         // Generator logs this as unscheduled
       }
-    }
-
-    // ── 4b: Place PPI in last slot on a chosen day ────────────
-    if (task.isPpi) {
-      let ppiPlaced = false
-      for (const day of DAYS) {
-        if (classSlots.has(classKey(day, lastLessonIdx, task.classId))) continue
-        // Only check teacher availability if a teacher is assigned to PPI
-        if (task.teacherId && teacherSlots.has(teacherKey(day, lastLessonIdx, task.teacherId))) continue
-
-        placeLesson(classSlots, teacherSlots, roomSlots, resultSlots, {
-          classId: task.classId, subjectCode: task.subjectCode,
-          teacherId: task.teacherId, roomId: null,
-          day, slotIndex: lastLessonIdx, isDouble: false,
-        }, timetableId, nextSlotId, true)
-
-        remaining--
-        ppiPlaced = true
-        break
-      }
-      if (!ppiPlaced) {
-        unscheduled.push({ classId: task.classId, subjectCode: task.subjectCode, remaining })
-      }
-      taskIdx++
-      continue
     }
 
     // ── 4c: Place remaining single lessons ────────────────────

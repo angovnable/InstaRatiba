@@ -56,7 +56,22 @@ export function buildDayLayout(timing: LevelTiming): DaySlot[] {
     end_time: '08:20',
     duration_min: 20,
   })
-  cursor = toMin('08:20')   // lessons begin at 08:20
+  cursor = toMin('08:20')
+
+  // PPI / Religious Programme — school-wide fixed slot, once per week (Monday only).
+  // Placed after assembly, before first academic lesson (08:20 – 08:30).
+  // Not a subject allocation; not teacher-assigned; not counted in lesson totals.
+  if (timing.ppi_day != null) {
+    slots.push({
+      slot_index: slotIdx++,
+      kind: 'ppi',
+      start_time: fromMin(cursor),
+      end_time: fromMin(cursor + 10),
+      duration_min: 10,
+    })
+    cursor += 10
+  }
+  // lessons begin after assembly (and PPI if applicable)
 
   // Determine total academic lessons for this level
   // We'll place lessons and inject breaks at the right points
@@ -192,6 +207,7 @@ export const DEFAULT_TIMINGS: Record<SchoolLevel, LevelTiming> = {
     lunch_enabled: false,
     non_formal_start: undefined,
     non_formal_end: undefined,
+    ppi_day: 0, // Monday
   },
   upper_primary: {
     level: 'upper_primary',
@@ -206,6 +222,7 @@ export const DEFAULT_TIMINGS: Record<SchoolLevel, LevelTiming> = {
     lunch_duration_min: 45,
     non_formal_start: '15:35',
     non_formal_end: '16:30',
+    ppi_day: 0, // Monday
   },
   junior_secondary: {
     level: 'junior_secondary',
@@ -220,6 +237,7 @@ export const DEFAULT_TIMINGS: Record<SchoolLevel, LevelTiming> = {
     lunch_duration_min: 60,
     non_formal_start: '15:20',
     non_formal_end: '16:45',
+    ppi_day: 0, // Monday
   },
 }
 

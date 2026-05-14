@@ -76,7 +76,7 @@ const SECTIONS: Section[] = [
     key: 'lessons',
     label: 'Lesson Counts',
     icon: 'bi-list-ol',
-    types: ['lesson_count_wrong', 'ppi_count_wrong', 'unintended_double_lesson'],
+    types: ['lesson_count_wrong', 'unintended_double_lesson'],
   },
   {
     key: 'schedule',

@@ -194,7 +194,6 @@ interface AllocationRowProps {
 function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange }: AllocationRowProps) {
   const morning = morningIcon(subject.code)
   const deviation = alloc.lessons_per_week - moeDefault
-  const isPpi = subject.is_ppi
 
   const assignedTeacher = eligibleTeachers.find(t => t.id === alloc.teacher_id)
 
@@ -226,9 +225,6 @@ function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange 
             <span title="Requires double lesson (MoE default)">
               <i className="bi bi-layers-fill text-[#512DA8] text-[10px]" />
             </span>
-          )}
-          {isPpi && (
-            <span className="text-[9px] px-1.5 py-px rounded-full bg-[#FFF8E1] text-amber-700 font-semibold">PPI</span>
           )}
         </div>
       </td>

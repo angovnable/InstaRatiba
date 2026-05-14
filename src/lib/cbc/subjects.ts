@@ -90,18 +90,8 @@ const LOWER_PRIMARY_SUBJECTS: CbcSubject[] = [
     morning_priority: 'flexible',
     similarity_group: 'phe',
   },
-  {
-    code: 'ppi_lp',
-    name: 'PPI / Religious Programme',
-    level: 'lower_primary',
-    lessons_per_week: 1,
-    lesson_duration_min: 30,
-    requires_double: false,
-    morning_priority: 'flexible',
-    is_ppi: true,
-  },
 ]
-// Total: 31 ✓
+// Total: 30 (PPI is a school-wide fixed timing slot, not a subject allocation)
 
 // ── GRADE 4–6: Upper Primary ────────────────────────────────
 const UPPER_PRIMARY_SUBJECTS: CbcSubject[] = [
@@ -205,18 +195,8 @@ const UPPER_PRIMARY_SUBJECTS: CbcSubject[] = [
     morning_priority: 'flexible',
     similarity_group: 'phe',
   },
-  {
-    code: 'ppi_up',
-    name: 'PPI / Religious Programme',
-    level: 'upper_primary',
-    lessons_per_week: 1,
-    lesson_duration_min: 30,
-    requires_double: false,
-    morning_priority: 'flexible',
-    is_ppi: true,
-  },
 ]
-// Total: 38–40 ✓
+// Total: 37–39 (PPI is a school-wide fixed timing slot, not a subject allocation)
 
 // ── GRADE 7–9: Junior Secondary ─────────────────────────────
 const JUNIOR_SECONDARY_SUBJECTS: CbcSubject[] = [

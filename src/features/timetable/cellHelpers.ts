@@ -82,7 +82,6 @@ export function getSubjectShortCode(code: string): string {
     ict: 'ICT', cte: 'CTE',
     pre_tech: 'PTV',
     indig_lang: 'IND',
-    ppi_lp: 'PPI', ppi_up: 'PPI',
   }
   return map[code] ?? code.slice(0, 3).toUpperCase()
 }
