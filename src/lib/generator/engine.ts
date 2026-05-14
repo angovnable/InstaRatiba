@@ -134,8 +134,7 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
   const resultSlots:  TimetableSlot[] = []
   const unscheduled:  GeneratorResult['unscheduled'] = []
 
-  let slotIdSeq = 0
-  function nextSlotId() { return `slot_${++slotIdSeq}` }
+  function nextSlotId() { return crypto.randomUUID() }
 
   // Build level layouts (cached)
   const levelLayouts = new Map<SchoolLevel, ReturnType<typeof buildDayLayout>>()
