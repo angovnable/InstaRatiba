@@ -234,7 +234,7 @@ function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange 
         <div className="flex items-center gap-1.5 justify-center">
           <button
             onClick={() => handleLessonsChange(-1)}
-            disabled={isPpi}
+            disabled={false}
             className="w-5 h-5 rounded border border-[--color-accent-light] text-[--color-muted] flex items-center justify-center hover:border-[--color-primary] hover:text-[--color-primary] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <i className="bi bi-dash text-[10px]" />
@@ -246,7 +246,7 @@ function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange 
           </span>
           <button
             onClick={() => handleLessonsChange(1)}
-            disabled={isPpi}
+            disabled={false}
             className="w-5 h-5 rounded border border-[--color-accent-light] text-[--color-muted] flex items-center justify-center hover:border-[--color-primary] hover:text-[--color-primary] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <i className="bi bi-plus text-[10px]" />
