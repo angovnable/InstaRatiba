@@ -8,14 +8,13 @@
 import type { TimetableSlot, Conflict, ConflictType, ConflictSeverity, Teacher, SchoolClass, Room } from '@/types'
 import { areSimilarSubjects, DOUBLE_LESSON_CODES, ALWAYS_MORNING_CODES } from '../cbc/subjects'
 
-let _seq = 0
 export function makeConflict(
   timetableId: string,
   type: ConflictType,
   severity: ConflictSeverity,
   description: string,
 ): Conflict {
-  return { id: `pg_${++_seq}_${Date.now()}`, timetable_id: timetableId, type, severity, description, resolved: false }
+  return { id: crypto.randomUUID(), timetable_id: timetableId, type, severity, description, resolved: false }
 }
 
 export interface PostScanInput {
@@ -30,8 +29,7 @@ export interface PostScanInput {
   lastLessonSlotIndex: number
 }
 
-export function scanGeneratedSlots(input: PostScanInput): Conflict[] {
-  _seq = 0
+export function scanGeneratedSlots(input: PostScanInput): Conflict[] {  
   const { timetableId, slots, teachers, classes, rooms, beforeBreakSlotIndexes, lastLessonSlotIndex } = input
   const conflicts: Conflict[] = []
 
