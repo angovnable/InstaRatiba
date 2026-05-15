@@ -87,8 +87,11 @@ export function validateLessonCounts(
   const conflicts: Conflict[] = []
   const classMap = new Map(classes.map(c => [c.id, c]))
 
-  // ── Per-subject check: each subject must match its MoE-defined lesson count ──
-  // (applies to ALL levels — Upper Primary subjects have exact counts too)
+  // ── Per-subject check ────────────────────────────────────────────────────────
+  // M2 FIX: Deviation from MoE lesson count is a WARNING (soft), not a hard block.
+  // Hard should be reserved for cases where lessons physically can't fit in the week
+  // (caught by validateTimingSlots). A school legitimately adjusting Creative Arts
+  // from 4 to 3 should not be prevented from generating entirely.
   for (const alloc of allocations) {
     const subject = getSubjectByCode(alloc.subject_code)
     if (!subject) continue
@@ -102,35 +105,44 @@ export function validateLessonCounts(
       conflicts.push(makeConflict(
         timetableId,
         'lesson_count_wrong',
-        'hard',
+        'soft',   // was 'hard' — see M2 fix above
         `${subject.name} for ${label} has ${alloc.lessons_per_week} lessons/week ` +
         `(MoE: ${subject.lessons_per_week}) — ${Math.abs(diff)} lesson(s) ${directionWord}.`,
       ))
     }
   }
 
-  // ── Class total check for Upper Primary: sum must be 38–40 (§2.2) ──
-  // Group allocations by class for Upper Primary only
-  const upClassTotals = new Map<string, number>()
-  for (const alloc of allocations) {
-    const cls = classMap.get(alloc.class_id)
-    if (!cls) continue
-    const level = gradeToLevel(cls.grade)
-    if (level !== 'upper_primary') continue
-    upClassTotals.set(alloc.class_id, (upClassTotals.get(alloc.class_id) ?? 0) + alloc.lessons_per_week)
+  // ── Class total checks by level (§2.2) ──────────────────────────────────────
+  // L2 FIX: Added Lower Primary (≤31) and JSS (≤40) class total checks.
+  // M4 FIX: maxWeeklyLessons() is now used here instead of being dead code.
+  // UP total is now also driven through maxWeeklyLessons for consistency.
+  const LEVEL_TOTAL_RANGES: Partial<Record<SchoolLevel, { min: number; max: number }>> = {
+    lower_primary:    { min: 0,  max: maxWeeklyLessons('lower_primary') },     // ≤31
+    upper_primary:    { min: 38, max: maxWeeklyLessons('upper_primary') },     // 38–40
+    junior_secondary: { min: 0,  max: maxWeeklyLessons('junior_secondary') },  // ≤40
   }
 
-  for (const [classId, total] of upClassTotals.entries()) {
+  const classTotals = new Map<string, number>()
+  for (const alloc of allocations) {
+    classTotals.set(alloc.class_id, (classTotals.get(alloc.class_id) ?? 0) + alloc.lessons_per_week)
+  }
+
+  for (const [classId, total] of classTotals.entries()) {
     const cls = classMap.get(classId)
-    const label = cls ? `Grade ${cls.grade}${cls.stream}` : classId
-    const UP_MIN = 38
-    const UP_MAX = 40
-    if (total < UP_MIN || total > UP_MAX) {
+    if (!cls) continue
+    const level = gradeToLevel(cls.grade)
+    const range = LEVEL_TOTAL_RANGES[level]
+    if (!range) continue
+    const label = `Grade ${cls.grade}${cls.stream}`
+    if (total > range.max) {
       conflicts.push(makeConflict(
-        timetableId,
-        'lesson_count_wrong',
-        'soft',
-        `${label} total lessons/week is ${total} (MoE Upper Primary target: ${UP_MIN}–${UP_MAX}).`,
+        timetableId, 'lesson_count_wrong', 'soft',
+        `${label} total lessons/week is ${total} — exceeds MoE ${level.replace(/_/g,' ')} maximum of ${range.max}.`,
+      ))
+    } else if (range.min > 0 && total < range.min) {
+      conflicts.push(makeConflict(
+        timetableId, 'lesson_count_wrong', 'soft',
+        `${label} total lessons/week is ${total} — below MoE ${level.replace(/_/g,' ')} minimum of ${range.min}.`,
       ))
     }
   }
@@ -347,7 +359,39 @@ export function validateMorningBalance(
 }
 
 // ────────────────────────────────────────────────────────────
-// 8. CLASS_TEACHER_UNASSIGNED (soft informational)
+// 7. DOUBLE_LESSON_TOGGLE_MISSING — §2.6 double lessons must have requires_double set
+// ────────────────────────────────────────────────────────────
+
+// L1 FIX: Pre-generation check that every subject requiring a double lesson (per MoE §2.6)
+// has requires_double: true in its allocation. Without this, an admin who unchecks the toggle
+// produces a non-compliant schedule silently — the generator simply skips the double.
+export function validateDoubleLesson(
+  allocations: SubjectAllocation[],
+  classes: SchoolClass[],
+  timetableId: string,
+): Conflict[] {
+  const conflicts: Conflict[] = []
+  const classMap = new Map(classes.map(c => [c.id, c]))
+
+  for (const alloc of allocations) {
+    if (!DOUBLE_LESSON_CODES.has(alloc.subject_code)) continue
+    if (alloc.requires_double) continue  // correctly set
+
+    const cls = classMap.get(alloc.class_id)
+    const label = cls ? `Grade ${cls.grade}${cls.stream}` : alloc.class_id
+    const subject = getSubjectByCode(alloc.subject_code)
+    conflicts.push(makeConflict(
+      timetableId,
+      'lesson_count_wrong',
+      'soft',
+      `${subject?.name ?? alloc.subject_code} for ${label} requires a double lesson (MoE §2.6) ` +
+      `but the double-lesson toggle is off. Enable it in allocations.`,
+    ))
+  }
+  return conflicts
+}
+
+
 // ────────────────────────────────────────────────────────────
 
 export function validateClassTeachers(
@@ -392,6 +436,7 @@ export function runFullValidation(input: ValidationInput): ValidationResult {
     ...validateTimingSlots(input.timings, input.allocations, input.classes, input.timetableId),
     ...validateRoomDemand(input.rooms, input.allocations, input.classes, input.timetableId, input.timings),
     ...validateMorningBalance(input.allocations, input.classes, input.timetableId),
+    ...validateDoubleLesson(input.allocations, input.classes, input.timetableId),  // L1
     ...validateClassTeachers(input.classes, input.timetableId),
   ]
 

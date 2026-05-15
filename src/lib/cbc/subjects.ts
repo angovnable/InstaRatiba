@@ -337,13 +337,16 @@ export function getSubjectByCode(code: string): CbcSubject | undefined {
 // Subjects in the same group CANNOT be scheduled consecutively
 
 export const SIMILARITY_GROUPS: Record<string, string[]> = {
-  languages:   ['english_lp','english_up','english_jss','kiswahili_lp','kiswahili_up','kiswahili_jss','indig_lang'],
-  mathematics: ['maths_lp','maths_up','maths_jss'],
-  sciences:    ['environ_lp','sci_tech','integ_sci'],
-  humanities:  ['social_studies_up','social_studies_jss','rel_ed_lp','rel_ed_up','rel_ethics_jss'],
-  creative:    ['creative_arts_lp','creative_arts_up','creative_arts_sports','home_sci'],
-  phe:         ['phe_lp','phe_up','creative_arts_sports'],
-  practical:   ['agri','agri_nutrition','home_sci','pre_tech'],
+  languages:        ['english_lp','english_up','english_jss','kiswahili_lp','kiswahili_up','kiswahili_jss','indig_lang'],
+  // C4 FIX: §7.3 — Mathematics ↔ Science & Technology / Integrated Science cannot be consecutive.
+  // Merged into one group so areSimilarSubjects() correctly blocks maths next to sciences.
+  maths_sciences:   ['maths_lp','maths_up','maths_jss','environ_lp','sci_tech','integ_sci'],
+  humanities:       ['social_studies_up','social_studies_jss','rel_ed_lp','rel_ed_up','rel_ethics_jss'],
+  creative:         ['creative_arts_lp','creative_arts_up','creative_arts_sports','home_sci'],
+  // C5 FIX: §7.3 — PHE ↔ Creative Arts. Added creative_arts_lp and creative_arts_up so the
+  // constraint fires at all primary levels, not just JSS (creative_arts_sports).
+  phe:              ['phe_lp','phe_up','creative_arts_lp','creative_arts_up','creative_arts_sports'],
+  practical:        ['agri','agri_nutrition','home_sci','pre_tech'],
 }
 
 /** Return true if two subjects are in the same similarity group (cannot be consecutive) */

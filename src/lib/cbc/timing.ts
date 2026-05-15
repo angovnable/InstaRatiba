@@ -41,6 +41,10 @@ function fromMin(m: number): string {
  * Build the full ordered slot layout for a single day given a LevelTiming config.
  * Assembly is always slot 0. Academic lessons are interleaved with break slots.
  * Returns array of DaySlot with accurate clock times.
+ *
+ * NOTE — PPI is intentionally NOT included here. MoE §2.7 requires PPI to appear
+ * exactly once per week, on a configured day, in the LAST lesson slot of that day.
+ * The engine handles PPI injection directly so it can target the correct day.
  */
 export function buildDayLayout(timing: LevelTiming): DaySlot[] {
   const slots: DaySlot[] = []
@@ -57,21 +61,9 @@ export function buildDayLayout(timing: LevelTiming): DaySlot[] {
     duration_min: 20,
   })
   cursor = toMin('08:20')
-
-  // PPI / Religious Programme — school-wide fixed slot, once per week (Monday only).
-  // Placed after assembly, before first academic lesson (08:20 – 08:30).
-  // Not a subject allocation; not teacher-assigned; not counted in lesson totals.
-  if (timing.ppi_day != null) {
-    slots.push({
-      slot_index: slotIdx++,
-      kind: 'ppi',
-      start_time: fromMin(cursor),
-      end_time: fromMin(cursor + 10),
-      duration_min: 10,
-    })
-    cursor += 10
-  }
-  // lessons begin after assembly (and PPI if applicable)
+  // Lessons begin immediately after assembly.
+  // PPI is NOT placed here — the engine injects it into the last lesson slot
+  // of ppi_day only, ensuring exactly one PPI per week per class (MoE §2.7).
 
   // Determine total academic lessons for this level
   // We'll place lessons and inject breaks at the right points
@@ -205,8 +197,10 @@ export const DEFAULT_TIMINGS: Record<SchoolLevel, LevelTiming> = {
     break2_after_lesson: 4,
     break2_duration_min: 30,
     lunch_enabled: false,
-    non_formal_start: undefined,
-    non_formal_end: undefined,
+    // M1 FIX: Cap Lower Primary at 6 lessons/day ending ~15:00. Without this boundary the
+    // loop ran to the 17:30 ceiling producing 10 lesson slots — 4 more than MoE specifies.
+    non_formal_start: '15:00',
+    non_formal_end:   '15:00', // no non-formal programme; boundary only
     ppi_day: 0, // Monday
   },
   upper_primary: {

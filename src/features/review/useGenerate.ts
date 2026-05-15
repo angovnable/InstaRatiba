@@ -123,11 +123,18 @@ export function useGenerate() {
       })
 
       // Post-generation conflict scan
-      const level: SchoolLevel = classes[0] ? gradeToLevel(classes[0].grade) : 'lower_primary'
-      const timing  = timings[level] ?? DEFAULT_TIMINGS[level]
-      const layout  = buildDayLayout(timing)
-      const beforeBreakSet = new Set(getSlotsBeforeBreak(layout))
-      const lastLessonIdx  = getLastLessonSlotIndex(layout)
+      // Bug 6 FIX: Build beforeBreakSet and lastLessonIdx by unioning ALL levels present in
+      // the school. The old code used only classes[0]'s level, causing false
+      // creative_arts_not_before_break conflicts for every other level in a mixed school.
+      const beforeBreakSet = new Set<number>()
+      let lastLessonIdx = -1
+      for (const level of ['lower_primary', 'upper_primary', 'junior_secondary'] as SchoolLevel[]) {
+        if (!classes.some(c => gradeToLevel(c.grade) === level)) continue
+        const lTiming = timings[level] ?? DEFAULT_TIMINGS[level]
+        const lLayout = buildDayLayout(lTiming)
+        for (const idx of getSlotsBeforeBreak(lLayout)) beforeBreakSet.add(idx)
+        lastLessonIdx = Math.max(lastLessonIdx, getLastLessonSlotIndex(lLayout))
+      }
 
       const postConflicts = scanGeneratedSlots({
         timetableId: tt.id,

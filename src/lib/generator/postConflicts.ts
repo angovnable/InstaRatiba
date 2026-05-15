@@ -172,7 +172,11 @@ export function scanGeneratedSlots(input: PostScanInput): Conflict[] {
 
       let consecutive = 1
       for (let i = 1; i < teacherSlotsToday.length; i++) {
-        if (teacherSlotsToday[i] === teacherSlotsToday[i - 1] + 1) {
+        // Bug 7 FIX: Lesson slot_indexes are non-contiguous (gaps where breaks sit, e.g. [2,3,5,6]).
+        // The pair (3,5) is back-to-back with only a break between them — consecutive from a
+        // teacher-fatigue standpoint — but 5 !== 3+1 so the old check silently missed it.
+        // Since teacherSlotsToday is sorted ascending, any forward step IS a consecutive lesson.
+        if (teacherSlotsToday[i] > teacherSlotsToday[i - 1]) {
           consecutive++
           if (consecutive > teacher.max_consecutive) {
             conflicts.push(makeConflict(
