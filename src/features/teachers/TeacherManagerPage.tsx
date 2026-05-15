@@ -506,7 +506,7 @@ export default function TeacherManagerPage() {
   const [deleteTarget, setDeleteTarget] = useState<Teacher | null>(null)
   const [deleting, setDeleting]       = useState(false)
   const [searchQuery, setSearch]      = useState('')
-  const [_saving, _setSaving]         = useState(false)
+  const [saving, setSaving]           = useState(false)
 
   // Load teachers on mount
   useEffect(() => {

@@ -11,6 +11,7 @@ import { useNavigate }       from 'react-router-dom'
 import { toast }             from 'sonner'
 import { useAuthStore }      from '@/store/authStore'
 import { useSchoolStore }    from '@/store/schoolStore'
+import type { School, AppUser } from '@/types'
 import { useTimetableStore } from '@/store/timetableStore'
 import { supabase }          from '@/lib/supabase/client'
 import {
@@ -586,8 +587,8 @@ function ShareLinkTab({ ttStore }: { ttStore: { current: { id: string } | null }
 
 function AccountTab({
   user, signOut, navigate,
-}: { user: Record<string, unknown> | null; signOut: () => void; navigate: ReturnType<typeof import("react-router-dom").useNavigate> }) {
-  const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name ?? '')
+}: { user: AppUser | null; signOut: () => void; navigate: (path: string) => void }) {
+  const [displayName, setDisplayName] = useState(user?.display_name ?? '')
   const [saving,      setSaving]      = useState(false)
 
   const handleSave = async () => {
@@ -617,7 +618,7 @@ function AccountTab({
 
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-full bg-[--color-primary] text-white text-xl font-bold flex items-center justify-center uppercase">
-          {(displayName || user?.email || '?')[0]}
+          {(displayName || user?.email || '?').charAt(0)}
         </div>
         <div>
           <p className="font-semibold text-[--color-text]">{displayName || '—'}</p>
@@ -655,7 +656,7 @@ function AccountTab({
 // Danger Zone Tab
 // ─────────────────────────────────────────────────────────────
 
-function DangerZoneTab({ school, signOut, navigate }: { school: School | null; signOut: () => void; navigate: ReturnType<typeof import('react-router-dom').useNavigate> }) {
+function DangerZoneTab({ school, signOut, navigate }: { school: School | null; signOut: () => void; navigate: (path: string) => void }) {
   const [confirm1, setConfirm1] = useState('')
   const [deleting, setDeleting] = useState(false)
 
