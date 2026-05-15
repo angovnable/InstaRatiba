@@ -51,7 +51,7 @@ function RoomFormModal({ room, open, schoolLevels, onClose, onSave, schoolId }: 
   const [capacity, setCapacity]     = useState('')
   const [subjectCodes, setSubjectCodes] = useState<string[]>([])
   const [levels, setLevels]         = useState<SchoolLevel[]>([])
-  const [_preset, _setPreset]       = useState<string>('')
+  const [_preset, setPreset]        = useState<string>('')
 
   useEffect(() => {
     if (room) {
@@ -258,7 +258,7 @@ export default function RoomManagerPage() {
   const [formTarget, setFormTarget]   = useState<Room | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Room | null>(null)
   const [showForm, setShowForm]       = useState(false)
-  const [_saving, _setSaving]         = useState(false)
+  const [saving, setSaving]           = useState(false)
 
   // ── Load ───────────────────────────────────────────────
   useEffect(() => {
