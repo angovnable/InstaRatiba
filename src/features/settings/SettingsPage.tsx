@@ -262,7 +262,7 @@ function TimingTab({ navigate }: { navigate: ReturnType<typeof useNavigate> }) {
 // Social Links Tab
 // ─────────────────────────────────────────────────────────────
 
-function SocialLinksTab({ school, setSchool }: { school: School | null; setSchool: (s: School) => void }) {
+function SocialLinksTab({ school, setSchool }: { school: (School & { meta?: Record<string, string> }) | null; setSchool: (s: School) => void }) {
   const meta = ((school?.meta ?? {}) as Record<string, string>)
   const [fb,  setFb]  = useState(meta.facebook  ?? '')
   const [ig,  setIg]  = useState(meta.instagram  ?? '')
@@ -328,7 +328,7 @@ function SocialLinksTab({ school, setSchool }: { school: School | null; setSchoo
 // WhatsApp Numbers Tab
 // ─────────────────────────────────────────────────────────────
 
-function WhatsAppTab({ school, setSchool }: { school: School | null; setSchool: (s: School) => void }) {
+function WhatsAppTab({ school, setSchool }: { school: (School & { meta?: Record<string, string> }) | null; setSchool: (s: School) => void }) {
   const meta = ((school?.meta ?? {}) as Record<string, string>)
   const [schoolWa, setSchoolWa]   = useState(meta.whatsapp_school ?? '')
   const [supportWa, setSupportWa] = useState(meta.whatsapp_support ?? '+254')
