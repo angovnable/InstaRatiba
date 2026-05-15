@@ -85,7 +85,7 @@ function validate(form: FormState): FieldError {
 
 export default function SchoolSetupPage() {
   const navigate   = useNavigate()
-  const { setSchool, setHasCompletedSetup } = useSchoolStore()
+  const { setSchool } = useSchoolStore()
   const { user, setHasCompletedSetup: setAuthSetup } = useAuthStore()
   const fileRef    = useRef<HTMLInputElement>(null)
   const [form, setForm]       = useState<FormState>(DEFAULT_FORM)
@@ -175,8 +175,8 @@ export default function SchoolSetupPage() {
       setAuthSetup(true)
       toast.success('School profile saved!')
       navigate('/setup/timing')
-    } catch (err: any) {
-      toast.error(err.message ?? 'Failed to save school profile')
+    } catch (err) {
+      toast.error((err as Error & { message?: string }).message ?? 'Failed to save school profile')
     } finally {
       setSaving(false)
     }

@@ -12,17 +12,14 @@ import html2canvas from 'html2canvas'
 import type { TimetableSlot, SchoolClass, Teacher, School, Timetable } from '@/types'
 import {
   DAYS, DAY_FULL, slotLabel, resolveTeacherName,
-  classLabel, groupSlotsByClass, groupSlotsByTeacher,
+  classLabel, groupSlotsByClass,
   buildTimeLabels, exportFilename, buildLegend, type ExportDay,
 } from './exportHelpers'
-import { getSubjectByCode } from '@/lib/cbc/subjects'
 
 // ─────────────────────────────────────────────────────────────
 // Internal: create a hidden A4-landscape HTML table that mirrors
 // §5.8 spec, capture it with html2canvas, push to jsPDF.
 // ─────────────────────────────────────────────────────────────
-
-function px(n: number) { return `${n}px` }
 
 /** Build the export-header markup (§5.8) */
 function buildHeaderHtml(
@@ -91,7 +88,7 @@ function buildClassTableHtml(
       const slot = byDay.get(day)?.[i]
       if (!slot) return `<td style="${tdStyle}">—</td>`
 
-      const { subject, teacherLine: _ } = slotLabel(slot)
+      const { subject } = slotLabel(slot)
       const teacher = resolveTeacherName(slot.teacher_id, teacherMap)
       const isFixed = slot.is_assembly || slot.is_break || slot.is_non_formal || slot.is_ppi
       const cellBg  = isFixed ? '#f0f0f0' : '#fff'

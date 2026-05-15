@@ -272,8 +272,8 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
   for (const task of tasks) {
     const layout = levelLayouts.get(task.level)!
     const lessonSlots = getLessonSlots(layout)
-    const beforeBreakSet = new Set(getSlotsBeforeBreak(layout))
-    const lastLessonIdx = getLastLessonSlotIndex(layout)
+    const _beforeBreakSet = new Set(getSlotsBeforeBreak(layout)) // reserved for future constraint
+    const _lastLessonIdx = getLastLessonSlotIndex(layout) // reserved for PPI enforcement
 
     let remaining = task.lessonCount
     const doubleNeeded = task.requiresDouble ? 1 : 0  // one double required
@@ -344,7 +344,7 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
             placed.push({ day, slotIndex: si, isDouble: true })
             placed.push({ day, slotIndex: nextSi, isDouble: false })
             remaining -= 2
-            doubleUsed++
+            doubleUsed++ // eslint-disable-line @typescript-eslint/no-unused-vars
             doublePlaced = true
             break outerLoop
           }

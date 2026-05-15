@@ -93,21 +93,6 @@ function ActivityRow({ icon, label, time, color }: {
 }
 
 // ── Status badge ───────────────────────────────────────────────
-function StatusBadge({ status }: { status: Timetable['status'] }) {
-  const map: Record<string, { label: string; cls: string }> = {
-    draft:     { label: 'Draft',    cls: 'bg-gray-100 text-gray-600' },
-    pending:   { label: 'Pending',  cls: 'bg-amber-100 text-amber-700' },
-    published: { label: 'Live',     cls: 'bg-green-100 text-green-700' },
-    archived:  { label: 'Archived', cls: 'bg-slate-100 text-slate-500' },
-  }
-  const { label, cls } = map[status] ?? map.draft
-  return (
-    <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${cls}`}>
-      {label}
-    </span>
-  )
-}
-
 // ─────────────────────────────────────────────────────────────
 // Main component
 // ─────────────────────────────────────────────────────────────
@@ -115,15 +100,15 @@ function StatusBadge({ status }: { status: Timetable['status'] }) {
 export default function DashboardPage() {
   const navigate  = useNavigate()
   const { school }        = useSchoolStore()
-  const { user }          = useAuthStore()
+  const { user: _user }  = useAuthStore()
   const ttStore           = useTimetableStore()
   const { teachers }      = useTeacherStore()
   const { allocations }   = useAllocationStore()
 
   const [timetables, setTimetables]             = useState<Timetable[]>([])
   const [isLoading, setIsLoading]               = useState(true)
-  const [showDutyRoster, setShowDutyRoster]     = useState(false)
-  const [showVersioning, setShowVersioning]     = useState(false)
+  const [_showDutyRoster, _setShowDutyRoster]     = useState(false) // eslint-disable-line
+  const [_showVersioning, _setShowVersioning]     = useState(false) // eslint-disable-line
   const [showSubSwap, setShowSubSwap]           = useState(false)
   const [activeTab, setActiveTab]               = useState<'overview' | 'versions' | 'duty'>('overview')
 

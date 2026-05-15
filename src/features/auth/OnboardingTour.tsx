@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 
-const TOUR_STORAGE_KEY = 'instaratiba-tour-done'
+// TOUR_STORAGE_KEY kept for future localStorage integration
 
 // ── Tour step definitions ────────────────────────────────────
 const STEPS = [

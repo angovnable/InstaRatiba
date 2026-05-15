@@ -9,7 +9,6 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { toast } from 'sonner'
 import { useSchoolStore }    from '@/store/schoolStore'
 import { useTimetableStore } from '@/store/timetableStore'
 import { useTeacherStore }   from '@/store/teacherStore'
@@ -140,7 +139,7 @@ function TeacherExportPanel({
 // ─────────────────────────────────────────────────────────────
 
 export default function ExportPage() {
-  const { school }  = useSchoolStore()
+  const { school: _school } = useSchoolStore()
   const ttStore     = useTimetableStore()
   const exp         = useExport()
 

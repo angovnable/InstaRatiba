@@ -30,7 +30,7 @@ export interface PostScanInput {
 }
 
 export function scanGeneratedSlots(input: PostScanInput): Conflict[] {  
-  const { timetableId, slots, teachers, classes, rooms, beforeBreakSlotIndexes, lastLessonSlotIndex } = input
+  const { timetableId, slots, teachers, classes, rooms, beforeBreakSlotIndexes, lastLessonSlotIndex: _lastLessonSlotIndex } = input
   const conflicts: Conflict[] = []
 
   const teacherMap  = new Map(teachers.map(t => [t.id, t]))

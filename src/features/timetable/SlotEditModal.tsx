@@ -12,7 +12,7 @@ import { useTimetableStore }  from '@/store/timetableStore'
 import { getSubjectByCode, getSubjectsForLevels } from '@/lib/cbc/subjects'
 import { gradeToLevel }       from '@/lib/cbc/timing'
 import { getCellColour, getSubjectShortCode } from './cellHelpers'
-import type { TimetableSlot, SchoolClass, Teacher } from '@/types'
+import type { TimetableSlot, SchoolClass } from '@/types'
 
 interface SlotEditModalProps {
   slot:     TimetableSlot | null
@@ -24,7 +24,7 @@ interface SlotEditModalProps {
 export default function SlotEditModal({ slot, cls, onClose, onSave }: SlotEditModalProps) {
   const { teachers, teacherSubjects } = useTeacherStore()
   const { school } = useSchoolStore()
-  const { slots, conflicts } = useTimetableStore()
+  const { slots } = useTimetableStore()
 
   const [subjectCode, setSubjectCode] = useState(slot?.subject_code ?? '')
   const [teacherId,   setTeacherId]   = useState(slot?.teacher_id  ?? '')
@@ -38,7 +38,7 @@ export default function SlotEditModal({ slot, cls, onClose, onSave }: SlotEditMo
     setTeacherId(slot?.teacher_id ?? '')
     setReason('')
     setWarning(null)
-  }, [slot?.id])
+  }, [slot?.id, slot?.subject_code, slot?.teacher_id])
 
   if (!slot || !cls) return null
 

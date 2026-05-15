@@ -10,7 +10,7 @@ import { useTeacherStore } from '@/store/teacherStore'
 import { buildDayLayout, gradeToLevel, DEFAULT_TIMINGS } from '@/lib/cbc/timing'
 import { getSubjectByCode } from '@/lib/cbc/subjects'
 import {
-  getCellColour, getCellLabel, getSubjectShortCode,
+  getCellColour,
   DAYS, DAY_LABELS,
 } from './cellHelpers'
 import type { TimetableSlot, SchoolClass } from '@/types'

@@ -7,7 +7,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useSchoolStore } from '@/store/schoolStore'
-import { buildDayLayout, gradeToLevel, DEFAULT_TIMINGS } from '@/lib/cbc/timing'
+import { buildDayLayout, DEFAULT_TIMINGS } from '@/lib/cbc/timing'
 import { getSubjectByCode } from '@/lib/cbc/subjects'
 import { getCellColour, getClassLabel, DAYS, DAY_LABELS } from './cellHelpers'
 import type { TimetableSlot, SchoolClass, Teacher } from '@/types'
@@ -19,7 +19,7 @@ interface TeacherViewProps {
 }
 
 export default function TeacherView({ slots, teacher, classes }: TeacherViewProps) {
-  const { school } = useSchoolStore()
+  const { school: _school } = useSchoolStore()
   const classMap = useMemo(() => new Map(classes.map(c => [c.id, c])), [classes])
 
   // Teacher's slots only

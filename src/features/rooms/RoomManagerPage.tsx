@@ -13,7 +13,7 @@ import { useSchoolStore } from '@/store/schoolStore'
 import { fetchRooms, upsertRoom, deleteRoom } from '@/lib/supabase/rooms'
 import { CBC_SUBJECTS_BY_LEVEL } from '@/lib/cbc/subjects'
 import type { Room, SchoolLevel } from '@/types'
-import { Button, Card, Badge, Modal, Input, SkeletonLoader } from '@/components/ui'
+import { Button, Badge, Modal, Input, SkeletonLoader } from '@/components/ui'
 import { WizardLayout } from '@/components/layout'
 
 // ── Preset room templates ───────────────────────────────────
@@ -51,7 +51,7 @@ function RoomFormModal({ room, open, schoolLevels, onClose, onSave, schoolId }: 
   const [capacity, setCapacity]     = useState('')
   const [subjectCodes, setSubjectCodes] = useState<string[]>([])
   const [levels, setLevels]         = useState<SchoolLevel[]>([])
-  const [preset, setPreset]         = useState<string>('')
+  const [_preset, _setPreset]       = useState<string>('')
 
   useEffect(() => {
     if (room) {
@@ -258,14 +258,14 @@ export default function RoomManagerPage() {
   const [formTarget, setFormTarget]   = useState<Room | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Room | null>(null)
   const [showForm, setShowForm]       = useState(false)
-  const [saving, setSaving]           = useState(false)
+  const [_saving, _setSaving]         = useState(false)
 
   // ── Load ───────────────────────────────────────────────
   useEffect(() => {
     if (!schoolId) return
     fetchRooms(schoolId)
       .then(setRooms)
-      .catch(e => toast.error(e.message))
+      .catch(e => toast.error((e as Error).message))
       .finally(() => setLoading(false))
   }, [schoolId])
 
@@ -281,8 +281,8 @@ export default function RoomManagerPage() {
       setShowForm(false)
       setFormTarget(null)
       toast.success(formTarget ? 'Room updated' : 'Room added')
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }
@@ -297,8 +297,8 @@ export default function RoomManagerPage() {
       setRooms(prev => prev.filter(r => r.id !== deleteTarget.id))
       setDeleteTarget(null)
       toast.success('Room removed')
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }

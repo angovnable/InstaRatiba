@@ -137,7 +137,7 @@ export default function SettingsPage() {
 // School Profile Tab
 // ─────────────────────────────────────────────────────────────
 
-function SchoolProfileTab({ school, setSchool }: any) {
+function SchoolProfileTab({ school, setSchool }: { school: Record<string, unknown> | null; setSchool: (s: Record<string, unknown>) => void }) {
   const [name,     setName]     = useState(school?.name     ?? '')
   const [motto,    setMotto]    = useState(school?.motto    ?? '')
   const [nemis,    setNemis]    = useState(school?.nemis_code ?? '')
@@ -261,8 +261,8 @@ function TimingTab({ navigate }: { navigate: ReturnType<typeof useNavigate> }) {
 // Social Links Tab
 // ─────────────────────────────────────────────────────────────
 
-function SocialLinksTab({ school, setSchool }: any) {
-  const meta = school?.meta ?? {}
+function SocialLinksTab({ school, setSchool }: { school: Record<string, unknown> | null; setSchool: (s: Record<string, unknown>) => void }) {
+  const meta = (school?.meta as Record<string, string>) ?? {}
   const [fb,  setFb]  = useState(meta.facebook  ?? '')
   const [ig,  setIg]  = useState(meta.instagram  ?? '')
   const [tw,  setTw]  = useState(meta.twitter    ?? '')
@@ -327,8 +327,8 @@ function SocialLinksTab({ school, setSchool }: any) {
 // WhatsApp Numbers Tab
 // ─────────────────────────────────────────────────────────────
 
-function WhatsAppTab({ school, setSchool }: any) {
-  const meta = school?.meta ?? {}
+function WhatsAppTab({ school, setSchool }: { school: Record<string, unknown> | null; setSchool: (s: Record<string, unknown>) => void }) {
+  const meta = (school?.meta as Record<string, string>) ?? {}
   const [schoolWa, setSchoolWa]   = useState(meta.whatsapp_school ?? '')
   const [supportWa, setSupportWa] = useState(meta.whatsapp_support ?? '+254')
   const [saving, setSaving]       = useState(false)
@@ -586,7 +586,7 @@ function ShareLinkTab({ ttStore }: { ttStore: { current: { id: string } | null }
 
 function AccountTab({
   user, signOut, navigate,
-}: { user: any; signOut: () => void; navigate: any }) {
+}: { user: Record<string, unknown> | null; signOut: () => void; navigate: ReturnType<typeof import("react-router-dom").useNavigate> }) {
   const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name ?? '')
   const [saving,      setSaving]      = useState(false)
 
@@ -655,7 +655,7 @@ function AccountTab({
 // Danger Zone Tab
 // ─────────────────────────────────────────────────────────────
 
-function DangerZoneTab({ school, signOut, navigate }: any) {
+function DangerZoneTab({ school, signOut, navigate }: { school: Record<string, unknown> | null; signOut: () => void; navigate: ReturnType<typeof import("react-router-dom").useNavigate> }) {
   const [confirm1, setConfirm1] = useState('')
   const [deleting, setDeleting] = useState(false)
 

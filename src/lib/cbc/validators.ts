@@ -17,7 +17,7 @@ import type {
   ConflictType,
   ConflictSeverity,
 } from '@/types'
-import { getSubjectByCode, areSimilarSubjects, DOUBLE_LESSON_CODES, ALWAYS_MORNING_CODES } from './subjects'
+import { getSubjectByCode, DOUBLE_LESSON_CODES, ALWAYS_MORNING_CODES } from './subjects'
 import { gradeToLevel } from './timing'
 import { buildDayLayout, countLessonSlots } from './timing'
 

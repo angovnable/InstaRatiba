@@ -16,7 +16,7 @@ import {
   fetchTeachers,
 } from '@/lib/supabase/classes'
 import type { SchoolClass, Teacher, SchoolLevel } from '@/types'
-import { Button, Card, Badge, Modal, Input, SkeletonLoader } from '@/components/ui'
+import { Button, Badge, Modal, Input, SkeletonLoader } from '@/components/ui'
 import { WizardLayout } from '@/components/layout'
 
 // ── Grade → level mapping ────────────────────────────────────
@@ -135,7 +135,7 @@ function EditModal({ sc, teachers, open, onClose, onSave }: EditModalProps) {
   if (!sc) return null
 
   const level = levelForGrade(sc.grade)
-  const eligible = teachers.filter(t => {
+  const eligible = teachers.filter((_t) => {
     // Teacher's grades should include this class's grade
     return true // We'll filter more precisely when TeacherSubject data is available
   })
@@ -250,7 +250,7 @@ function DeleteConfirm({ open, onClose, onConfirm, label }: DeleteConfirmProps) 
 export default function ClassManagerPage() {
   const navigate = useNavigate()
   const { school } = useSchoolStore()
-  const { user }   = useAuthStore()
+  const { user: _user } = useAuthStore()
   const schoolId   = school?.id ?? ''
 
   const [classes, setClasses]   = useState<SchoolClass[]>([])
@@ -276,7 +276,7 @@ export default function ClassManagerPage() {
     ]).then(([cls, tch]) => {
       setClasses(cls)
       setTeachers(tch)
-    }).catch(e => toast.error(e.message))
+    }).catch(e => toast.error((e as Error).message))
       .finally(() => setLoading(false))
   }, [schoolId])
 
@@ -295,8 +295,8 @@ export default function ClassManagerPage() {
       for (const nc of newClasses) await upsertClass(nc)
       setClasses(prev => [...prev, ...newClasses])
       toast.success(`Added ${count} stream${count > 1 ? 's' : ''} for Grade ${grade}`)
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }
@@ -310,8 +310,8 @@ export default function ClassManagerPage() {
       setClasses(prev => prev.map(c => c.id === updated.id ? updated : c))
       setEditTarget(null)
       toast.success('Class updated')
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }
@@ -326,8 +326,8 @@ export default function ClassManagerPage() {
       setClasses(prev => prev.filter(c => c.id !== deleteTarget.id))
       setDeleteTarget(null)
       toast.success('Class removed')
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }

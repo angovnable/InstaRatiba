@@ -22,12 +22,12 @@ import {
   revokeShareToken,
   fetchActiveShareToken,
 } from '@/lib/supabase/timetable'
-import type { TimetableSlot, TimetableOverride, TimetableStatus } from '@/types'
+import type { TimetableSlot, TimetableOverride } from '@/types'
 
 export function useTimetable() {
   const store       = useTimetableStore()
   const { user }    = useAuthStore()
-  const { school }  = useSchoolStore()
+  const { school: _school }  = useSchoolStore()
 
   const [overrides, setOverrides]         = useState<TimetableOverride[]>([])
   const [shareToken, setShareToken]       = useState<string | null>(null)

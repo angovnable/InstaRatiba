@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx'
 import type { TimetableSlot, SchoolClass, Teacher, School, Timetable } from '@/types'
 import {
   DAYS, DAY_FULL, slotLabel, resolveTeacherName,
-  classLabel, groupSlotsByClass, groupSlotsByTeacher,
+  classLabel,
   exportFilename, type ExportDay,
 } from './exportHelpers'
 import { getSubjectByCode } from '@/lib/cbc/subjects'

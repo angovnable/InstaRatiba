@@ -47,7 +47,7 @@ export function useGenerate() {
   const { allocations } = useAllocationStore()
   const timetableStore  = useTimetableStore()
   const validationStore = useValidationStore()
-  const { user }        = useAuthStore()
+  const { user: _user } = useAuthStore()
 
   // ── 1. Validate only (for Pre-Generate Review screen) ──────
 

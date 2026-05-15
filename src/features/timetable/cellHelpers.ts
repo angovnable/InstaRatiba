@@ -4,7 +4,7 @@
 // §9.2 On-screen colour coding (NOT used in PDF export)
 // ============================================================
 
-import type { TimetableSlot, SchoolClass, Teacher } from '@/types'
+import type { TimetableSlot, SchoolClass } from '@/types'
 import { getSubjectByCode } from '@/lib/cbc/subjects'
 
 // ── §9.2 Subject group colour map ────────────────────────────

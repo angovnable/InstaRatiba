@@ -17,7 +17,7 @@ import {
   type PdfExportOptions,
 } from './pdfExport'
 import {
-  exportCsvAllClasses, exportCsvSingleClass,
+  exportCsvAllClasses,
   exportCsvTeachers, exportCsvRaw,
 } from './csvExport'
 import { exportJson } from './jsonExport'

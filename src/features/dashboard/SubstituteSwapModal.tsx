@@ -84,7 +84,7 @@ export default function SubstituteSwapModal({ timetableId, teachers, onClose }: 
       )
 
       const subName = teachers.find(t => t.id === substituteId)?.name ?? 'Substitute'
-      const absentName = teachers.find(t => t.id === absentTeacherId)?.name ?? 'Teacher'
+      const _absentName = teachers.find(t => t.id === absentTeacherId)?.name ?? 'Teacher'
       toast.success(`${affectedSlots.length} lesson${affectedSlots.length > 1 ? 's' : ''} swapped to ${subName} for ${selectedDay}`)
       onClose()
     } catch (e) {

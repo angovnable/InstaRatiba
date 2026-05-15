@@ -8,7 +8,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
-import { useSchoolStore, DEFAULT_TIMINGS } from '@/store/schoolStore'
+import { useSchoolStore } from '@/store/schoolStore'
 import type { SchoolLevel, LevelTiming } from '@/types'
 import { Button, Card, Badge } from '@/components/ui'
 import { WizardLayout } from '@/components/layout'
@@ -211,8 +211,8 @@ export default function TimingEditorPage() {
       await new Promise(r => setTimeout(r, 400)) // simulate
       toast.success('Timings saved!')
       navigate('/classes')
-    } catch (e: any) {
-      toast.error(e.message)
+    } catch (e) {
+      toast.error((e as Error).message)
     } finally {
       setSaving(false)
     }

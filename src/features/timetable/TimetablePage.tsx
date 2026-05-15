@@ -8,7 +8,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'sonner'
 import { useSchoolStore }    from '@/store/schoolStore'
 import { useTeacherStore }   from '@/store/teacherStore'
 import { useTimetableStore } from '@/store/timetableStore'
@@ -24,7 +23,7 @@ import { ExportModal } from '@/features/export'
 // ── View mode tab ─────────────────────────────────────────────
 type ViewMode = 'master' | 'class' | 'teacher'
 
-function ViewTab({ mode, label, icon, active, onClick }: {
+function ViewTab({ mode: _mode, label, icon, active, onClick }: {
   mode: ViewMode; label: string; icon: string; active: boolean; onClick: () => void
 }) {
   return (
@@ -144,7 +143,7 @@ export default function TimetablePage() {
   const { teachers } = useTeacherStore()
 
   const {
-    timetable, slots, conflicts, overrides, shareToken, isLoadingData,
+    timetable, slots, conflicts, overrides: _overrides, shareToken, isLoadingData,
     viewMode, setViewMode, selectedClassId, selectedTeacherId,
     setSelectedClass, setSelectedTeacher,
     overrideSlot, submitForApproval, approveTimetable, returnForRevision,

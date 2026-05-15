@@ -27,14 +27,14 @@ interface MasterGridProps {
 // A single timetable cell
 function TimetableCell({
   slot,
-  cls,
+  cls: _cls,
   teacherName,
   hasConflict,
   isEditable,
   onClick,
 }: {
   slot:        TimetableSlot | undefined
-  cls:         SchoolClass
+  cls:         SchoolClass // eslint-disable-line @typescript-eslint/no-unused-vars
   teacherName: string
   hasConflict: boolean
   isEditable:  boolean
@@ -91,7 +91,7 @@ function TimetableCell({
 }
 
 export default function MasterGrid({ slots, classes, conflicts, onCellClick, isEditable }: MasterGridProps) {
-  const { school } = useSchoolStore()
+  useSchoolStore() // reserved for school-level config
   const { teachers } = useTeacherStore()
   const [activeDay, setActiveDay] = useState<string>('monday')
 

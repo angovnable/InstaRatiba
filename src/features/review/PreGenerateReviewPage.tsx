@@ -11,7 +11,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSchoolStore }     from '@/store/schoolStore'
 import { useTeacherStore }    from '@/store/teacherStore'
 import { useAllocationStore } from '@/store/allocationStore'
-import { useValidationStore } from '@/store/validationStore'
 import { useTimetableStore }  from '@/store/timetableStore'
 import { useGenerate }        from './useGenerate'
 import type { Conflict }      from '@/types'
@@ -243,7 +242,6 @@ function GeneratingOverlay({ progress }: { progress: number }) {
 export default function PreGenerateReviewPage() {
   const navigate = useNavigate()
   const { validate, generate, isValidating, isGenerating, progress, validationResult, canGenerate } = useGenerate()
-  const validationStore = useValidationStore()
 
   // Auto-validate on mount
   useEffect(() => {

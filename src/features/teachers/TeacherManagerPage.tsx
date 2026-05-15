@@ -22,7 +22,7 @@ import {
 } from '@/lib/supabase/teachers'
 import { CBC_SUBJECTS_BY_LEVEL } from '@/lib/cbc/subjects'
 import type { Teacher, TeacherSubject, SchoolLevel } from '@/types'
-import { Button, Card, CardHeader, CardBody, Badge, Modal, Input, SkeletonLoader } from '@/components/ui'
+import { Button, Modal, Input, SkeletonLoader } from '@/components/ui'
 import { WizardLayout } from '@/components/layout'
 
 // ── Level helpers ────────────────────────────────────────────
@@ -114,7 +114,7 @@ function TeacherFormModal({
       const cur = prev[subjectCode] ?? []
       const next = cur.includes(grade) ? cur.filter(g => g !== grade) : [...cur, grade].sort()
       if (!next.length) {
-        const { [subjectCode]: _, ...rest } = prev
+        const { [subjectCode]: _removed, ...rest } = prev // eslint-disable-line @typescript-eslint/no-unused-vars
         return rest
       }
       return { ...prev, [subjectCode]: next }
@@ -129,7 +129,7 @@ function TeacherFormModal({
       const others = cur.filter(g => !grades.includes(g))
       const next = allSelected ? others : [...others, ...grades].sort()
       if (!next.length) {
-        const { [subjectCode]: _, ...rest } = prev
+        const { [subjectCode]: _removed, ...rest } = prev // eslint-disable-line @typescript-eslint/no-unused-vars
         return rest
       }
       return { ...prev, [subjectCode]: next }
@@ -489,7 +489,7 @@ function DeleteConfirmModal({
 export default function TeacherManagerPage() {
   const navigate  = useNavigate()
   const { school } = useSchoolStore()
-  const { user }   = useAuthStore()
+  const { user: _user } = useAuthStore()
   const {
     teachers, teacherSubjects,
     setTeachers, addTeacher, updateTeacher, removeTeacher,
@@ -506,7 +506,7 @@ export default function TeacherManagerPage() {
   const [deleteTarget, setDeleteTarget] = useState<Teacher | null>(null)
   const [deleting, setDeleting]       = useState(false)
   const [searchQuery, setSearch]      = useState('')
-  const [saving, setSaving]           = useState(false)
+  const [_saving, _setSaving]         = useState(false)
 
   // Load teachers on mount
   useEffect(() => {
@@ -519,7 +519,7 @@ export default function TeacherManagerPage() {
       setTeachers(ts)
       setTeacherSubjects(subs)
     }).catch(err => {
-      toast.error('Failed to load teachers: ' + err.message)
+      toast.error('Failed to load teachers: ' + (err as Error).message)
     }).finally(() => setLoading(false))
   }, [schoolId]) // eslint-disable-line
 
@@ -549,7 +549,7 @@ export default function TeacherManagerPage() {
         await upsertTeacher(t)
         await upsertTeacherSubjects(t.id, subjectList)
 
-        const newSubjectRows = subjectList.map((s, i) => ({
+        const newSubjectRows = subjectList.map((s, _i) => ({
           id:           `${t.id}_${s.subject_code}`,
           teacher_id:   t.id,
           subject_code: s.subject_code,
@@ -565,8 +565,8 @@ export default function TeacherManagerPage() {
 
         toast.success(editingTeacher ? 'Teacher updated' : 'Teacher added')
         setFormOpen(false)
-      } catch (err: any) {
-        toast.error('Failed to save: ' + err.message)
+      } catch (err) {
+        toast.error('Failed to save: ' + (err as Error).message)
       } finally {
         setSaving(false)
       }
@@ -581,8 +581,8 @@ export default function TeacherManagerPage() {
       await deleteTeacher(deleteTarget.id)
       removeTeacher(deleteTarget.id)
       toast.success(`${deleteTarget.name} removed`)
-    } catch (err: any) {
-      toast.error('Failed to delete: ' + err.message)
+    } catch (err) {
+      toast.error('Failed to delete: ' + (err as Error).message)
     } finally {
       setDeleting(false)
       setDeleteTarget(null)

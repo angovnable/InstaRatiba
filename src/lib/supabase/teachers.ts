@@ -5,7 +5,7 @@
 // ============================================================
 
 import { supabase } from './client'
-import type { Teacher, TeacherSubject, SubjectAllocation } from '@/types'
+import type { Teacher, TeacherSubject } from '@/types'
 
 // ── Teachers ─────────────────────────────────────────────────
 

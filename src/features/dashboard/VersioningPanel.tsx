@@ -40,7 +40,7 @@ export default function VersioningPanel({
     try {
       await createTimetable({
         school_id: schoolId,
-        term_id:   null as any,
+        term_id:   null as unknown as string,
         name:      form.name.trim(),
         status:    'draft',
       })
