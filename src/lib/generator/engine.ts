@@ -288,68 +288,71 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
       let doublePlaced = false
 
       // Bug 4 FIX: Build consecutive pairs from the FULL layout, not the lesson sub-array.
-      // A valid pair is two lesson slots that are adjacent in the full layout (no gap between
-      // their positions in the layout array). Pairs before a break are preferred (§2.6).
       const consecutivePairs: Array<{ si: number; nextSi: number; beforeBreak: boolean }> = []
       for (let i = 0; i < layout.length - 1; i++) {
         const curr = layout[i]
         const next = layout[i + 1]
         if (curr.kind === 'lesson' && next.kind === 'lesson') {
-          // These two lesson slots are truly back-to-back (no break between them)
           const isBeforeBreak = i + 2 < layout.length &&
             ['break1', 'break2', 'lunch'].includes(layout[i + 2].kind)
           consecutivePairs.push({ si: curr.slot_index, nextSi: next.slot_index, beforeBreak: isBeforeBreak })
         }
       }
-      // Prefer pairs that land before a break (MoE §2.6)
-      consecutivePairs.sort((a, b) => (a.beforeBreak ? 0 : 1) - (b.beforeBreak ? 0 : 1))
 
-      dayLoop:
-      for (const day of DAYS) {
-        for (const { si, nextSi } of consecutivePairs) {
-          // Both slots must be free for this class
-          if (classSlots.has(classKey(day, si, task.classId))) continue
-          if (classSlots.has(classKey(day, nextSi, task.classId))) continue
+      // Two-pass approach: first try ALL days with before-break pairs only,
+      // then fall back to ALL days with any consecutive pair.
+      // This prevents settling for a non-before-break slot on day 1 when a
+      // before-break slot would have been available on day 3.
+      const beforeBreakPairs = consecutivePairs.filter(p => p.beforeBreak)
+      const anyPairs         = consecutivePairs
 
-          // Teacher must be free at both slots
-          if (teacherSlots.has(teacherKey(day, si, task.teacherId))) continue
-          if (teacherSlots.has(teacherKey(day, nextSi, task.teacherId))) continue
+      outerLoop:
+      for (const pairSet of [beforeBreakPairs, anyPairs]) {
+        for (const day of DAYS) {
+          for (const { si, nextSi } of pairSet) {
+            // Both slots must be free for this class
+            if (classSlots.has(classKey(day, si, task.classId))) continue
+            if (classSlots.has(classKey(day, nextSi, task.classId))) continue
 
-          // Check similarity: slot before si must not be same similarity group
-          const lessonIdxOfSi = lessonSlots.findIndex(s => s.slot_index === si)
-          const prevSlotIdx = lessonSlots[lessonIdxOfSi - 1]?.slot_index ?? -1
-          const prevSubject = classSlots.get(classKey(day, prevSlotIdx, task.classId))
-          if (prevSubject && areSimilarSubjects(prevSubject, task.subjectCode)) continue
+            // Teacher must be free at both slots
+            if (teacherSlots.has(teacherKey(day, si, task.teacherId))) continue
+            if (teacherSlots.has(teacherKey(day, nextSi, task.teacherId))) continue
 
-          // Check room — must be free for BOTH slots of the double lesson
-          const roomId = findAvailableRoom(task.subjectCode, task.teacherId, day, si, subjectRoomMap, roomSlots, task.classId)
-          if (roomId && roomSlots.has(roomKey(day, nextSi, roomId))) continue  // room taken at nextSi
+            // Check similarity: slot before si must not be same similarity group
+            const lessonIdxOfSi = lessonSlots.findIndex(s => s.slot_index === si)
+            const prevSlotIdx = lessonSlots[lessonIdxOfSi - 1]?.slot_index ?? -1
+            const prevSubject = classSlots.get(classKey(day, prevSlotIdx, task.classId))
+            if (prevSubject && areSimilarSubjects(prevSubject, task.subjectCode)) continue
 
-          // Place double
-          placeLesson(classSlots, teacherSlots, roomSlots, resultSlots, {
-            classId: task.classId, subjectCode: task.subjectCode,
-            teacherId: task.teacherId, roomId,
-            day, slotIndex: si, isDouble: true,
-          }, timetableId, nextSlotId)
+            // Check room — must be free for BOTH slots of the double lesson
+            const roomId = findAvailableRoom(task.subjectCode, task.teacherId, day, si, subjectRoomMap, roomSlots, task.classId)
+            if (roomId && roomSlots.has(roomKey(day, nextSi, roomId))) continue
 
-          placeLesson(classSlots, teacherSlots, roomSlots, resultSlots, {
-            classId: task.classId, subjectCode: task.subjectCode,
-            teacherId: task.teacherId, roomId,
-            day, slotIndex: nextSi, isDouble: false,
-          }, timetableId, nextSlotId)
+            // Place double
+            placeLesson(classSlots, teacherSlots, roomSlots, resultSlots, {
+              classId: task.classId, subjectCode: task.subjectCode,
+              teacherId: task.teacherId, roomId,
+              day, slotIndex: si, isDouble: true,
+            }, timetableId, nextSlotId)
 
-          placed.push({ day, slotIndex: si, isDouble: true })
-          placed.push({ day, slotIndex: nextSi, isDouble: false })
-          remaining -= 2
-          doubleUsed++
-          doublePlaced = true
-          break dayLoop
+            placeLesson(classSlots, teacherSlots, roomSlots, resultSlots, {
+              classId: task.classId, subjectCode: task.subjectCode,
+              teacherId: task.teacherId, roomId,
+              day, slotIndex: nextSi, isDouble: false,
+            }, timetableId, nextSlotId)
+
+            placed.push({ day, slotIndex: si, isDouble: true })
+            placed.push({ day, slotIndex: nextSi, isDouble: false })
+            remaining -= 2
+            doubleUsed++
+            doublePlaced = true
+            break outerLoop
+          }
         }
       }
 
       if (!doublePlaced) {
         // Double placement failed — fall through to single placement
-        // Generator logs this as unscheduled
       }
     }
 
@@ -400,6 +403,14 @@ export async function generateTimetable(input: GeneratorInput): Promise<Generato
           // P5: No unintended double (same subject already in prev/next slot)
           if (prevSubj === task.subjectCode) continue
           if (nextSubj === task.subjectCode) continue
+
+          // P5b: No same subject twice on the same day (pass 2+ guard)
+          // Prevents sci_tech, agri, rel_ed_up etc. appearing twice on one day
+          // when the spread logic is forced to reuse a day in pass 2+.
+          const subjectAlreadyToday = dayLessonIdxs.some(
+            s => classSlots.get(classKey(day, s, task.classId)) === task.subjectCode
+          )
+          if (subjectAlreadyToday) continue
 
           // P8: teacher max lessons day
           const teacher = teacherMap.get(task.teacherId)

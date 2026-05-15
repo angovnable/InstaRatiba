@@ -337,14 +337,23 @@ export function getSubjectByCode(code: string): CbcSubject | undefined {
 // Subjects in the same group CANNOT be scheduled consecutively
 
 export const SIMILARITY_GROUPS: Record<string, string[]> = {
-  languages:        ['english_lp','english_up','english_jss','kiswahili_lp','kiswahili_up','kiswahili_jss','indig_lang'],
-  // C4 FIX: §7.3 — Mathematics ↔ Science & Technology / Integrated Science cannot be consecutive.
-  // Merged into one group so areSimilarSubjects() correctly blocks maths next to sciences.
+  // Languages: split by level — blocking english next to kiswahili within the same level
+  // is too restrictive and causes many unnecessary conflicts. Each level has its own pair.
+  languages_lp:     ['english_lp', 'kiswahili_lp', 'indig_lang'],
+  languages_up:     ['english_up', 'kiswahili_up'],
+  languages_jss:    ['english_jss', 'kiswahili_jss'],
+
+  // C4 FIX: §7.3 — Mathematics ↔ Science cannot be consecutive.
   maths_sciences:   ['maths_lp','maths_up','maths_jss','environ_lp','sci_tech','integ_sci'],
-  humanities:       ['social_studies_up','social_studies_jss','rel_ed_lp','rel_ed_up','rel_ethics_jss'],
+
+  // Humanities: split by level — social_studies and rel_ed are different subjects at
+  // the same level and should NOT block each other. Cross-level never co-occurs in practice.
+  humanities_lp:    ['rel_ed_lp'],
+  humanities_up:    ['social_studies_up', 'rel_ed_up'],
+  humanities_jss:   ['social_studies_jss', 'rel_ethics_jss'],
+
   creative:         ['creative_arts_lp','creative_arts_up','creative_arts_sports','home_sci'],
-  // C5 FIX: §7.3 — PHE ↔ Creative Arts. Added creative_arts_lp and creative_arts_up so the
-  // constraint fires at all primary levels, not just JSS (creative_arts_sports).
+  // C5 FIX: PHE ↔ Creative Arts blocked at all levels.
   phe:              ['phe_lp','phe_up','creative_arts_lp','creative_arts_up','creative_arts_sports'],
   practical:        ['agri','agri_nutrition','home_sci','pre_tech'],
 }
