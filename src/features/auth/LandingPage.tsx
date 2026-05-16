@@ -1,13 +1,13 @@
-// LandingPage — §4.2.1 / §3.5.1
-// Cinematic load sequence: logo char-by-char → subtitle → underline → CTAs → features
+// LandingPage — InstaRatiba Kenyan/EAC Theme
+// Dark Nairobi Night bg, Kenya flag stripe, Savanna Gold accents, Kenya map SVG watermark
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // ── Character-by-character logo ──────────────────────────────
-const LOGO_TEXT = 'InstaRatiba'
-const CHARS = LOGO_TEXT.split('')
+const INSTA = 'Insta'.split('')
+const RATIBA = 'Ratiba'.split('')
 
 // ── Feature strip data ───────────────────────────────────────
 const FEATURES = [
@@ -24,14 +24,15 @@ const FEATURES = [
   {
     icon: 'bi-file-earmark-arrow-down-fill',
     title: 'Print-Ready Export',
-    desc: 'Export black-and-white PDFs ready for notice boards, teachers, and admin offices.',
+    desc: 'Export PDFs ready for notice boards, teachers, and admin offices.',
   },
 ]
+
+const TRUST_BADGES = ['CBC Compliant', 'Grade 1–9', 'Free to Start', 'Works Offline']
 
 export default function LandingPage() {
   const navigate = useNavigate()
   const [phase, setPhase] = useState(0)
-  // phase 0 = overlay fade, 1 = logo, 2 = subtitle, 3 = underline, 4 = CTAs, 5 = features
 
   useEffect(() => {
     const timers = [
@@ -47,32 +48,53 @@ export default function LandingPage() {
   return (
     <div
       className="relative min-h-screen flex flex-col overflow-hidden"
-      style={{ background: 'var(--landing-bg, #f0f7f0)' }}
+      style={{ background: '#0F1B14' }}
     >
+      {/* ── Kenyan flag top stripe ── */}
+      <div className="kenya-flag-stripe" />
+
       {/* ── Animated mesh gradient background ── */}
       <MeshBackground />
 
-      {/* ── Hero section ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-16 pb-8 text-center">
+      {/* ── Kenya map SVG watermark ── */}
+      <KenyaMapWatermark />
 
-        {/* Logo wordmark */}
+      {/* ── Hero section ── */}
+      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-20 pb-8 text-center">
+
+        {/* Logo wordmark — char by char */}
         <div className="mb-1" aria-label="InstaRatiba">
           <div className="flex items-center justify-center flex-wrap gap-0">
-            {CHARS.map((char, i) => (
+            {INSTA.map((char, i) => (
               <motion.span
-                key={i}
+                key={`insta-${i}`}
                 initial={{ opacity: 0, scale: 0.8, y: 8 }}
                 animate={phase >= 1 ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{
-                  delay: i * 0.08,
-                  duration: 0.28,
-                  ease: [0.34, 1.56, 0.64, 1],
-                }}
+                transition={{ delay: i * 0.08, duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
                 style={{
-                  fontFamily: 'Montserrat, sans-serif',
+                  fontFamily: 'var(--font-display)',
                   fontWeight: 800,
                   fontSize: 'clamp(2.2rem, 8vw, 4.2rem)',
-                  color: '#2E7D32',
+                  color: '#ffffff',
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.1,
+                  display: 'inline-block',
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+            {RATIBA.map((char, i) => (
+              <motion.span
+                key={`ratiba-${i}`}
+                initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                animate={phase >= 1 ? { opacity: 1, scale: 1, y: 0 } : {}}
+                transition={{ delay: (INSTA.length + i) * 0.08, duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(2.2rem, 8vw, 4.2rem)',
+                  color: '#C8922A',
                   letterSpacing: '-0.01em',
                   lineHeight: 1.1,
                   display: 'inline-block',
@@ -83,29 +105,29 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Animated green underline */}
+          {/* Animated underline — Savanna Gold → Rift Red */}
           <div className="relative h-[4px] mt-2 overflow-hidden rounded-full mx-auto" style={{ maxWidth: 360 }}>
             <motion.div
               initial={{ scaleX: 0, originX: 0 }}
               animate={phase >= 3 ? { scaleX: 1 } : {}}
               transition={{ duration: 0.32, ease: 'easeOut' }}
               className="absolute inset-0 rounded-full"
-              style={{ background: 'linear-gradient(90deg, #2E7D32, #4CAF50, #A5D6A7)' }}
+              style={{ background: 'linear-gradient(90deg, #C8922A, #A01F1F)' }}
             />
           </div>
         </div>
 
-        {/* Subtitle */}
+        {/* by AG Computer Solutions */}
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           animate={phase >= 2 ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.35, ease: 'easeOut' }}
           style={{
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'var(--font-body)',
             fontStyle: 'italic',
-            fontSize: '0.95rem',
-            color: '#4CAF50',
-            marginTop: 6,
+            fontSize: '0.9rem',
+            color: 'rgba(200,146,42,0.7)',
+            marginTop: 8,
             marginBottom: 4,
             letterSpacing: '0.02em',
           }}
@@ -119,10 +141,10 @@ export default function LandingPage() {
           animate={phase >= 2 ? { opacity: 1 } : {}}
           transition={{ delay: 0.1, duration: 0.4 }}
           style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
-            color: '#37474F',
-            marginTop: 14,
+            fontFamily: 'var(--font-body)',
+            fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
+            color: 'rgba(255,255,255,0.75)',
+            marginTop: 12,
             maxWidth: 440,
           }}
         >
@@ -136,22 +158,44 @@ export default function LandingPage() {
           transition={{ duration: 0.35, ease: 'easeOut' }}
           className="flex flex-col sm:flex-row gap-3 mt-8"
         >
-          <button
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/register')}
-            className="cta-primary"
-            style={ctaPrimary}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: '#C8922A', color: '#0F1B14',
+              padding: '13px 28px', borderRadius: 10, border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--font-ui)', fontWeight: 700,
+              fontSize: '0.95rem', letterSpacing: '0.01em',
+              boxShadow: '0 4px 20px rgba(200,146,42,0.35)',
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#B57E21')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#C8922A')}
           >
             <i className="bi-rocket-takeoff-fill" />
             Get Started — It's Free
-          </button>
-          <button
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/login')}
-            className="cta-ghost"
-            style={ctaGhost}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'transparent', color: '#fff',
+              padding: '12px 28px', borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.25)', cursor: 'pointer',
+              fontFamily: 'var(--font-ui)', fontWeight: 600,
+              fontSize: '0.95rem', letterSpacing: '0.01em',
+              backdropFilter: 'blur(8px)',
+              transition: 'border-color 0.15s, background 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.45)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
           >
             <i className="bi-box-arrow-in-right" />
             Sign In
-          </button>
+          </motion.button>
         </motion.div>
 
         {/* Trust badges */}
@@ -161,18 +205,18 @@ export default function LandingPage() {
           transition={{ delay: 0.15, duration: 0.4 }}
           className="flex flex-wrap items-center justify-center gap-3 mt-5"
         >
-          {['CBC Compliant', 'Grade 1–9', 'Free to Start', 'Works Offline'].map((badge) => (
+          {TRUST_BADGES.map((badge) => (
             <span
               key={badge}
               style={{
-                background: '#E8F5E9',
-                border: '1px solid #A5D6A7',
+                background: 'rgba(200,146,42,0.10)',
+                border: '1px solid rgba(200,146,42,0.3)',
                 borderRadius: 999,
-                padding: '3px 12px',
+                padding: '4px 14px',
                 fontSize: '0.72rem',
                 fontWeight: 600,
-                color: '#2E7D32',
-                fontFamily: 'DM Sans, sans-serif',
+                color: '#C8922A',
+                fontFamily: 'var(--font-ui)',
                 letterSpacing: '0.03em',
               }}
             >
@@ -193,25 +237,52 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1, duration: 0.35, ease: 'easeOut' }}
-                  style={featureCard}
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(200,146,42,0.20)',
+                    borderRadius: 16,
+                    padding: '20px 18px',
+                    backdropFilter: 'blur(8px)',
+                  }}
                 >
-                  <div style={featureIconWrap}>
-                    <i className={`${f.icon} text-xl`} style={{ color: '#2E7D32' }} />
+                  {/* Gold icon box */}
+                  <div
+                    style={{
+                      width: 44, height: 44, borderRadius: 12,
+                      background: 'rgba(200,146,42,0.15)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: 12,
+                    }}
+                  >
+                    <i className={`${f.icon} text-xl`} style={{ color: '#C8922A' }} />
                   </div>
-                  <h3 style={featureTitle}>{f.title}</h3>
-                  <p style={featureDesc}>{f.desc}</p>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 700,
+                      fontSize: '0.95rem',
+                      color: '#fff',
+                      marginBottom: 6,
+                    }}
+                  >
+                    {f.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '0.82rem',
+                      color: 'rgba(255,255,255,0.6)',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {f.desc}
+                  </p>
                 </motion.div>
               ))}
             </div>
           </div>
         )}
       </AnimatePresence>
-
-      {/* ── Bottom gradient fade for footer ── */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none z-0"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(232,245,233,0.6))' }}
-      />
     </div>
   )
 }
@@ -219,76 +290,71 @@ export default function LandingPage() {
 // ── Animated mesh gradient background ──────────────────────
 function MeshBackground() {
   return (
-    <div
-      className="absolute inset-0 z-0 overflow-hidden"
-      aria-hidden="true"
-    >
-      <div style={meshStyle} />
-      {/* Floating blobs */}
+    <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      {/* Mau Forest orb */}
       <motion.div
         animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-        style={{ ...blob, width: 480, height: 480, top: -100, right: -80, background: 'radial-gradient(circle, rgba(76,175,80,0.18) 0%, transparent 70%)' }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
+          width: 520, height: 520, top: -120, right: -100,
+          background: 'radial-gradient(circle, rgba(13,61,35,0.35) 0%, transparent 70%)',
+        }}
       />
+      {/* Savanna Gold orb */}
       <motion.div
         animate={{ x: [0, -25, 0], y: [0, 30, 0], scale: [1, 1.05, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        style={{ ...blob, width: 360, height: 360, bottom: 60, left: -60, background: 'radial-gradient(circle, rgba(165,214,167,0.22) 0%, transparent 70%)' }}
+        transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        style={{
+          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
+          width: 380, height: 380, bottom: 60, left: -80,
+          background: 'radial-gradient(circle, rgba(200,146,42,0.14) 0%, transparent 70%)',
+        }}
       />
+      {/* Indian Ocean orb */}
       <motion.div
         animate={{ x: [0, 20, 0], y: [0, 15, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
-        style={{ ...blob, width: 240, height: 240, top: '40%', left: '30%', background: 'radial-gradient(circle, rgba(46,125,50,0.10) 0%, transparent 70%)' }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
+        style={{
+          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
+          width: 260, height: 260, top: '40%', left: '28%',
+          background: 'radial-gradient(circle, rgba(30,92,138,0.12) 0%, transparent 70%)',
+        }}
       />
     </div>
   )
 }
 
-// ── Inline styles (avoids Tailwind purge issues for dynamic values) ──
-const ctaPrimary: React.CSSProperties = {
-  display: 'inline-flex', alignItems: 'center', gap: 8,
-  background: '#2E7D32', color: '#fff',
-  padding: '13px 28px',
-  borderRadius: 12, border: 'none', cursor: 'pointer',
-  fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
-  fontSize: '0.95rem', letterSpacing: '0.02em',
-  boxShadow: '0 4px 16px rgba(46,125,50,0.28)',
-  transition: 'transform 0.15s, box-shadow 0.15s',
-}
-const ctaGhost: React.CSSProperties = {
-  display: 'inline-flex', alignItems: 'center', gap: 8,
-  background: 'transparent', color: '#2E7D32',
-  padding: '12px 28px',
-  borderRadius: 12, border: '2px solid #2E7D32', cursor: 'pointer',
-  fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
-  fontSize: '0.95rem', letterSpacing: '0.02em',
-  transition: 'background 0.15s, transform 0.15s',
-}
-const featureCard: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.78)',
-  border: '1px solid rgba(165,214,167,0.6)',
-  borderRadius: 16,
-  padding: '20px 18px',
-  backdropFilter: 'blur(8px)',
-  boxShadow: '0 2px 12px rgba(46,125,50,0.07)',
-}
-const featureIconWrap: React.CSSProperties = {
-  width: 44, height: 44, borderRadius: 12,
-  background: '#E8F5E9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-  marginBottom: 12,
-}
-const featureTitle: React.CSSProperties = {
-  fontFamily: 'Montserrat, sans-serif', fontWeight: 700,
-  fontSize: '0.95rem', color: '#1B5E20', marginBottom: 6,
-}
-const featureDesc: React.CSSProperties = {
-  fontFamily: 'DM Sans, sans-serif', fontSize: '0.82rem',
-  color: '#546E7A', lineHeight: 1.55,
-}
-const meshStyle: React.CSSProperties = {
-  position: 'absolute', inset: 0,
-  background: 'linear-gradient(135deg, #f0f9f0 0%, #e8f5e9 30%, #f5fff5 60%, #e0f2e0 100%)',
-}
-const blob: React.CSSProperties = {
-  position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
+// ── Kenya map SVG silhouette watermark ──────────────────────
+function KenyaMapWatermark() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        bottom: 40,
+        right: -20,
+        width: 280,
+        height: 280,
+        opacity: 0.04,
+        pointerEvents: 'none',
+        zIndex: 1,
+      }}
+    >
+      {/* Approximate Kenya outline as a simple SVG path */}
+      <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M100 10 L140 20 L165 45 L175 70 L170 95 L155 115 L160 140 L155 165
+             L140 185 L120 200 L100 210 L85 200 L70 185 L60 165 L55 140 L45 115
+             L30 95 L25 70 L35 45 L55 25 L80 12 Z"
+          fill="#C8922A"
+        />
+        {/* Coast indentation */}
+        <path
+          d="M155 115 L170 110 L185 115 L180 130 L165 135 L155 130 Z"
+          fill="#C8922A"
+        />
+      </svg>
+    </div>
+  )
 }

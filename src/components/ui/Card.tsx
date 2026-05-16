@@ -1,24 +1,38 @@
+// Card — InstaRatiba Kenyan/EAC Theme
+// Warm accent-light borders, green-tinted shadows, gold accent bar on CardHeader
+
 import React from 'react'
 
 interface CardProps {
   children: React.ReactNode
   className?: string
-  lift?: boolean      // hover lift effect
-  flat?: boolean      // border only, no shadow
+  lift?: boolean
+  flat?: boolean
   onClick?: () => void
+  style?: React.CSSProperties
 }
 
-export function Card({ children, className = '', lift = false, flat = false, onClick }: CardProps) {
+export function Card({ children, className = '', lift = false, flat = false, onClick, style }: CardProps) {
+  const [hovered, setHovered] = React.useState(false)
+
   return (
     <div
       onClick={onClick}
-      className={[
-        'bg-white rounded-lg border border-[#e4ece6] overflow-hidden',
-        flat ? '' : 'shadow-sm',
-        lift ? 'transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : '',
-        onClick ? 'cursor-pointer' : '',
-        className,
-      ].join(' ')}
+      onMouseEnter={() => setHovered(lift)}
+      onMouseLeave={() => setHovered(false)}
+      className={`overflow-hidden ${className}`}
+      style={{
+        background: '#fff',
+        borderRadius: '16px',
+        border: '1px solid #EDE7D9',
+        boxShadow: hovered
+          ? '0 8px 24px rgba(200,146,42,0.12)'
+          : flat ? 'none' : '0 2px 12px rgba(13,61,35,0.06)',
+        transform: hovered ? 'translateY(-2px)' : 'none',
+        transition: 'all 0.2s ease',
+        cursor: onClick ? 'pointer' : undefined,
+        ...style,
+      }}
     >
       {children}
     </div>
@@ -33,8 +47,21 @@ interface CardHeaderProps {
 
 export function CardHeader({ children, action, className = '' }: CardHeaderProps) {
   return (
-    <div className={`px-5 py-4 border-b border-[#f0f5f1] flex items-center justify-between ${className}`}>
-      <div className="font-display font-semibold text-sm text-ir-text">{children}</div>
+    <div
+      className={`px-5 py-4 flex items-center justify-between ${className}`}
+      style={{ borderBottom: '1px solid #F5F0E8' }}
+    >
+      <div
+        className="flex items-center gap-2 font-semibold text-sm"
+        style={{ fontFamily: 'var(--font-ui)', color: '#1C2B22', fontWeight: 700 }}
+      >
+        {/* Gold left accent bar */}
+        <span
+          className="flex-shrink-0 rounded-full"
+          style={{ width: 3, height: 16, background: '#C8922A', display: 'block' }}
+        />
+        {children}
+      </div>
       {action && <div>{action}</div>}
     </div>
   )
@@ -46,7 +73,10 @@ export function CardBody({ children, className = '' }: { children: React.ReactNo
 
 export function CardFooter({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`px-5 py-3 border-t border-[#f0f5f1] bg-[#fafcfb] flex items-center gap-2 ${className}`}>
+    <div
+      className={`px-5 py-3 flex items-center gap-2 ${className}`}
+      style={{ borderTop: '1px solid #F5F0E8', background: 'rgba(247,245,239,0.6)' }}
+    >
       {children}
     </div>
   )

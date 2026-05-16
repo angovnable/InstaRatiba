@@ -1,3 +1,6 @@
+// SkeletonLoader — InstaRatiba Kenyan/EAC Theme
+// Warm Savanna Mist shimmer (ivory → mist) instead of grey
+
 interface SkeletonProps {
   width?: string
   height?: string
@@ -17,7 +20,10 @@ export function Skeleton({ width = '100%', height = '1rem', className = '', roun
 
 export function SkeletonCard({ className = '', lines: _lines, height: _height }: { className?: string; lines?: number; height?: string }) {
   return (
-    <div className={`bg-white rounded-lg border border-[#e4ece6] p-5 space-y-3 ${className}`}>
+    <div
+      className={`rounded-lg p-5 space-y-3 ${className}`}
+      style={{ background: '#fff', border: '1px solid #EDE7D9' }}
+    >
       <Skeleton height="1.1rem" width="60%" />
       <Skeleton height="0.85rem" width="85%" />
       <Skeleton height="0.85rem" width="70%" />
@@ -43,5 +49,5 @@ export function SkeletonTable({ rows = 4, cols = 5 }: { rows?: number; cols?: nu
   )
 }
 
-// Alias: some pages import { SkeletonLoader } — maps to SkeletonCard
+// Alias: some pages import { SkeletonLoader }
 export const SkeletonLoader = SkeletonCard
