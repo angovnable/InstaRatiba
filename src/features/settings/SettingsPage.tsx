@@ -195,7 +195,7 @@ function SchoolProfileTab({ school, setSchool }: { school: School | null; setSch
               className="hidden"
               onChange={e => setLogoFile(e.target.files?.[0] ?? null)}
             />
-            {logoFile && <p className="text-xs text-green-600 mt-0.5">✓ {logoFile.name}</p>}
+            {logoFile && <p className="text-xs text-[#0D3D23] mt-0.5">✓ {logoFile.name}</p>}
           </div>
         </div>
       </div>
@@ -233,7 +233,7 @@ function TimingTab({ navigate }: { navigate: ReturnType<typeof useNavigate> }) {
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Lower Primary', sub: 'Grade 1–3 · 30 min lessons', color: '#2E7D32' },
+          { label: 'Lower Primary', sub: 'Grade 1–3 · 30 min lessons', color: '#0D3D23' },
           { label: 'Upper Primary', sub: 'Grade 4–6 · 30 min lessons', color: '#1565C0' },
           { label: 'Junior Secondary', sub: 'Grade 7–9 · 40 min lessons', color: '#E65100' },
         ].map(lv => (
@@ -428,7 +428,7 @@ function NotificationsTab() {
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ml-4 ${value ? 'bg-[--color-primary]' : 'bg-gray-200'}`}
+        className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ml-4 ${value ? 'bg-[--color-primary]' : 'bg-[#EDE7D9]'}`}
       >
         <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${value ? 'translate-x-5' : 'translate-x-0.5'}`} />
       </button>
@@ -549,8 +549,8 @@ function ShareLinkTab({ ttStore }: { ttStore: { current: { id: string } | null }
               onClick={handleCopy}
               className={`px-4 py-2 rounded-xl text-sm border transition-colors flex-shrink-0 ${
                 isCopied
-                  ? 'bg-green-100 text-green-700 border-green-300'
-                  : 'border-[--color-accent-light] text-[--color-primary] hover:bg-green-50'
+                  ? 'bg-[#EDE7D9] text-[#0D3D23] border-[rgba(13,61,35,0.25)]'
+                  : 'border-[--color-accent-light] text-[--color-primary] hover:bg-[rgba(13,61,35,0.06)]'
               }`}
             >
               <i className={`${isCopied ? 'bi-check-lg' : 'bi-copy'} mr-1.5`} />
@@ -566,7 +566,7 @@ function ShareLinkTab({ ttStore }: { ttStore: { current: { id: string } | null }
             </button>
             <button
               onClick={handleRevoke}
-              className="text-sm border border-red-200 text-red-500 rounded-xl px-3 py-2 hover:bg-red-50 transition-colors"
+              className="text-sm border border-[rgba(160,31,31,0.2)] text-[#A01F1F] rounded-xl px-3 py-2 hover:bg-[rgba(160,31,31,0.06)] transition-colors"
             >
               <i className="bi bi-x-circle mr-1.5" />Revoke
             </button>
@@ -643,7 +643,7 @@ function AccountTab({
         </button>
         <button
           onClick={() => { signOut(); navigate('/') }}
-          className="border border-[--color-accent-light] text-sm text-red-500 rounded-xl px-4 py-2 hover:bg-red-50 hover:border-red-300 transition-colors"
+          className="border border-[--color-accent-light] text-sm text-[#A01F1F] rounded-xl px-4 py-2 hover:bg-[rgba(160,31,31,0.06)] hover:border-[rgba(160,31,31,0.25)] transition-colors"
         >
           <i className="bi bi-box-arrow-right mr-1.5" />Sign Out
         </button>
@@ -690,12 +690,12 @@ function DangerZoneTab({ school, signOut, navigate }: { school: School | null; s
     <div className="space-y-5">
       <SectionHeader title="Danger Zone" icon="bi-exclamation-triangle" />
 
-      <div className="border border-red-300 rounded-2xl p-5 bg-red-50 space-y-4">
+      <div className="border border-[rgba(160,31,31,0.25)] rounded-2xl p-5 bg-[rgba(160,31,31,0.06)] space-y-4">
         <div className="flex items-start gap-3">
-          <i className="bi bi-exclamation-triangle-fill text-red-500 text-xl mt-0.5" />
+          <i className="bi bi-exclamation-triangle-fill text-[#A01F1F] text-xl mt-0.5" />
           <div>
-            <h3 className="font-semibold text-red-800 text-sm">Delete All School Data</h3>
-            <p className="text-xs text-red-700 mt-1">
+            <h3 className="font-semibold text-[#A01F1F] text-sm">Delete All School Data</h3>
+            <p className="text-xs text-[#A01F1F] mt-1">
               This permanently deletes your school profile, all teachers, classes, rooms, allocations, and timetables.
               Your account login is preserved. <strong>This cannot be undone.</strong>
             </p>
@@ -703,21 +703,21 @@ function DangerZoneTab({ school, signOut, navigate }: { school: School | null; s
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-red-700 mb-1">
+          <label className="block text-xs font-medium text-[#A01F1F] mb-1">
             Type <strong>DELETE</strong> to confirm
           </label>
           <input
             value={confirm1}
             onChange={e => setConfirm1(e.target.value)}
             placeholder="DELETE"
-            className="w-full border border-red-300 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="w-full border border-[rgba(160,31,31,0.25)] rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
           />
         </div>
 
         <button
           onClick={handleDeleteAll}
           disabled={deleting || confirm1 !== 'DELETE'}
-          className="w-full py-2.5 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 font-semibold"
+          className="w-full py-2.5 bg-[#A01F1F] text-white text-sm rounded-xl hover:bg-[#7A1515] transition-colors disabled:opacity-50 font-semibold"
         >
           {deleting ? <i className="bi bi-arrow-repeat animate-spin mr-1.5" /> : <i className="bi bi-trash mr-1.5" />}
           Delete All School Data

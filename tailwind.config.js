@@ -1,51 +1,46 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // ── Kenyan / EAC design tokens ────────────────────────
-        primary:          '#0D3D23',   // Mau Forest
-        'primary-hover':  '#1A5C3A',   // lighter Mau Forest for hover
-        gold:             '#C8922A',   // Savanna Gold
-        'gold-hover':     '#B57E21',   // 10% darker gold
-        red:              '#A01F1F',   // Rift Red
-        surface:          '#F7F5EF',   // Kilimanjaro Ivory
-        dark:             '#0F1B14',   // Nairobi Night
-        ocean:            '#1E5C8A',   // Indian Ocean
-        'ir-text':        '#1C2B22',   // Charcoal
-        muted:            '#7A8C82',   // Dust
-        'accent-light':   '#EDE7D9',   // Savanna Mist
-
-        // ── Semantic aliases (backward compat) ────────────────
-        'accent-gold':    '#C8922A',
-        'ir-error':       '#A01F1F',
-        warn:             '#C8922A',
-        info:             '#1E5C8A',
-
-        // ── Dark mode surface overrides ───────────────────────
-        'dark-surface':   '#111814',
-        'dark-card':      '#182118',
+        // New Kenyan/EAC palette
+        primary:        '#0D3D23',  // Mau Forest
+        'primary-dark': '#062818',
+        gold:           '#C8922A',  // Savanna Gold
+        red:            '#A01F1F',  // Rift Red
+        surface:        '#F7F5EF',  // Kilimanjaro Ivory
+        dark:           '#0F1B14',  // Nairobi Night
+        ocean:          '#1E5C8A',  // Indian Ocean
+        'ir-text':      '#1C2B22',  // Charcoal
+        muted:          '#7A8C82',  // Dust
+        'accent-light': '#EDE7D9',  // Savanna Mist
+        // Legacy aliases
+        mid:            '#1A5C3A',
+        'ir-bg':        '#F7F5EF',
+        warn:           '#C8922A',
+        'ir-error':     '#A01F1F',
+        info:           '#1E5C8A',
       },
       fontFamily: {
-        display: ['"Plus Jakarta Sans"', 'sans-serif'],
-        ui:      ['Outfit', 'sans-serif'],
-        body:    ['Figtree', 'sans-serif'],
-        mono:    ['"Space Mono"', 'monospace'],
+        display: ["'Plus Jakarta Sans'", 'sans-serif'],
+        ui:      ["'Outfit'", 'sans-serif'],
+        body:    ["'Figtree'", 'sans-serif'],
+        mono:    ["'Space Mono'", 'monospace'],
+        // Legacy alias
+        heading: ["'Plus Jakarta Sans'", 'sans-serif'],
       },
       borderRadius: {
-        sm:  '6px',
-        md:  '10px',
-        lg:  '16px',
-        xl:  '22px',
+        sm: '6px',
+        md: '10px',
+        lg: '16px',
+        xl: '22px',
       },
       boxShadow: {
-        sm:   '0 1px 3px rgba(13,61,35,0.06)',
-        md:   '0 2px 12px rgba(13,61,35,0.06)',
-        lg:   '0 8px 24px rgba(13,61,35,0.10)',
+        sm: '0 2px 12px rgba(13,61,35,0.06)',
+        md: '0 4px 20px rgba(13,61,35,0.10)',
+        lg: '0 8px 32px rgba(13,61,35,0.14)',
         gold: '0 8px 24px rgba(200,146,42,0.12)',
-        btn:  '0 4px 14px rgba(13,61,35,0.30)',
       },
       animation: {
         shimmer:     'shimmer 1.4s infinite',

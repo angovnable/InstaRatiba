@@ -15,16 +15,28 @@ import type { Timetable, TimetableStatus, ApprovalComment } from '@/types'
 // ── Status badge ──────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: TimetableStatus }) {
-  const map = {
-    draft:     { label: 'Draft',          icon: 'bi-pencil',            bg: 'bg-gray-100',    text: 'text-gray-600'  },
-    pending:   { label: 'Pending Review', icon: 'bi-hourglass-split',   bg: 'bg-amber-100',   text: 'text-amber-700' },
-    published: { label: 'Published',      icon: 'bi-check-circle-fill', bg: 'bg-green-100',   text: 'text-green-700' },
-    archived:  { label: 'Archived',       icon: 'bi-archive',           bg: 'bg-gray-100',    text: 'text-gray-500'  },
+  const map: Record<TimetableStatus, { label: string; icon: string; style: React.CSSProperties }> = {
+    draft:     { label: 'Draft',          icon: 'bi-pencil',            style: { background: '#EDE7D9', color: '#7A8C82',  border: '1px solid #D8D0C0' } },
+    pending:   { label: 'Pending Review', icon: 'bi-hourglass-split',   style: { background: 'rgba(200,146,42,0.10)', color: '#9B6E1A', border: '1px solid rgba(200,146,42,0.25)' } },
+    published: { label: 'Published',      icon: 'bi-check-circle-fill', style: { background: 'rgba(13,61,35,0.09)', color: '#0D3D23', border: '1px solid rgba(13,61,35,0.2)' } },
+    archived:  { label: 'Archived',       icon: 'bi-archive',           style: { background: '#EDE7D9', color: '#7A8C82',  border: '1px solid #D8D0C0' } },
   }
   const s = map[status]
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${s.bg} ${s.text}`}>
-      <i className={`${s.icon} text-base`} />
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        padding: '5px 12px',
+        borderRadius: 999,
+        fontFamily: "'Outfit', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.8rem',
+        ...s.style,
+      }}
+    >
+      <i className={`${s.icon} text-sm`} />
       {s.label}
     </span>
   )
@@ -37,7 +49,7 @@ function CommentRow({ comment }: { comment: ApprovalComment }) {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   })
   return (
-    <div className="flex gap-3 py-3 border-b border-[--color-accent-light] last:border-0">
+    <div className="flex gap-3 py-3 border-b border-[#EDE7D9] last:border-0">
       <div className="w-8 h-8 rounded-full bg-[--color-primary] flex items-center justify-center text-white text-xs font-bold shrink-0">
         HT
       </div>
@@ -48,7 +60,7 @@ function CommentRow({ comment }: { comment: ApprovalComment }) {
         </div>
         <p className="text-sm text-[--color-text] mt-0.5">{comment.comment}</p>
         {comment.slot_id && (
-          <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-[--color-info] bg-blue-50 px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center gap-1 mt-1 text-[10px] text-[#1E5C8A] bg-[rgba(30,92,138,0.08)] px-2 py-0.5 rounded-full">
             <i className="bi bi-grid-3x2" /> Attached to a slot
           </span>
         )}
@@ -177,7 +189,7 @@ export default function ApprovalPanel({
         <button
           onClick={() => busy(onSubmitForApproval)}
           disabled={isBusy || hardConflictCount > 0}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#1B5E20] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#062818] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isBusy
             ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting…</>
@@ -198,14 +210,14 @@ export default function ApprovalPanel({
           <button
             onClick={() => busy(onReturn)}
             disabled={isBusy}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-[--color-warn] text-[#E65100] font-semibold text-sm hover:bg-amber-50 transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-[--color-warn] text-[#9B6E1A] font-semibold text-sm hover:bg-[rgba(200,146,42,0.07)] transition-colors disabled:opacity-50"
           >
             <i className="bi bi-arrow-return-left" /> Return for Revision
           </button>
           <button
             onClick={() => busy(onApprove)}
             disabled={isBusy}
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#1B5E20] transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#062818] transition-colors disabled:opacity-50"
           >
             {isBusy
               ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> …</>
@@ -217,7 +229,7 @@ export default function ApprovalPanel({
 
       {/* Published: share link section */}
       {timetable.status === 'published' && (
-        <div className="space-y-3 p-4 rounded-xl bg-green-50 border border-green-200">
+        <div className="space-y-3 p-4 rounded-xl bg-[rgba(13,61,35,0.06)] border border-[rgba(13,61,35,0.15)]">
           <div className="flex items-center gap-2">
             <i className="bi bi-check-circle-fill text-[--color-primary] text-lg" />
             <p className="text-sm font-semibold text-[--color-text]">Timetable is live and published</p>
@@ -225,7 +237,7 @@ export default function ApprovalPanel({
 
           {shareUrl ? (
             <div className="space-y-2">
-              <div className="flex items-center gap-2 bg-white rounded-lg border border-green-200 px-3 py-2">
+              <div className="flex items-center gap-2 bg-white rounded-lg border border-[rgba(13,61,35,0.15)] px-3 py-2">
                 <i className="bi bi-link-45deg text-[--color-primary]" />
                 <p className="text-xs text-[--color-muted] flex-1 truncate font-mono">{shareUrl}</p>
                 <button
@@ -290,7 +302,7 @@ export default function ApprovalPanel({
                 <div className="px-4 py-3 bg-white space-y-0">
                   {/* Add comment (head teacher only, pending status) */}
                   {isHeadTeacher && timetable.status === 'pending' && (
-                    <div className="flex gap-2 pb-3 mb-1 border-b border-[--color-accent-light]">
+                    <div className="flex gap-2 pb-3 mb-1 border-b border-[#EDE7D9]">
                       <textarea
                         value={newComment}
                         onChange={e => setNewComment(e.target.value)}
@@ -301,7 +313,7 @@ export default function ApprovalPanel({
                       <button
                         onClick={postComment}
                         disabled={!newComment.trim() || isBusy}
-                        className="self-end px-3 py-2 rounded-lg bg-[--color-primary] text-white text-sm font-semibold hover:bg-[#1B5E20] transition-colors disabled:opacity-50"
+                        className="self-end px-3 py-2 rounded-lg bg-[--color-primary] text-white text-sm font-semibold hover:bg-[#062818] transition-colors disabled:opacity-50"
                       >
                         <i className="bi bi-send" />
                       </button>

@@ -37,7 +37,7 @@ const LEVEL_GRADES: Record<SchoolLevel, number[]> = {
   junior_secondary: [7, 8, 9],
 }
 const LEVEL_BADGE: Record<SchoolLevel, string> = {
-  lower_primary:    'bg-[#E8F5E9] text-[#2E7D32]',
+  lower_primary:    'bg-[#F7F5EF] text-[#0D3D23]',
   upper_primary:    'bg-[#E3F2FD] text-[#1565C0]',
   junior_secondary: 'bg-[#EDE7F6] text-[#512DA8]',
 }
@@ -45,7 +45,7 @@ const LEVEL_BADGE: Record<SchoolLevel, string> = {
 // Deterministic colour from name (for avatar initial background)
 function avatarColour(name: string) {
   const palette = [
-    '#2E7D32','#1565C0','#512DA8','#AD1457',
+    '#0D3D23','#1565C0','#512DA8','#AD1457',
     '#E65100','#558B2F','#00695C','#37474F',
   ]
   let h = 0
@@ -414,7 +414,7 @@ function TeacherCard({ teacher, subjects, onEdit, onDelete }: TeacherCardProps) 
           </button>
           <button
             onClick={() => onDelete(teacher.id)}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-[--color-muted] hover:text-[--color-error] hover:bg-red-50 transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-[--color-muted] hover:text-[--color-error] hover:bg-[rgba(160,31,31,0.06)] transition-colors"
           >
             <i className="bi bi-trash text-sm" />
           </button>
@@ -624,12 +624,12 @@ export default function TeacherManagerPage() {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 rounded-xl border border-[--color-warn] bg-amber-50 flex items-start gap-3"
+          className="mb-6 p-4 rounded-xl border border-[--color-warn] bg-[rgba(200,146,42,0.07)] flex items-start gap-3"
         >
           <i className="bi bi-exclamation-triangle-fill text-[--color-warn] mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-amber-800">No teachers added yet</p>
-            <p className="text-xs text-amber-700 mt-0.5">
+            <p className="text-sm font-semibold text-[#9B6E1A]">No teachers added yet</p>
+            <p className="text-xs text-[#9B6E1A] mt-0.5">
               Add at least one teacher to proceed to Lesson Allocation.
             </p>
           </div>
@@ -676,7 +676,7 @@ export default function TeacherManagerPage() {
             <strong className="text-[--color-text]">{teacherSubjects.length}</strong> subject assignments
           </span>
           <span className="flex items-center gap-1.5">
-            <i className="bi bi-exclamation-circle text-amber-500" />
+            <i className="bi bi-exclamation-circle text-[#C8922A]" />
             <strong className="text-[--color-text]">
               {teachers.filter(t => getSubjectsForTeacher(t.id).length === 0).length}
             </strong> without subjects

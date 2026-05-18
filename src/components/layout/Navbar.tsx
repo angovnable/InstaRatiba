@@ -1,8 +1,10 @@
-// Navbar — InstaRatiba Kenyan/EAC Theme
-// Kilimanjaro Ivory glassmorphism, Savanna Gold term badge, dark mode toggle
+// Navbar — Emil Kowalski design language
+// Precise 56px height, hairline border, perfect kerning,
+// no decorative noise — every element earns its place
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useUiStore, useSchoolStore } from '@/store'
 
 const PAGE_TITLES: Record<string, string> = {
@@ -17,131 +19,188 @@ const PAGE_TITLES: Record<string, string> = {
   '/settings':   'Settings',
 }
 
+function IconBtn({
+  icon, onClick, label, active,
+}: {
+  icon: string; onClick?: () => void; label: string; active?: boolean
+}) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.92 }}
+      onClick={onClick}
+      aria-label={label}
+      style={{
+        width: 34,
+        height: 34,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 7,
+        border: '1px solid transparent',
+        background: active ? 'rgba(13,61,35,0.07)' : 'transparent',
+        color: active ? '#0D3D23' : '#7A8C82',
+        cursor: 'pointer',
+        fontSize: '1rem',
+        transition: 'background 120ms, color 120ms, border-color 120ms',
+        flexShrink: 0,
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLButtonElement
+        el.style.background = 'rgba(13,61,35,0.06)'
+        el.style.color = '#1C2B22'
+        el.style.borderColor = 'rgba(13,61,35,0.08)'
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLButtonElement
+        el.style.background = active ? 'rgba(13,61,35,0.07)' : 'transparent'
+        el.style.color = active ? '#0D3D23' : '#7A8C82'
+        el.style.borderColor = 'transparent'
+      }}
+    >
+      <i className={icon} />
+    </motion.button>
+  )
+}
+
 export default function Navbar() {
   const { toggleSidebar } = useUiStore()
   const { school } = useSchoolStore()
   const location = useLocation()
-  const [darkMode, setDarkMode] = useState(false)
+  const [dark, setDark] = useState(false)
 
   const title = PAGE_TITLES[location.pathname] ?? 'InstaRatiba'
 
-  // Persist dark mode preference
-  useEffect(() => {
-    const saved = localStorage.getItem('ir-dark-mode')
-    if (saved === 'true') {
-      setDarkMode(true)
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
-
-  const toggleDark = () => {
-    const next = !darkMode
-    setDarkMode(next)
-    document.documentElement.classList.toggle('dark', next)
-    localStorage.setItem('ir-dark-mode', String(next))
+  function toggleDark() {
+    const next = !dark
+    setDark(next)
+    document.documentElement.setAttribute('data-theme', next ? 'dark' : '')
   }
 
   return (
     <header
-      className="fixed top-0 right-0 flex items-center px-5 gap-3 z-[100]"
-      role="banner"
       style={{
-        left: 'var(--sidebar-w, 240px)',
-        height: '60px',
-        background: 'rgba(247,245,239,0.85)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderBottom: '1px solid #EDE7D9',
-        boxShadow: '0 1px 12px rgba(13,61,35,0.08)',
+        position: 'fixed',
+        top: 3, // below 3px flag stripe
+        left: 240,
+        right: 0,
+        height: 56,
+        background: 'rgba(247,245,239,0.92)',
+        backdropFilter: 'blur(16px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+        borderBottom: '1px solid rgba(13,61,35,0.07)',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 20px',
+        gap: 12,
+        zIndex: 100,
       }}
+      role="banner"
     >
       {/* Hamburger */}
-      <button
-        onClick={toggleSidebar}
-        className="w-8 h-8 flex items-center justify-center rounded-md transition-colors duration-150 flex-shrink-0"
-        style={{ color: '#7A8C82' }}
-        onMouseEnter={e => { e.currentTarget.style.background = '#EDE7D9'; e.currentTarget.style.color = '#0D3D23' }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7A8C82' }}
-        aria-label="Toggle sidebar"
-      >
-        <i className="bi-list text-xl" />
-      </button>
+      <IconBtn icon="bi-list" onClick={toggleSidebar} label="Toggle sidebar" />
 
-      {/* Title + Breadcrumb */}
-      <div className="flex-1 min-w-0">
-        <h1
-          className="font-bold text-sm truncate"
-          style={{ fontFamily: 'var(--font-display)', color: '#0D3D23', lineHeight: 1.2 }}
-        >
-          {title}
-        </h1>
+      {/* Divider */}
+      <div style={{ width: 1, height: 18, background: 'rgba(13,61,35,0.08)', flexShrink: 0 }} />
+
+      {/* Title area */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <AnimatePresence mode="wait">
+          <motion.h1
+            key={title}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              color: '#1C2B22',
+              letterSpacing: '-0.018em',
+              lineHeight: 1.2,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {title}
+          </motion.h1>
+        </AnimatePresence>
         {school && (
           <p
-            className="text-[10px] truncate"
-            style={{ fontFamily: 'var(--font-body)', color: '#7A8C82', lineHeight: 1.2 }}
+            style={{
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: '0.64rem',
+              color: '#7A8C82',
+              letterSpacing: '0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              lineHeight: 1.3,
+              marginTop: 1,
+            }}
           >
             {school.name}
           </p>
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-1.5 flex-shrink-0">
-
-        {/* Term badge */}
+      {/* Right side */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {/* Term badge — restrained pill */}
         {school && (
           <span
-            className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+            className="hidden sm:inline-flex"
             style={{
-              fontFamily: 'var(--font-ui)',
-              border: '1px solid #C8922A',
-              color: '#C8922A',
-              background: 'rgba(200,146,42,0.06)',
+              alignItems: 'center',
+              gap: 5,
+              padding: '4px 10px',
+              borderRadius: 99,
+              border: '1px solid rgba(200,146,42,0.3)',
+              background: 'rgba(200,146,42,0.07)',
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 500,
+              fontSize: '0.68rem',
+              color: '#9B6E1A',
+              letterSpacing: '0.01em',
             }}
           >
-            <i className="bi-calendar3 text-xs" />
+            <i className="bi-calendar3" style={{ fontSize: '0.62rem' }} />
             {school.academic_year} · Term {school.current_term}
           </span>
         )}
 
-        {/* Dark mode toggle */}
-        <button
+        <IconBtn
+          icon={dark ? 'bi-sun-fill' : 'bi-moon-fill'}
           onClick={toggleDark}
-          className="w-8 h-8 flex items-center justify-center rounded-md transition-colors duration-150"
-          style={{ color: '#7A8C82' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#EDE7D9'; e.currentTarget.style.color = '#0D3D23' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7A8C82' }}
-          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          <i className={`bi-${darkMode ? 'sun-fill' : 'moon-stars-fill'} text-base`} />
-        </button>
+          label={dark ? 'Light mode' : 'Dark mode'}
+        />
 
-        {/* Notification bell */}
-        <button
-          className="w-8 h-8 flex items-center justify-center rounded-md relative transition-colors duration-150"
-          style={{ color: '#7A8C82' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#EDE7D9'; e.currentTarget.style.color = '#0D3D23' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#7A8C82' }}
-          aria-label="Notifications"
-        >
-          <i className="bi-bell text-base" />
-          {/* Conflict dot — conditionally show with bi-bell-fill + red dot */}
-        </button>
+        <IconBtn icon="bi-bell" label="Notifications" />
 
         {/* Avatar */}
-        <div
-          className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs cursor-pointer flex-shrink-0"
+        <motion.div
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
           style={{
-            background: '#0D3D23',
-            color: '#fff',
-            fontFamily: 'var(--font-display)',
-            outline: '2px solid #C8922A',
-            outlineOffset: '1px',
+            width: 30,
+            height: 30,
+            borderRadius: '50%',
+            background: 'rgba(200,146,42,0.12)',
+            border: '1.5px solid rgba(200,146,42,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontWeight: 700,
+            fontSize: '0.72rem',
+            color: '#9B6E1A',
+            cursor: 'pointer',
+            flexShrink: 0,
           }}
-          aria-label="User profile"
         >
           U
-        </div>
+        </motion.div>
       </div>
     </header>
   )

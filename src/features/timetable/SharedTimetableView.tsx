@@ -93,7 +93,7 @@ export default function SharedTimetableView() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[--color-bg] px-4">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 rounded-full bg-[rgba(160,31,31,0.10)] flex items-center justify-center mx-auto mb-4">
             <i className="bi bi-link-45deg text-3xl text-[--color-error]" />
           </div>
           <h2 className="text-lg font-bold text-[--color-text]">{error ?? 'Something went wrong'}</h2>
@@ -130,7 +130,7 @@ export default function SharedTimetableView() {
             )}
             <div>
               <h1 className="font-bold text-base leading-tight">{school.name}</h1>
-              <p className="text-xs text-green-200">
+              <p className="text-xs text-[rgba(200,146,42,0.7)]">
                 Term {school.current_term} · {school.academic_year} · {timetable.name}
               </p>
             </div>

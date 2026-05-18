@@ -46,19 +46,19 @@ export default function AuthCallbackPage() {
       background: 'linear-gradient(135deg, #f0f9f0 0%, #e8f5e9 100%)',
     }}>
       <span style={{
-        fontFamily: 'Montserrat, sans-serif', fontWeight: 800,
-        fontSize: '1.6rem', color: '#2E7D32',
+        fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 800,
+        fontSize: '1.6rem', color: '#0D3D23',
       }}>
         InstaRatiba
       </span>
       <div style={{
         width: 36, height: 36,
-        border: '3px solid #A5D6A7',
-        borderTopColor: '#2E7D32',
+        border: '3px solid #EDE7D9',
+        borderTopColor: '#0D3D23',
         borderRadius: '50%',
         animation: 'spin 0.7s linear infinite',
       }} />
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.875rem', color: '#757575' }}>
+      <p style={{ fontFamily: 'Figtree, sans-serif', fontSize: '0.875rem', color: '#7A8C82' }}>
         Completing sign-in…
       </p>
     </div>

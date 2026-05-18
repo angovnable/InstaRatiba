@@ -1,17 +1,8 @@
-// ============================================================
-// InstaRatiba — src/components/layout/OfflineBanner.tsx
-// Persistent top banner shown when the device is offline.
-// Shows queued action count + "Retry now" button.
-// Consumes usePwaSync from the PwaProvider context.
-// ============================================================
-
 import { AnimatePresence, motion } from 'framer-motion'
-import { usePwaContext }           from './usePwaContext'
+import { usePwaContext } from './usePwaContext'
 
 export default function OfflineBanner() {
   const { isOnline, queueSize, syncState, syncMsg, manualSync } = usePwaContext()
-
-  // Syncing state — separate visual
   const isSyncing = syncState === 'syncing'
 
   return (
@@ -20,92 +11,94 @@ export default function OfflineBanner() {
         <motion.div
           key="offline-banner"
           initial={{ y: -48, opacity: 0 }}
-          animate={{ y: 0,   opacity: 1 }}
-          exit={{   y: -48,  opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -48, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-          className="
-            fixed top-0 left-0 right-0 z-[1100]
-            bg-[#37474F] text-white
-            flex items-center justify-between
-            px-4 py-2 gap-3 text-sm
-            shadow-lg
-          "
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0,
+            zIndex: 1100,
+            background: '#1C2B22',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '8px 16px',
+            gap: 12,
+            boxShadow: '0 2px 12px rgba(13,61,35,0.2)',
+          }}
           role="alert"
           aria-live="assertive"
         >
-          <div className="flex items-center gap-2 min-w-0">
-            <i className="bi bi-wifi-off text-base flex-shrink-0" aria-hidden="true" />
-            <span className="font-medium font-body">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+            <i className="bi bi-wifi-off text-base flex-shrink-0" style={{ color: '#C8922A' }} aria-hidden="true" />
+            <span style={{ fontFamily: "'Figtree', sans-serif", fontWeight: 500, fontSize: '0.875rem' }}>
               You are offline
               {queueSize > 0 && (
-                <span className="ml-1 text-[#A5D6A7]">
+                <span style={{ marginLeft: 6, color: '#C8922A', fontSize: '0.8rem' }}>
                   — {queueSize} change{queueSize > 1 ? 's' : ''} queued
                 </span>
               )}
             </span>
-            {isSyncing && syncMsg && (
-              <span className="text-xs text-[#A5D6A7] hidden sm:inline truncate">
-                {syncMsg}
-              </span>
-            )}
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Animated Wi-Fi pulse when syncing */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             {isSyncing && (
-              <span className="flex items-center gap-1 text-xs text-[#A5D6A7]">
-                <span
-                  className="inline-block w-2 h-2 rounded-full bg-[#4CAF50] animate-pulse"
-                  aria-hidden="true"
-                />
-                Syncing…
+              <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.75rem', color: '#C8922A', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#C8922A', display: 'inline-block', animation: 'pulse 1s infinite' }} />
+                {syncMsg || 'Syncing…'}
               </span>
             )}
-
-            {/* Retry button — only shown when offline and not syncing */}
             {!isSyncing && (
               <button
                 onClick={manualSync}
-                className="
-                  text-xs px-3 py-1 rounded-full
-                  bg-white/10 hover:bg-white/20
-                  transition-colors duration-150
-                  font-body font-medium
-                  focus:outline-none focus:ring-2 focus:ring-white/40
-                "
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  padding: '4px 12px',
+                  borderRadius: 999,
+                  background: 'rgba(200,146,42,0.15)',
+                  border: '1px solid rgba(200,146,42,0.3)',
+                  color: '#C8922A',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
                 aria-label="Retry sync now"
               >
                 Retry now
               </button>
             )}
-
-            {/* Dismiss — only informational; banner returns if still offline */}
-            <span className="text-[10px] text-white/50 hidden md:inline">
-              Changes will sync when reconnected
-            </span>
           </div>
         </motion.div>
       )}
 
-      {/* Sync-done confirmation flash (shown briefly after going back online) */}
       {isOnline && syncState === 'done' && (
         <motion.div
           key="sync-done-banner"
           initial={{ y: -48, opacity: 0 }}
-          animate={{ y: 0,   opacity: 1 }}
-          exit={{   y: -48,  opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -48, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 340, damping: 30 }}
-          className="
-            fixed top-0 left-0 right-0 z-[1100]
-            bg-[#2E7D32] text-white
-            flex items-center justify-center
-            px-4 py-2 gap-2 text-sm
-            shadow-lg
-          "
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0,
+            zIndex: 1100,
+            background: '#0D3D23',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px 16px',
+            gap: 8,
+            boxShadow: '0 2px 12px rgba(13,61,35,0.2)',
+          }}
           role="status"
         >
-          <i className="bi bi-check-circle-fill text-base" aria-hidden="true" />
-          <span className="font-body font-medium">Back online — all changes synced.</span>
+          <i className="bi bi-check-circle-fill" style={{ color: '#C8922A' }} aria-hidden="true" />
+          <span style={{ fontFamily: "'Figtree', sans-serif", fontWeight: 500, fontSize: '0.875rem' }}>
+            Back online — all changes synced.
+          </span>
         </motion.div>
       )}
     </AnimatePresence>

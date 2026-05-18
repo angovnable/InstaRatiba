@@ -1,51 +1,124 @@
+// StepWizard — Emil Kowalski design language
+// Minimal numbered steps. The only decoration is the spring-animated
+// active indicator and the completing gold fill.
+
+import { motion } from 'framer-motion'
 import type { WizardStep } from '@/types'
 
 interface StepWizardProps {
   steps: WizardStep[]
-  currentStep: number   // 0-indexed
+  currentStep: number
 }
 
 export default function StepWizard({ steps, currentStep }: StepWizardProps) {
   return (
-    <div className="flex items-start mb-8 px-1">
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        marginBottom: 36,
+        position: 'relative',
+      }}
+    >
+      {/* Background connector track */}
+      <div style={{
+        position: 'absolute',
+        top: 14,
+        left: '6%',
+        right: '6%',
+        height: 1,
+        background: '#EDE7D9',
+        zIndex: 0,
+      }} />
+
+      {/* Gold progress fill */}
+      <motion.div
+        animate={{ width: currentStep === 0 ? '0%' : `${(currentStep / (steps.length - 1)) * 88}%` }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        style={{
+          position: 'absolute',
+          top: 14,
+          left: '6%',
+          height: 1,
+          background: '#C8922A',
+          zIndex: 1,
+        }}
+      />
+
       {steps.map((step, i) => {
-        const isDone   = i < currentStep
-        const isActive = i === currentStep
+        const done   = i < currentStep
+        const active = i === currentStep
 
         return (
-          <div key={step.key} className="flex-1 flex flex-col items-center relative">
-            {/* Connector line */}
-            {i < steps.length - 1 && (
-              <div
-                className={[
-                  'absolute top-4 left-1/2 w-full h-0.5 z-0 transition-colors duration-500',
-                  isDone ? 'bg-mid' : 'bg-accent-light',
-                ].join(' ')}
-              />
-            )}
-
-            {/* Dot */}
-            <div
-              className={[
-                'relative z-10 w-8 h-8 rounded-full flex items-center justify-center',
-                'font-display font-bold text-xs transition-all duration-300',
-                isDone   ? 'bg-mid text-white shadow-sm'    : '',
-                isActive ? 'bg-primary text-white shadow-md scale-110' : '',
-                !isDone && !isActive ? 'bg-accent-light text-primary' : '',
-              ].join(' ')}
+          <div
+            key={step.key}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          >
+            {/* Step dot */}
+            <motion.div
+              animate={{
+                scale:           active ? 1.1 : 1,
+                background:      done ? '#C8922A' : active ? '#0D3D23' : 'white',
+                borderColor:     done ? '#C8922A' : active ? '#0D3D23' : '#EDE7D9',
+              }}
+              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                border: '2px solid',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: active ? '0 0 0 4px rgba(13,61,35,0.08)' : 'none',
+                transition: 'box-shadow 200ms',
+              }}
             >
-              {isDone ? <i className="bi-check text-sm" /> : i + 1}
-            </div>
+              {done ? (
+                <motion.i
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 24 }}
+                  className="bi-check"
+                  style={{ fontSize: '0.8rem', color: 'white', lineHeight: 1 }}
+                />
+              ) : (
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '0.6rem',
+                    fontWeight: 700,
+                    color: active ? 'white' : '#7A8C82',
+                    lineHeight: 1,
+                  }}
+                >
+                  {i + 1}
+                </span>
+              )}
+            </motion.div>
 
             {/* Label */}
-            <span
-              className={[
-                'mt-1.5 text-[10px] font-semibold text-center whitespace-nowrap transition-colors',
-                isActive ? 'text-primary' : isDone ? 'text-mid' : 'text-muted',
-              ].join(' ')}
+            <motion.span
+              animate={{ color: active ? '#0D3D23' : done ? '#C8922A' : '#7A8C82' }}
+              style={{
+                marginTop: 7,
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: active ? 600 : 400,
+                fontSize: '0.62rem',
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+                letterSpacing: '-0.005em',
+              }}
             >
               {step.label}
-            </span>
+            </motion.span>
           </div>
         )
       })}

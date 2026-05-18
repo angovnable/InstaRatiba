@@ -469,7 +469,7 @@ export default function SchoolSetupPage() {
               <button
                 onClick={() => set('climate_adjustment', !form.climate_adjustment)}
                 className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-                  form.climate_adjustment ? 'bg-[--color-primary]' : 'bg-gray-300'
+                  form.climate_adjustment ? 'bg-[--color-primary]' : 'bg-[#EDE7D9]'
                 }`}
               >
                 <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${

@@ -91,7 +91,7 @@ function ConflictSidebar({
               Hard Conflicts ({hard.length})
             </p>
             {hard.map(c => (
-              <div key={c.id} className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-[--color-text]">
+              <div key={c.id} className="p-3 rounded-lg bg-[rgba(160,31,31,0.06)] border border-[rgba(160,31,31,0.2)] text-xs text-[--color-text]">
                 <i className="bi bi-x-circle-fill text-[--color-error] mr-1.5" />
                 {c.description}
               </div>
@@ -105,7 +105,7 @@ function ConflictSidebar({
               Warnings ({soft.length})
             </p>
             {soft.map(c => (
-              <div key={c.id} className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-[--color-text]">
+              <div key={c.id} className="p-3 rounded-lg bg-[rgba(200,146,42,0.07)] border border-[rgba(200,146,42,0.2)] text-xs text-[--color-text]">
                 <i className="bi bi-exclamation-triangle-fill text-[--color-warn] mr-1.5" />
                 {c.description}
               </div>
@@ -124,7 +124,7 @@ function GridSkeleton() {
       <div className="h-10 bg-[--color-surface] rounded-xl w-64" />
       <div className="rounded-xl border border-[--color-accent-light] overflow-hidden">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className={`h-14 flex gap-1 px-1 py-1 ${i % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}`}>
+          <div key={i} className={`h-14 flex gap-1 px-1 py-1 ${i % 2 === 0 ? 'bg-white' : 'bg-[#FDFCF9]'}`}>
             <div className="w-20 h-full bg-[--color-surface] rounded" />
             {Array.from({ length: 5 }).map((_, j) => (
               <div key={j} className="flex-1 h-full bg-[--color-surface] rounded" style={{ opacity: 1 - j * 0.1 }} />
@@ -181,7 +181,7 @@ export default function TimetablePage() {
         </p>
         <button
           onClick={() => navigate('/review')}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#1B5E20] transition-colors"
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[--color-primary] text-white font-semibold text-sm hover:bg-[#062818] transition-colors"
         >
           <i className="bi bi-lightning-fill" /> Go to Pre-Generate Review
         </button>
@@ -265,10 +265,10 @@ export default function TimetablePage() {
               className={[
                 'flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold border transition-colors',
                 hardConflictCount > 0
-                  ? 'bg-red-50 border-red-200 text-[--color-error]'
+                  ? 'bg-[rgba(160,31,31,0.06)] border-[rgba(160,31,31,0.2)] text-[--color-error]'
                   : softConflictCount > 0
-                    ? 'bg-amber-50 border-amber-200 text-amber-700'
-                    : 'bg-green-50 border-green-200 text-[--color-primary]',
+                    ? 'bg-[rgba(200,146,42,0.07)] border-[rgba(200,146,42,0.2)] text-[#9B6E1A]'
+                    : 'bg-[rgba(13,61,35,0.06)] border-[rgba(13,61,35,0.15)] text-[--color-primary]',
               ].join(' ')}
             >
               <i className={hardConflictCount > 0 ? 'bi bi-exclamation-circle-fill' : softConflictCount > 0 ? 'bi bi-exclamation-triangle-fill' : 'bi bi-check-circle-fill'} />
@@ -305,7 +305,7 @@ export default function TimetablePage() {
             {/* Approval / status */}
             <button
               onClick={() => setShowApproval(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-[--color-primary] text-white hover:bg-[#1B5E20] transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold bg-[--color-primary] text-white hover:bg-[#062818] transition-colors"
             >
               <i className={timetable?.status === 'published' ? 'bi bi-check-circle-fill' : 'bi bi-shield-check'} />
               {timetable?.status === 'draft'     && 'Submit for Approval'}
@@ -434,7 +434,7 @@ export default function TimetablePage() {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800"
+            className="flex items-center gap-3 px-4 py-3 bg-[rgba(13,61,35,0.06)] border border-[rgba(13,61,35,0.15)] rounded-xl text-sm text-[#0D3D23]"
           >
             <i className="bi bi-lock-fill" />
             <span>This timetable is published. Editing is locked. Submit an Amendment Request to make changes.</span>

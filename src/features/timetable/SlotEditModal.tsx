@@ -171,7 +171,7 @@ export default function SlotEditModal({ slot, cls, onClose, onSave }: SlotEditMo
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800"
+                className="flex items-start gap-2 px-3 py-2 bg-[rgba(200,146,42,0.07)] border border-[rgba(200,146,42,0.2)] rounded-lg text-xs text-[#9B6E1A]"
               >
                 <i className="bi bi-exclamation-triangle-fill mt-0.5 shrink-0" />
                 <span>{warning}</span>

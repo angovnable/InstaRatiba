@@ -1,48 +1,62 @@
-// Badge — InstaRatiba Kenyan/EAC Theme
-// bi-circle-fill dot + label, Outfit 500, semantic colours
+// Badge — Emil Kowalski: no borders by default, just colour fields.
+// Tiny, precise. Never shouts.
 
 import React from 'react'
 
-type BadgeVariant = 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'gold'
+type BadgeVariant = 'success' | 'warning' | 'error' | 'info' | 'neutral'
 
 interface BadgeProps {
   variant?: BadgeVariant
   children: React.ReactNode
   icon?: string
-  dot?: boolean          // show coloured dot instead of icon
+  dot?: boolean
   className?: string
-  style?: React.CSSProperties
 }
 
-const variantStyles: Record<BadgeVariant, { bg: string; color: string; dot: string }> = {
-  success: { bg: 'rgba(13,61,35,0.08)',   color: '#0D3D23', dot: '#0D3D23' },
-  warning: { bg: 'rgba(200,146,42,0.10)', color: '#8A6010', dot: '#C8922A' },
-  error:   { bg: 'rgba(160,31,31,0.08)',  color: '#A01F1F', dot: '#A01F1F' },
-  info:    { bg: 'rgba(30,92,138,0.08)',  color: '#1E5C8A', dot: '#1E5C8A' },
-  neutral: { bg: 'rgba(122,140,130,0.10)', color: '#4A5E52', dot: '#7A8C82' },
-  gold:    { bg: 'rgba(200,146,42,0.10)', color: '#C8922A', dot: '#C8922A' },
+const STYLES: Record<BadgeVariant, React.CSSProperties> = {
+  success: { background: 'rgba(13,61,35,0.08)',   color: '#0D3D23' },
+  warning: { background: 'rgba(200,146,42,0.10)', color: '#9B6E1A' },
+  error:   { background: 'rgba(160,31,31,0.08)',  color: '#A01F1F' },
+  info:    { background: 'rgba(30,92,138,0.08)',  color: '#1E5C8A' },
+  neutral: { background: 'rgba(13,61,35,0.04)',   color: '#7A8C82' },
 }
 
-export default function Badge({ variant = 'neutral', children, icon, dot, className = '', style }: BadgeProps) {
-  const vs = variantStyles[variant]
+const DOT_COLORS: Record<BadgeVariant, string> = {
+  success: '#0D3D23',
+  warning: '#C8922A',
+  error:   '#A01F1F',
+  info:    '#1E5C8A',
+  neutral: '#7A8C82',
+}
 
+export default function Badge({ variant = 'neutral', children, icon, dot = false, className = '' }: BadgeProps) {
+  const s = STYLES[variant]
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${className}`}
+      className={className}
       style={{
-        background: vs.bg,
-        color: vs.color,
-        fontFamily: 'var(--font-ui)',
-        fontSize: '0.72rem',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        padding: '2px 8px',
+        borderRadius: 99,
+        fontFamily: "'Outfit', sans-serif",
         fontWeight: 500,
-        letterSpacing: '0.02em',
-        ...style,
+        fontSize: '0.68rem',
+        letterSpacing: '0.01em',
+        ...s,
       }}
     >
       {dot && (
-        <i className="bi-circle-fill text-[6px]" style={{ color: vs.dot }} />
+        <span style={{
+          width: 5,
+          height: 5,
+          borderRadius: '50%',
+          background: DOT_COLORS[variant],
+          flexShrink: 0,
+        }} />
       )}
-      {icon && !dot && <i className={`${icon} text-xs`} />}
+      {icon && <i className={icon} style={{ fontSize: '0.7rem' }} />}
       {children}
     </span>
   )

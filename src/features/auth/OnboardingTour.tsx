@@ -144,25 +144,25 @@ export default function OnboardingTour({
             {/* Icon */}
             <div style={{
               width: 56, height: 56, borderRadius: 16,
-              background: 'linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%)',
+              background: 'linear-gradient(135deg, #F7F5EF 0%, #EDE7D9 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               marginBottom: 16,
             }}>
-              <i className={`${current.icon} text-2xl`} style={{ color: '#2E7D32' }} />
+              <i className={`${current.icon} text-2xl`} style={{ color: '#0D3D23' }} />
             </div>
 
             {/* Title */}
             <h2 style={{
-              fontFamily: 'Montserrat, sans-serif', fontWeight: 700,
-              fontSize: '1.1rem', color: '#1B5E20', marginBottom: 10,
+              fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700,
+              fontSize: '1.1rem', color: '#062818', marginBottom: 10,
             }}>
               {current.title}
             </h2>
 
             {/* Body */}
             <p style={{
-              fontFamily: 'DM Sans, sans-serif', fontSize: '0.88rem',
-              color: '#546E7A', lineHeight: 1.65, marginBottom: 24,
+              fontFamily: 'Figtree, sans-serif', fontSize: '0.88rem',
+              color: '#7A8C82', lineHeight: 1.65, marginBottom: 24,
             }}>
               {current.body}
             </p>
@@ -174,7 +174,7 @@ export default function OnboardingTour({
                   key={i}
                   style={{
                     width: i === step ? 20 : 7, height: 7, borderRadius: 999,
-                    background: i === step ? '#2E7D32' : i < step ? '#A5D6A7' : '#E0E0E0',
+                    background: i === step ? '#0D3D23' : i < step ? '#EDE7D9' : '#EDE7D9',
                     transition: 'all 0.3s ease',
                   }}
                 />
@@ -188,8 +188,8 @@ export default function OnboardingTour({
                 onClick={onSkip}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem',
-                  color: '#9E9E9E', padding: '4px 0',
+                  fontFamily: 'Figtree, sans-serif', fontSize: '0.8rem',
+                  color: '#7A8C82', padding: '4px 0',
                 }}
               >
                 Skip tour
@@ -201,10 +201,10 @@ export default function OnboardingTour({
                   <button
                     onClick={onPrev}
                     style={{
-                      background: '#F5F5F5', border: 'none', borderRadius: 10,
+                      background: '#EDE7D9', border: 'none', borderRadius: 10,
                       padding: '9px 18px', cursor: 'pointer',
-                      fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
-                      fontSize: '0.85rem', color: '#546E7A',
+                      fontFamily: 'Figtree, sans-serif', fontWeight: 600,
+                      fontSize: '0.85rem', color: '#7A8C82',
                       display: 'flex', alignItems: 'center', gap: 6,
                     }}
                   >
@@ -216,9 +216,9 @@ export default function OnboardingTour({
                 <button
                   onClick={isLast ? handleFinish : onNext}
                   style={{
-                    background: '#2E7D32', border: 'none', borderRadius: 10,
+                    background: '#0D3D23', border: 'none', borderRadius: 10,
                     padding: '9px 22px', cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+                    fontFamily: 'Figtree, sans-serif', fontWeight: 700,
                     fontSize: '0.85rem', color: '#fff',
                     display: 'flex', alignItems: 'center', gap: 6,
                     boxShadow: '0 2px 10px rgba(46,125,50,0.28)',
@@ -236,8 +236,8 @@ export default function OnboardingTour({
             {/* Keyboard hint */}
             <p style={{
               textAlign: 'center', marginTop: 14,
-              fontSize: '0.68rem', color: '#BDBDBD',
-              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '0.68rem', color: '#EDE7D9',
+              fontFamily: 'Figtree, sans-serif',
             }}>
               Use ← → arrow keys to navigate · Esc to skip
             </p>

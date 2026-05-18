@@ -52,16 +52,16 @@ const LEVEL_LABELS: Record<SchoolLevel, string> = {
 }
 
 const LEVEL_TAB_COLOUR: Record<SchoolLevel, string> = {
-  lower_primary:    'bg-[#E8F5E9] text-[#2E7D32] border-[#A5D6A7]',
+  lower_primary:    'bg-[#F7F5EF] text-[#0D3D23] border-[#EDE7D9]',
   upper_primary:    'bg-[#E3F2FD] text-[#1565C0] border-[#90CAF9]',
   junior_secondary: 'bg-[#EDE7F6] text-[#512DA8] border-[#CE93D8]',
 }
 
 function morningIcon(code: string): { icon: string; colour: string; tip: string } | null {
   if (ALWAYS_MORNING_CODES.has(code))
-    return { icon: 'bi-sunrise-fill', colour: 'text-amber-500', tip: 'Always schedule in morning (Slots 1–4)' }
+    return { icon: 'bi-sunrise-fill', colour: 'text-[#C8922A]', tip: 'Always schedule in morning (Slots 1–4)' }
   if (PREFERRED_MORNING_CODES.has(code))
-    return { icon: 'bi-sunrise', colour: 'text-amber-400', tip: 'Preferably schedule in morning (Slots 1–5)' }
+    return { icon: 'bi-sunrise', colour: 'text-[#C8922A]', tip: 'Preferably schedule in morning (Slots 1–5)' }
   return null
 }
 
@@ -94,7 +94,7 @@ function PlacementGuideModal({ open, onClose }: { open: boolean; onClose: () => 
         {/* Morning priority */}
         <div>
           <h3 className="font-semibold text-[--color-primary] flex items-center gap-2 mb-2">
-            <i className="bi bi-sunrise-fill text-amber-500" /> Morning Priority Subjects
+            <i className="bi bi-sunrise-fill text-[#C8922A]" /> Morning Priority Subjects
           </h3>
           <div className="rounded-xl border border-[--color-accent-light] overflow-hidden">
             <table className="w-full text-xs">
@@ -108,7 +108,7 @@ function PlacementGuideModal({ open, onClose }: { open: boolean; onClose: () => 
               <tbody className="divide-y divide-[--color-surface]">
                 <tr>
                   <td className="px-3 py-2">
-                    <span className="flex items-center gap-1 text-amber-600 font-semibold">
+                    <span className="flex items-center gap-1 text-[#9B6E1A] font-semibold">
                       <i className="bi bi-sunrise-fill" /> Always Morning
                     </span>
                   </td>
@@ -117,7 +117,7 @@ function PlacementGuideModal({ open, onClose }: { open: boolean; onClose: () => 
                 </tr>
                 <tr>
                   <td className="px-3 py-2">
-                    <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                    <span className="flex items-center gap-1 text-[#C8922A] font-semibold">
                       <i className="bi bi-sunrise" /> Preferred Morning
                     </span>
                   </td>
@@ -150,7 +150,7 @@ function PlacementGuideModal({ open, onClose }: { open: boolean; onClose: () => 
               </thead>
               <tbody className="divide-y divide-[--color-surface]">
                 <tr>
-                  <td className="px-3 py-2 font-medium text-[#2E7D32]">Lower Primary</td>
+                  <td className="px-3 py-2 font-medium text-[#0D3D23]">Lower Primary</td>
                   <td className="px-3 py-2">Creative Arts & Craft</td>
                   <td className="px-3 py-2 text-[--color-muted]">Immediately before Break 1 or Break 2</td>
                 </tr>
@@ -250,8 +250,8 @@ function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange 
           {deviation !== 0 && (
             <span className={`text-[9px] px-1 py-px rounded font-semibold ${
               deviation > 0
-                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                : 'bg-red-50 text-red-700 border border-red-200'
+                ? 'bg-[rgba(200,146,42,0.07)] text-[#9B6E1A] border border-[rgba(200,146,42,0.2)]'
+                : 'bg-[rgba(160,31,31,0.06)] text-[#A01F1F] border border-[rgba(160,31,31,0.2)]'
             }`}>
               {deviation > 0 ? `+${deviation}` : deviation}
             </span>
@@ -283,7 +283,7 @@ function AllocationRow({ alloc, subject, eligibleTeachers, moeDefault, onChange 
             onChange={e => handleTeacherChange(e.target.value)}
             className={`text-xs rounded-lg border px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[--color-primary] transition-colors ${
               !alloc.teacher_id
-                ? 'border-[--color-warn] bg-amber-50 text-amber-800'
+                ? 'border-[--color-warn] bg-[rgba(200,146,42,0.07)] text-[#9B6E1A]'
                 : 'border-[--color-accent-light] bg-white text-[--color-text]'
             }`}
           >
@@ -346,14 +346,14 @@ function ClassAllocationCard({
           {/* Total lessons badge */}
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${
             overMax
-              ? 'bg-red-50 text-red-700 border-red-200'
+              ? 'bg-[rgba(160,31,31,0.06)] text-[#A01F1F] border-[rgba(160,31,31,0.2)]'
               : 'bg-[--color-surface] text-[--color-muted] border-[--color-accent-light]'
           }`}>
             {totalLessons}/{maxLessons} lessons
           </span>
           {/* Unassigned badge */}
           {unassigned > 0 && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[rgba(200,146,42,0.07)] text-[#9B6E1A] border border-[rgba(200,146,42,0.2)]">
               {unassigned} unassigned
             </span>
           )}
@@ -568,7 +568,7 @@ export default function AllocationPage() {
           </Button>
           <button
             onClick={() => setGuideOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[--color-info] bg-blue-50 border border-blue-200 hover:bg-blue-100 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1E5C8A] bg-[rgba(30,92,138,0.08)] border border-[rgba(30,92,138,0.2)] hover:bg-[rgba(30,92,138,0.14)] transition-colors"
           >
             <i className="bi bi-question-circle" /> Placement Guide
           </button>
@@ -601,14 +601,14 @@ export default function AllocationPage() {
           <motion.div
             key="over-max"
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-            className="mb-4 p-3 rounded-xl border border-[--color-error] bg-red-50 flex items-start gap-3"
+            className="mb-4 p-3 rounded-xl border border-[--color-error] bg-[rgba(160,31,31,0.06)] flex items-start gap-3"
           >
             <i className="bi bi-x-circle-fill text-[--color-error] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-red-800">
+              <p className="text-sm font-semibold text-[#A01F1F]">
                 {totalOverMax} class{totalOverMax !== 1 ? 'es' : ''} exceed maximum lessons/week
               </p>
-              <p className="text-xs text-red-700 mt-0.5">
+              <p className="text-xs text-[#A01F1F] mt-0.5">
                 Reduce lesson counts — this will block timetable generation.
               </p>
             </div>
@@ -618,14 +618,14 @@ export default function AllocationPage() {
           <motion.div
             key="unassigned"
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-            className="mb-4 p-3 rounded-xl border border-[--color-warn] bg-amber-50 flex items-start gap-3"
+            className="mb-4 p-3 rounded-xl border border-[--color-warn] bg-[rgba(200,146,42,0.07)] flex items-start gap-3"
           >
             <i className="bi bi-exclamation-triangle-fill text-[--color-warn] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">
+              <p className="text-sm font-semibold text-[#9B6E1A]">
                 {totalUnassigned} class{totalUnassigned !== 1 ? 'es have' : ' has'} unassigned subjects
               </p>
-              <p className="text-xs text-amber-700 mt-0.5">
+              <p className="text-xs text-[#9B6E1A] mt-0.5">
                 Every subject must have a teacher before generation.
               </p>
             </div>

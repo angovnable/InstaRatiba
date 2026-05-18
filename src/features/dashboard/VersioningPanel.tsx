@@ -56,9 +56,9 @@ export default function VersioningPanel({
   }
 
   const statusInfo: Record<Timetable['status'], { icon: string; label: string; cls: string }> = {
-    draft:     { icon: 'bi-pencil',               label: 'Draft',    cls: 'bg-gray-100 text-gray-600' },
-    pending:   { icon: 'bi-hourglass-split',       label: 'Pending',  cls: 'bg-amber-100 text-amber-700' },
-    published: { icon: 'bi-check-circle-fill',     label: 'Live',     cls: 'bg-green-100 text-green-700' },
+    draft:     { icon: 'bi-pencil',               label: 'Draft',    cls: 'bg-[#EDE7D9] text-[#7A8C82]' },
+    pending:   { icon: 'bi-hourglass-split',       label: 'Pending',  cls: 'bg-[rgba(200,146,42,0.10)] text-[#9B6E1A]' },
+    published: { icon: 'bi-check-circle-fill',     label: 'Live',     cls: 'bg-[#EDE7D9] text-[#0D3D23]' },
     archived:  { icon: 'bi-archive',               label: 'Archived', cls: 'bg-slate-100 text-slate-500' },
   }
 
@@ -104,7 +104,7 @@ export default function VersioningPanel({
                   <div className="flex flex-wrap items-center gap-2 mb-0.5">
                     <span className="font-semibold text-[--color-text] truncate">{tt.name}</span>
                     {isActive && (
-                      <span className="text-[10px] bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full">ACTIVE</span>
+                      <span className="text-[10px] bg-[#EDE7D9] text-[#0D3D23] font-semibold px-2 py-0.5 rounded-full">ACTIVE</span>
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[--color-muted]">
@@ -116,7 +116,7 @@ export default function VersioningPanel({
                       {new Date(tt.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                     {tt.approved_at && (
-                      <span><i className="bi bi-check2-all mr-1 text-green-600" />
+                      <span><i className="bi bi-check2-all mr-1 text-[#0D3D23]" />
                         Approved {new Date(tt.approved_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' })}
                       </span>
                     )}
@@ -128,7 +128,7 @@ export default function VersioningPanel({
                   {!isActive && (
                     <button
                       onClick={() => onActivate(tt)}
-                      className="text-xs border border-[--color-primary] text-[--color-primary] rounded-lg px-3 py-1.5 hover:bg-green-50 transition-colors"
+                      className="text-xs border border-[--color-primary] text-[--color-primary] rounded-lg px-3 py-1.5 hover:bg-[rgba(13,61,35,0.06)] transition-colors"
                     >
                       <i className="bi bi-lightning mr-1" />Use This
                     </button>
@@ -144,7 +144,7 @@ export default function VersioningPanel({
                     <button
                       onClick={() => onDelete(tt.id)}
                       title="Delete version"
-                      className="text-xs border border-red-200 text-red-500 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
+                      className="text-xs border border-[rgba(160,31,31,0.2)] text-[#A01F1F] rounded-lg px-3 py-1.5 hover:bg-[rgba(160,31,31,0.06)] transition-colors"
                     >
                       <i className="bi bi-trash" />
                     </button>

@@ -313,7 +313,7 @@ export default function RoomManagerPage() {
 
         {/* Info banner */}
         <div className="mb-5 flex gap-3 p-3 rounded-xl bg-[--color-surface] border border-[--color-accent-light] text-sm">
-          <i className="bi bi-info-circle text-[--color-info] text-lg flex-shrink-0 mt-0.5" />
+          <i className="bi bi-info-circle text-[#1E5C8A] text-lg flex-shrink-0 mt-0.5" />
           <p className="text-[--color-text]">
             Define special-purpose rooms (labs, computer rooms, etc.). The generator will
             prevent two classes from using the same room at the same time.

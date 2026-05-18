@@ -39,7 +39,7 @@ const LEVEL_LABELS: Record<SchoolLevel, string> = {
 }
 
 const LEVEL_COLOUR: Record<SchoolLevel, string> = {
-  lower_primary:    'bg-[#E8F5E9] text-[#2E7D32] border-[#A5D6A7]',
+  lower_primary:    'bg-[#F7F5EF] text-[#0D3D23] border-[#EDE7D9]',
   upper_primary:    'bg-[#E3F2FD] text-[#1565C0] border-[#90CAF9]',
   junior_secondary: 'bg-[#EDE7F6] text-[#512DA8] border-[#CE93D8]',
 }

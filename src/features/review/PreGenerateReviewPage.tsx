@@ -32,8 +32,8 @@ function ConflictRow({ conflict }: { conflict: Conflict }) {
         ${conflict.resolved
           ? 'bg-[--color-surface] border-[--color-accent-light] opacity-60'
           : conflict.severity === 'hard'
-            ? 'bg-red-50 border-red-200'
-            : 'bg-amber-50 border-amber-200'
+            ? 'bg-[rgba(160,31,31,0.06)] border-[rgba(160,31,31,0.2)]'
+            : 'bg-[rgba(200,146,42,0.07)] border-[rgba(200,146,42,0.2)]'
         }`}
     >
       <span className="mt-0.5 text-base shrink-0">
@@ -45,8 +45,8 @@ function ConflictRow({ conflict }: { conflict: Conflict }) {
         </p>
         <span className={`mt-1 inline-block text-xs font-medium px-2 py-0.5 rounded-full
           ${conflict.severity === 'hard'
-            ? 'bg-red-100 text-red-700'
-            : 'bg-amber-100 text-amber-700'
+            ? 'bg-[rgba(160,31,31,0.10)] text-[#A01F1F]'
+            : 'bg-[rgba(200,146,42,0.12)] text-[#9B6E1A]'
           }`}>
           {conflict.severity === 'hard' ? 'Hard — must fix' : 'Warning — review'}
         </span>
@@ -129,12 +129,12 @@ function ValidationSection({
             </span>
           )}
           {hardCount > 0 && (
-            <span className="flex items-center gap-1 text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-xs font-medium bg-[rgba(160,31,31,0.10)] text-[#A01F1F] px-2 py-0.5 rounded-full">
               <i className="bi bi-x-circle-fill" /> {hardCount}
             </span>
           )}
           {softCount > 0 && (
-            <span className="flex items-center gap-1 text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-xs font-medium bg-[rgba(200,146,42,0.12)] text-[#9B6E1A] px-2 py-0.5 rounded-full">
               <i className="bi bi-exclamation-triangle-fill" /> {softCount}
             </span>
           )}
@@ -212,10 +212,10 @@ function GeneratingOverlay({ progress }: { progress: number }) {
       <div className="w-24 h-24 mb-6">
         {/* Spinning ring */}
         <svg className="animate-spin w-full h-full" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#A5D6A7" strokeWidth="8" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke="#EDE7D9" strokeWidth="8" />
           <circle
             cx="50" cy="50" r="40" fill="none"
-            stroke="#2E7D32" strokeWidth="8"
+            stroke="#C8922A" strokeWidth="8"
             strokeDasharray="251"
             strokeDashoffset={251 - (251 * progress) / 100}
             strokeLinecap="round"
@@ -276,7 +276,7 @@ export default function PreGenerateReviewPage() {
 
       {/* Conflict summary bar */}
       <div className={`flex items-center justify-between px-5 py-4 rounded-xl border-2 
-        ${hardCount > 0 ? 'bg-red-50 border-red-300' : 'bg-green-50 border-[--color-primary]'}`}
+        ${hardCount > 0 ? 'bg-[rgba(160,31,31,0.06)] border-[rgba(160,31,31,0.25)]' : 'bg-[rgba(13,61,35,0.06)] border-[--color-primary]'}`}
       >
         <div className="flex items-center gap-3">
           {hardCount > 0

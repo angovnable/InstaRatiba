@@ -98,9 +98,9 @@ export default function SubstituteSwapModal({ timetableId, teachers, onClose }: 
     <Modal isOpen onClose={onClose} title="Substitute Teacher Swap" size="md">
       <div className="space-y-5 pt-2">
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-3">
-          <i className="bi bi-exclamation-triangle-fill text-amber-500 mt-0.5" />
-          <p className="text-sm text-amber-800">
+        <div className="bg-[rgba(200,146,42,0.07)] border border-[rgba(200,146,42,0.2)] rounded-xl px-4 py-3 flex items-start gap-3">
+          <i className="bi bi-exclamation-triangle-fill text-[#C8922A] mt-0.5" />
+          <p className="text-sm text-[#9B6E1A]">
             This creates a <strong>temporary override</strong> for the selected day only. The original timetable is preserved.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function SubstituteSwapModal({ timetableId, teachers, onClose }: 
               Available Substitute Teachers
             </label>
             {availableSubs.length === 0 ? (
-              <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 text-sm text-red-700">
+              <div className="bg-[rgba(160,31,31,0.06)] border border-[rgba(160,31,31,0.2)] rounded-xl px-3 py-2.5 text-sm text-[#A01F1F]">
                 <i className="bi bi-x-circle mr-1.5" />
                 No teachers are free during all affected slots on {selectedDay}.
               </div>

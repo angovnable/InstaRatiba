@@ -1,203 +1,166 @@
-// ============================================================
-// InstaRatiba — src/components/layout/PwaInstallBanner.tsx
-// Shows a dismissible install-app banner on the dashboard.
-// Handles Chrome/Edge prompt AND iOS manual instructions.
-// ============================================================
+// PwaInstallBanner — Emil Kowalski: dark card, gold action,
+// precise copy. No excessive illustration.
 
-import { useState }                from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { usePwaInstall }           from '@/hooks/usePwaInstall'
+import { usePwaInstall } from '@/hooks/usePwaInstall'
 
 const IOS_STEPS = [
-  { icon: 'bi-box-arrow-up',      text: 'Tap the Share button at the bottom of your browser.' },
-  { icon: 'bi-plus-square',       text: 'Scroll down and tap "Add to Home Screen".' },
-  { icon: 'bi-check2-circle',     text: 'Tap "Add" — InstaRatiba will appear on your home screen.' },
+  { icon: 'bi-box-arrow-up',  text: 'Tap Share in Safari.' },
+  { icon: 'bi-plus-square',   text: 'Scroll to "Add to Home Screen".' },
+  { icon: 'bi-check2-circle', text: 'Tap Add — done.' },
 ]
 
 export default function PwaInstallBanner() {
   const { status, isIos, promptInstall } = usePwaInstall()
-  const [dismissed, setDismissed]        = useState(false)
-  const [showIosModal, setShowIosModal]  = useState(false)
-  const [installing, setInstalling]      = useState(false)
-
+  const [dismissed, setDismissed] = useState(false)
+  const [showIos, setShowIos] = useState(false)
+  const [installing, setInstalling] = useState(false)
   const visible = !dismissed && (status === 'ready' || status === 'ios')
 
-  async function handleInstall() {
-    if (isIos) {
-      setShowIosModal(true)
-      return
-    }
+  async function install() {
+    if (isIos) { setShowIos(true); return }
     setInstalling(true)
-    const accepted = await promptInstall()
-    if (!accepted) setInstalling(false)
+    const ok = await promptInstall()
+    if (!ok) setInstalling(false)
   }
 
   return (
     <>
-      {/* ── Install banner ─────────────────────────────────── */}
       <AnimatePresence>
         {visible && (
           <motion.div
-            key="install-banner"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0  }}
-            exit={{   opacity: 0, y: 24  }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="
-              mx-4 mb-4 rounded-xl border border-[#A5D6A7]
-              bg-[#E8F5E9] p-4
-              flex flex-col sm:flex-row items-start sm:items-center gap-3
-              shadow-sm
-            "
-            role="region"
-            aria-label="Install InstaRatiba app"
+            key="pwa-banner"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+            style={{
+              margin: '0 16px 12px',
+              borderRadius: 12,
+              border: '1px solid rgba(200,146,42,0.18)',
+              background: '#0F1B14',
+              padding: '12px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              boxShadow: '0 2px 12px rgba(13,61,35,0.12)',
+            }}
           >
-            {/* Icon */}
-            <div className="w-12 h-12 rounded-xl bg-[#2E7D32] flex items-center justify-center flex-shrink-0">
-              <i className="bi bi-phone text-white text-2xl" aria-hidden="true" />
+            <div style={{
+              width: 36, height: 36, borderRadius: 9,
+              background: 'rgba(200,146,42,0.15)',
+              border: '1px solid rgba(200,146,42,0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <i className="bi-phone" style={{ color: '#C8922A', fontSize: '1rem' }} />
             </div>
-
-            {/* Text */}
-            <div className="flex-1 min-w-0">
-              <p className="font-display font-semibold text-[#1B5E20] text-sm">
-                Install InstaRatiba on your device
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, color: 'white', fontSize: '0.82rem', letterSpacing: '-0.01em' }}>
+                Install InstaRatiba
               </p>
-              <p className="text-[#37474F] text-xs mt-0.5 font-body">
-                Access timetables offline, get instant updates, and open in one tap —
-                no app store required.
+              <p style={{ fontFamily: "'Figtree', sans-serif", color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', marginTop: 1 }}>
+                Offline access · one-tap open
               </p>
             </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={handleInstall}
-                disabled={installing}
-                className="
-                  flex items-center gap-1.5
-                  bg-[#2E7D32] hover:bg-[#1B5E20]
-                  text-white text-sm font-body font-semibold
-                  px-4 py-2 rounded-lg
-                  transition-colors duration-150
-                  disabled:opacity-60
-                  focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/40
-                "
-              >
-                {installing
-                  ? <><i className="bi bi-arrow-repeat animate-spin" aria-hidden="true" /> Installing…</>
-                  : <><i className="bi bi-download" aria-hidden="true" /> Install App</>
-                }
-              </button>
-              <button
-                onClick={() => setDismissed(true)}
-                aria-label="Dismiss install prompt"
-                className="
-                  w-8 h-8 rounded-lg
-                  hover:bg-[#A5D6A7]/50
-                  flex items-center justify-center
-                  text-[#757575] hover:text-[#37474F]
-                  transition-colors duration-150
-                  focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/30
-                "
-              >
-                <i className="bi bi-x-lg text-sm" aria-hidden="true" />
-              </button>
-            </div>
+            <button
+              onClick={install}
+              disabled={installing}
+              style={{
+                padding: '6px 14px', borderRadius: 6, border: 'none',
+                background: '#C8922A', color: '#0F1B14',
+                fontFamily: "'Outfit', sans-serif", fontWeight: 600,
+                fontSize: '0.75rem', cursor: installing ? 'wait' : 'pointer',
+                flexShrink: 0, transition: 'filter 120ms',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(0.9)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}
+            >
+              {installing ? '…' : 'Install'}
+            </button>
+            <button
+              onClick={() => setDismissed(true)}
+              style={{
+                width: 24, height: 24, borderRadius: 5,
+                border: 'none', background: 'rgba(255,255,255,0.06)',
+                color: 'rgba(255,255,255,0.35)', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.7rem', flexShrink: 0,
+              }}
+            >
+              <i className="bi-x-lg" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── iOS instructions modal ─────────────────────────── */}
+      {/* iOS guide modal */}
       <AnimatePresence>
-        {showIosModal && (
+        {showIos && (
           <motion.div
-            key="ios-modal-backdrop"
-            className="fixed inset-0 z-[2000] bg-black/50 flex items-end sm:items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{   opacity: 0 }}
-            onClick={() => setShowIosModal(false)}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 2000,
+              background: 'rgba(12,24,16,0.6)', backdropFilter: 'blur(6px)',
+              display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+              padding: 16,
+            }}
+            onClick={() => setShowIos(false)}
           >
             <motion.div
-              className="
-                bg-white rounded-2xl shadow-lg w-full max-w-sm p-6
-                flex flex-col gap-5
-              "
-              initial={{ scale: 0.93, opacity: 0, y: 20 }}
-              animate={{ scale: 1,    opacity: 1, y: 0  }}
-              exit={{   scale: 0.93,  opacity: 0, y: 20 }}
-              transition={{ type: 'spring', stiffness: 340, damping: 26 }}
-              onClick={(e) => e.stopPropagation()}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="ios-modal-title"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              style={{
+                background: 'white', borderRadius: 16, padding: 24,
+                width: '100%', maxWidth: 360,
+                boxShadow: '0 0 0 1px rgba(13,61,35,0.06), 0 8px 40px rgba(13,61,35,0.18)',
+              }}
+              onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3
-                    id="ios-modal-title"
-                    className="font-display font-bold text-[#1B5E20] text-lg"
-                  >
-                    Add to Home Screen
-                  </h3>
-                  <p className="text-[#757575] text-sm mt-1 font-body">
-                    iOS Safari doesn't support automatic install.
-                    Follow these steps:
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowIosModal(false)}
-                  className="
-                    w-8 h-8 rounded-full bg-[#F5F5F5]
-                    flex items-center justify-center
-                    text-[#757575] flex-shrink-0
-                    focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/30
-                  "
-                  aria-label="Close"
-                >
-                  <i className="bi bi-x-lg text-sm" />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: '0.92rem', color: '#1C2B22', letterSpacing: '-0.014em' }}>
+                  Add to Home Screen
+                </h3>
+                <button onClick={() => setShowIos(false)} style={{
+                  width: 26, height: 26, borderRadius: 5,
+                  border: '1px solid #EDE7D9', background: 'white',
+                  color: '#7A8C82', cursor: 'pointer', fontSize: '0.72rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <i className="bi-x-lg" />
                 </button>
               </div>
-
-              <ol className="flex flex-col gap-4">
-                {IOS_STEPS.map((step, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="
-                      w-8 h-8 rounded-full bg-[#E8F5E9]
-                      flex items-center justify-center flex-shrink-0
-                      text-[#2E7D32]
-                    ">
-                      <i className={`${step.icon} text-base`} aria-hidden="true" />
+              <ol style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {IOS_STEPS.map((s, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <div style={{
+                      width: 28, height: 28, borderRadius: 7,
+                      background: 'rgba(200,146,42,0.09)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#C8922A', fontSize: '0.82rem', flexShrink: 0,
+                    }}>
+                      <i className={s.icon} />
                     </div>
-                    <p className="text-[#37474F] text-sm font-body leading-snug pt-1">
-                      {step.text}
+                    <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.82rem', color: '#1C2B22', paddingTop: 4, lineHeight: 1.5 }}>
+                      {s.text}
                     </p>
                   </li>
                 ))}
               </ol>
-
-              {/* Animated bounce arrow hinting at Safari share button */}
-              <div className="flex justify-center">
-                <div className="flex flex-col items-center gap-1">
-                  <motion.i
-                    className="bi bi-box-arrow-up text-2xl text-[#2E7D32]"
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-                    aria-hidden="true"
-                  />
-                  <p className="text-xs text-[#757575] font-body">Tap Share ↑ to begin</p>
-                </div>
-              </div>
-
               <button
-                onClick={() => { setShowIosModal(false); setDismissed(true) }}
-                className="
-                  w-full py-2.5 rounded-xl
-                  bg-[#2E7D32] hover:bg-[#1B5E20]
-                  text-white font-body font-semibold text-sm
-                  transition-colors duration-150
-                  focus:outline-none focus:ring-2 focus:ring-[#2E7D32]/40
-                "
+                onClick={() => { setShowIos(false); setDismissed(true) }}
+                style={{
+                  marginTop: 18, width: '100%', padding: '10px',
+                  borderRadius: 8, border: 'none',
+                  background: '#0D3D23', color: 'white',
+                  fontFamily: "'Outfit', sans-serif", fontWeight: 600,
+                  fontSize: '0.875rem', cursor: 'pointer', letterSpacing: '-0.01em',
+                }}
               >
                 Got it
               </button>

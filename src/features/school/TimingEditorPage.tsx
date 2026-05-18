@@ -131,7 +131,7 @@ function countDailyLessonSlots(t: LevelTiming): number {
 
 // ── Slot colour coding ─────────────────────────────────────
 const SLOT_COLOURS: Record<SlotInfo['type'], string> = {
-  assembly:   'bg-[#E8F5E9] border-[#A5D6A7] text-[#2E7D32]',
+  assembly:   'bg-[#F7F5EF] border-[#EDE7D9] text-[#0D3D23]',
   lesson:     'bg-white border-[--color-accent-light] text-[--color-text]',
   break:      'bg-[#ECEFF1] border-[#B0BEC5] text-[#546E7A]',
   lunch:      'bg-[#FFF8E1] border-[#FFE082] text-[#F57F17]',
@@ -285,7 +285,7 @@ export default function TimingEditorPage() {
                   </h3>
                   <button
                     onClick={() => update({ lunch_enabled: !timing.lunch_enabled })}
-                    className={`relative w-10 h-5 rounded-full transition-colors ${timing.lunch_enabled ? 'bg-[--color-primary]' : 'bg-gray-300'}`}
+                    className={`relative w-10 h-5 rounded-full transition-colors ${timing.lunch_enabled ? 'bg-[--color-primary]' : 'bg-[#EDE7D9]'}`}
                   >
                     <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${timing.lunch_enabled ? 'translate-x-5' : ''}`} />
                   </button>

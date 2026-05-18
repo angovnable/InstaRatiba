@@ -1,34 +1,169 @@
-// LandingPage — InstaRatiba Kenyan/EAC Theme
-// Dark Nairobi Night bg, Kenya flag stripe, Savanna Gold accents, Kenya map SVG watermark
+// LandingPage — Emil Kowalski design language
+// Every detail deliberate. No noise. Precise spring animations.
+// The unforgettable thing: the logo resolves letter by letter,
+// then a razor-thin gold underline draws itself under "Ratiba".
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 
-// ── Character-by-character logo ──────────────────────────────
-const INSTA = 'Insta'.split('')
-const RATIBA = 'Ratiba'.split('')
-
-// ── Feature strip data ───────────────────────────────────────
 const FEATURES = [
-  {
-    icon: 'bi-lightning-charge-fill',
-    title: 'Under 5 Minutes',
-    desc: 'Generate a fully validated CBC-compliant timetable faster than any manual method.',
-  },
-  {
-    icon: 'bi-patch-check-fill',
-    title: 'CBC-Compliant',
-    desc: 'Built to the exact MoE timetabling guidelines for Grade 1–9 comprehensive schools.',
-  },
-  {
-    icon: 'bi-file-earmark-arrow-down-fill',
-    title: 'Print-Ready Export',
-    desc: 'Export PDFs ready for notice boards, teachers, and admin offices.',
-  },
+  { n: '01', title: 'Under 5 minutes',   body: 'From blank screen to a fully validated CBC-compliant timetable.' },
+  { n: '02', title: 'CBC-Compliant',      body: 'Built to exact MoE timetabling guidelines for Grades 1–9.' },
+  { n: '03', title: 'Print-ready export', body: 'B&W PDFs sized for notice boards, staffrooms, and admin files.' },
 ]
 
-const TRUST_BADGES = ['CBC Compliant', 'Grade 1–9', 'Free to Start', 'Works Offline']
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const
+
+// Floating grid-cell decorations — Emil's signature minimal art
+function GridDecoration() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        overflow: 'hidden',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    >
+      {/* Subtle mesh glow — primary only */}
+      <div style={{
+        position: 'absolute',
+        width: 600,
+        height: 600,
+        borderRadius: '50%',
+        top: -200,
+        right: -100,
+        background: 'radial-gradient(circle, rgba(13,61,35,0.22) 0%, transparent 65%)',
+        filter: 'blur(1px)',
+      }} />
+      <div style={{
+        position: 'absolute',
+        width: 400,
+        height: 400,
+        borderRadius: '50%',
+        bottom: 0,
+        left: -80,
+        background: 'radial-gradient(circle, rgba(200,146,42,0.10) 0%, transparent 70%)',
+      }} />
+
+      {/* Timetable grid motif — top right */}
+      <div style={{
+        position: 'absolute',
+        top: 60,
+        right: 60,
+        opacity: 0.07,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 16px)',
+        gridTemplateRows: 'repeat(5, 16px)',
+        gap: 6,
+      }}>
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div key={i} style={{
+            width: 16, height: 16,
+            borderRadius: 2,
+            background: i % 7 === 0 || i % 11 === 0 ? '#C8922A' : '#FFFFFF',
+          }} />
+        ))}
+      </div>
+
+      {/* Kenya map silhouette — bottom right corner, barely visible */}
+      <svg
+        viewBox="0 0 200 220"
+        style={{
+          position: 'absolute',
+          bottom: 60,
+          right: -20,
+          width: 200,
+          height: 220,
+          opacity: 0.035,
+          fill: '#C8922A',
+        }}
+      >
+        <path d="M100 10L140 20L170 35L185 55L190 80L180 100L190 120L175 140L165 170L150 190L130 210L110 215L95 200L80 185L65 195L50 180L35 160L25 140L15 120L20 95L10 75L25 55L50 35L75 18Z" />
+      </svg>
+    </div>
+  )
+}
+
+// Magnetic button — Emil's signature interaction
+function MagneticButton({
+  children,
+  onClick,
+  variant = 'gold',
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  variant?: 'gold' | 'ghost'
+}) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const springX = useSpring(x, { stiffness: 350, damping: 25 })
+  const springY = useSpring(y, { stiffness: 350, damping: 25 })
+
+  function onMove(e: React.MouseEvent) {
+    if (!ref.current) return
+    const r = ref.current.getBoundingClientRect()
+    x.set((e.clientX - (r.left + r.width / 2)) * 0.25)
+    y.set((e.clientY - (r.top + r.height / 2)) * 0.25)
+  }
+  function onLeave() { x.set(0); y.set(0) }
+
+  const isGold = variant === 'gold'
+
+  return (
+    <motion.button
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      whileTap={{ scale: 0.96 }}
+      style={{
+        x: springX,
+        y: springY,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '12px 24px',
+        borderRadius: 8,
+        border: isGold ? 'none' : '1px solid rgba(255,255,255,0.2)',
+        background: isGold ? '#C8922A' : 'transparent',
+        color: isGold ? '#0F1B14' : 'rgba(255,255,255,0.85)',
+        fontFamily: "'Outfit', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.9rem',
+        letterSpacing: '-0.01em',
+        cursor: 'pointer',
+        backdropFilter: isGold ? 'none' : 'blur(8px)',
+        boxShadow: isGold
+          ? '0 1px 2px rgba(200,146,42,0.3), 0 4px 16px rgba(200,146,42,0.2)'
+          : 'none',
+        transition: 'background 150ms, box-shadow 150ms',
+      }}
+      onMouseEnter={e => {
+        if (isGold) {
+          (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(0.92)'
+        } else {
+          (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.06)'
+          ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.3)'
+        }
+      }}
+      onMouseLeave={e => {
+        if (isGold) {
+          (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)'
+        } else {
+          (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+          ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)'
+        }
+      }}
+      onClick={onClick}
+    >
+      {children}
+    </motion.button>
+  )
+}
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -36,99 +171,196 @@ export default function LandingPage() {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 300),
-      setTimeout(() => setPhase(2), 980),
-      setTimeout(() => setPhase(3), 1180),
-      setTimeout(() => setPhase(4), 1420),
-      setTimeout(() => setPhase(5), 1750),
+      setTimeout(() => setPhase(1), 100),   // logo starts
+      setTimeout(() => setPhase(2), 700),   // underline
+      setTimeout(() => setPhase(3), 950),   // tagline
+      setTimeout(() => setPhase(4), 1150),  // CTAs
+      setTimeout(() => setPhase(5), 1400),  // features
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
 
+  const INSTA  = 'Insta'.split('')
+  const RATIBA = 'Ratiba'.split('')
+
   return (
     <div
-      className="relative min-h-screen flex flex-col overflow-hidden"
-      style={{ background: '#0F1B14' }}
+      style={{
+        position: 'relative',
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        background: '#0C1810',
+        backgroundImage: 'none',
+        color: 'white',
+      }}
     >
-      {/* ── Kenyan flag top stripe ── */}
-      <div className="kenya-flag-stripe" />
+      <GridDecoration />
 
-      {/* ── Animated mesh gradient background ── */}
-      <MeshBackground />
+      {/* Top bar — minimal branding + nav */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.05, duration: 0.4 }}
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '20px 32px',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
+        }}
+      >
+        <div style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: '1rem',
+          letterSpacing: '-0.02em',
+        }}>
+          Insta<span style={{ color: '#C8922A' }}>Ratiba</span>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button
+            onClick={() => navigate('/login')}
+            style={{
+              padding: '7px 16px',
+              borderRadius: 6,
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'transparent',
+              color: 'rgba(255,255,255,0.7)',
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 500,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              transition: 'all 150ms',
+              letterSpacing: '-0.01em',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.25)'
+              ;(e.currentTarget as HTMLButtonElement).style.color = 'white'
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.12)'
+              ;(e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.7)'
+            }}
+          >
+            Sign in
+          </button>
+          <button
+            onClick={() => navigate('/register')}
+            style={{
+              padding: '7px 16px',
+              borderRadius: 6,
+              border: 'none',
+              background: '#C8922A',
+              color: '#0F1B14',
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              letterSpacing: '-0.01em',
+              transition: 'filter 150ms',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(0.92)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}
+          >
+            Get started
+          </button>
+        </div>
+      </motion.div>
 
-      {/* ── Kenya map SVG watermark ── */}
-      <KenyaMapWatermark />
-
-      {/* ── Hero section ── */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 pt-20 pb-8 text-center">
-
-        {/* Logo wordmark — char by char */}
-        <div className="mb-1" aria-label="InstaRatiba">
-          <div className="flex items-center justify-center flex-wrap gap-0">
+      {/* Hero */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '60px 24px 40px',
+          textAlign: 'center',
+        }}
+      >
+        {/* Logo wordmark — char-by-char with spring */}
+        <div style={{ marginBottom: 6 }}>
+          <h1
+            style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontWeight: 800,
+              fontSize: 'clamp(3rem, 9vw, 6rem)',
+              letterSpacing: '-0.04em',
+              lineHeight: 1,
+              display: 'flex',
+              alignItems: 'baseline',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              gap: 0,
+            }}
+          >
             {INSTA.map((char, i) => (
               <motion.span
-                key={`insta-${i}`}
-                initial={{ opacity: 0, scale: 0.8, y: 8 }}
-                animate={phase >= 1 ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{ delay: i * 0.08, duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 800,
-                  fontSize: 'clamp(2.2rem, 8vw, 4.2rem)',
-                  color: '#ffffff',
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.1,
-                  display: 'inline-block',
+                key={`i-${i}`}
+                initial={{ opacity: 0, y: 20, rotateX: -40 }}
+                animate={phase >= 1 ? { opacity: 1, y: 0, rotateX: 0 } : {}}
+                transition={{
+                  delay: i * 0.06,
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 20,
                 }}
+                style={{ color: 'white', display: 'inline-block' }}
               >
                 {char}
               </motion.span>
             ))}
             {RATIBA.map((char, i) => (
               <motion.span
-                key={`ratiba-${i}`}
-                initial={{ opacity: 0, scale: 0.8, y: 8 }}
-                animate={phase >= 1 ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{ delay: (INSTA.length + i) * 0.08, duration: 0.28, ease: [0.34, 1.56, 0.64, 1] }}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 800,
-                  fontSize: 'clamp(2.2rem, 8vw, 4.2rem)',
-                  color: '#C8922A',
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.1,
-                  display: 'inline-block',
+                key={`r-${i}`}
+                initial={{ opacity: 0, y: 20, rotateX: -40 }}
+                animate={phase >= 1 ? { opacity: 1, y: 0, rotateX: 0 } : {}}
+                transition={{
+                  delay: (INSTA.length + i) * 0.06,
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 20,
                 }}
+                style={{ color: '#C8922A', display: 'inline-block' }}
               >
                 {char}
               </motion.span>
             ))}
-          </div>
+          </h1>
 
-          {/* Animated underline — Savanna Gold → Rift Red */}
-          <div className="relative h-[4px] mt-2 overflow-hidden rounded-full mx-auto" style={{ maxWidth: 360 }}>
+          {/* The razor-thin underline that draws itself */}
+          <div style={{ position: 'relative', height: 2, marginTop: 10, maxWidth: 480, margin: '10px auto 0' }}>
             <motion.div
               initial={{ scaleX: 0, originX: 0 }}
-              animate={phase >= 3 ? { scaleX: 1 } : {}}
-              transition={{ duration: 0.32, ease: 'easeOut' }}
-              className="absolute inset-0 rounded-full"
-              style={{ background: 'linear-gradient(90deg, #C8922A, #A01F1F)' }}
+              animate={phase >= 2 ? { scaleX: 1 } : {}}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO, delay: 0.05 }}
+              style={{
+                height: 1.5,
+                borderRadius: 99,
+                background: 'linear-gradient(90deg, transparent, #C8922A 20%, #C8922A 80%, transparent)',
+              }}
             />
           </div>
         </div>
 
-        {/* by AG Computer Solutions */}
+        {/* Byline */}
         <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          animate={phase >= 2 ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
+          initial={{ opacity: 0 }}
+          animate={phase >= 2 ? { opacity: 1 } : {}}
+          transition={{ duration: 0.4 }}
           style={{
-            fontFamily: 'var(--font-body)',
+            fontFamily: "'Figtree', sans-serif",
             fontStyle: 'italic',
-            fontSize: '0.9rem',
-            color: 'rgba(200,146,42,0.7)',
-            marginTop: 8,
-            marginBottom: 4,
+            fontSize: '0.8rem',
+            color: 'rgba(200,146,42,0.55)',
+            marginTop: 14,
             letterSpacing: '0.02em',
           }}
         >
@@ -137,145 +369,158 @@ export default function LandingPage() {
 
         {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={phase >= 2 ? { opacity: 1 } : {}}
-          transition={{ delay: 0.1, duration: 0.4 }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={phase >= 3 ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
           style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)',
-            color: 'rgba(255,255,255,0.75)',
-            marginTop: 12,
-            maxWidth: 440,
+            fontFamily: "'Figtree', sans-serif",
+            fontSize: 'clamp(1rem, 2.5vw, 1.15rem)',
+            color: 'rgba(255,255,255,0.55)',
+            maxWidth: 460,
+            marginTop: 18,
+            lineHeight: 1.6,
+            letterSpacing: '-0.005em',
           }}
         >
-          Automated CBC-compliant school timetables — generated in minutes, not days.
+          Automated CBC-compliant school timetables —<br />
+          generated in minutes, not days.
         </motion.p>
 
-        {/* CTA buttons */}
+        {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={phase >= 4 ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="flex flex-col sm:flex-row gap-3 mt-8"
+          transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
+          style={{
+            display: 'flex',
+            gap: 10,
+            marginTop: 32,
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+          }}
         >
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/register')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: '#C8922A', color: '#0F1B14',
-              padding: '13px 28px', borderRadius: 10, border: 'none', cursor: 'pointer',
-              fontFamily: 'var(--font-ui)', fontWeight: 700,
-              fontSize: '0.95rem', letterSpacing: '0.01em',
-              boxShadow: '0 4px 20px rgba(200,146,42,0.35)',
-              transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#B57E21')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#C8922A')}
-          >
-            <i className="bi-rocket-takeoff-fill" />
-            Get Started — It's Free
-          </motion.button>
-
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/login')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'transparent', color: '#fff',
-              padding: '12px 28px', borderRadius: 10,
-              border: '1px solid rgba(255,255,255,0.25)', cursor: 'pointer',
-              fontFamily: 'var(--font-ui)', fontWeight: 600,
-              fontSize: '0.95rem', letterSpacing: '0.01em',
-              backdropFilter: 'blur(8px)',
-              transition: 'border-color 0.15s, background 0.15s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.45)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
-          >
-            <i className="bi-box-arrow-in-right" />
-            Sign In
-          </motion.button>
+          <MagneticButton onClick={() => navigate('/register')} variant="gold">
+            <i className="bi-rocket-takeoff-fill" style={{ fontSize: '0.85rem' }} />
+            Get started free
+          </MagneticButton>
+          <MagneticButton onClick={() => navigate('/login')} variant="ghost">
+            Sign in
+            <i className="bi-arrow-right" style={{ fontSize: '0.85rem' }} />
+          </MagneticButton>
         </motion.div>
 
-        {/* Trust badges */}
+        {/* Trust chips — exact Kowalski restrained style */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={phase >= 4 ? { opacity: 1 } : {}}
           transition={{ delay: 0.15, duration: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-3 mt-5"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: 8,
+            marginTop: 20,
+          }}
         >
-          {TRUST_BADGES.map((badge) => (
+          {['CBC Compliant', 'Grade 1–9', 'Works Offline', 'Free to Start'].map(t => (
             <span
-              key={badge}
+              key={t}
               style={{
-                background: 'rgba(200,146,42,0.10)',
-                border: '1px solid rgba(200,146,42,0.3)',
-                borderRadius: 999,
-                padding: '4px 14px',
-                fontSize: '0.72rem',
-                fontWeight: 600,
-                color: '#C8922A',
-                fontFamily: 'var(--font-ui)',
-                letterSpacing: '0.03em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '3px 10px',
+                borderRadius: 99,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                fontFamily: "'Outfit', sans-serif",
+                fontWeight: 500,
+                fontSize: '0.67rem',
+                color: 'rgba(255,255,255,0.45)',
+                letterSpacing: '0.04em',
               }}
             >
-              {badge}
+              <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#C8922A', flexShrink: 0 }} />
+              {t}
             </span>
           ))}
         </motion.div>
       </div>
 
-      {/* ── Feature strip ── */}
+      {/* Feature strip — Emil's numbered list aesthetic */}
       <AnimatePresence>
         {phase >= 5 && (
-          <div className="relative z-10 px-6 pb-20 max-w-4xl mx-auto w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              padding: '0 24px 48px',
+              maxWidth: 880,
+              margin: '0 auto',
+              width: '100%',
+            }}
+          >
+            {/* Hairline divider */}
+            <motion.div
+              initial={{ scaleX: 0, originX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
+              style={{
+                height: 1,
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.08) 20%, rgba(255,255,255,0.08) 80%, transparent)',
+                marginBottom: 36,
+              }}
+            />
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 1,
+            }}>
               {FEATURES.map((f, i) => (
                 <motion.div
-                  key={f.title}
-                  initial={{ opacity: 0, y: 20 }}
+                  key={f.n}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.35, ease: 'easeOut' }}
+                  transition={{ delay: i * 0.08, duration: 0.4, ease: EASE_OUT_EXPO }}
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(200,146,42,0.20)',
-                    borderRadius: 16,
-                    padding: '20px 18px',
-                    backdropFilter: 'blur(8px)',
+                    padding: '24px 28px',
+                    borderRight: i < FEATURES.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                   }}
                 >
-                  {/* Gold icon box */}
-                  <div
+                  <span
                     style={{
-                      width: 44, height: 44, borderRadius: 12,
-                      background: 'rgba(200,146,42,0.15)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '0.65rem',
+                      color: 'rgba(200,146,42,0.6)',
+                      letterSpacing: '0.04em',
+                      display: 'block',
                       marginBottom: 12,
                     }}
                   >
-                    <i className={`${f.icon} text-xl`} style={{ color: '#C8922A' }} />
-                  </div>
+                    {f.n}
+                  </span>
                   <h3
                     style={{
-                      fontFamily: 'var(--font-display)',
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
                       fontWeight: 700,
                       fontSize: '0.95rem',
-                      color: '#fff',
-                      marginBottom: 6,
+                      color: 'white',
+                      letterSpacing: '-0.018em',
+                      marginBottom: 8,
+                      lineHeight: 1.3,
                     }}
                   >
                     {f.title}
                   </h3>
                   <p
                     style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '0.82rem',
-                      color: 'rgba(255,255,255,0.6)',
-                      lineHeight: 1.55,
+                      fontFamily: "'Figtree', sans-serif",
+                      fontSize: '0.8rem',
+                      color: 'rgba(255,255,255,0.38)',
+                      lineHeight: 1.6,
                     }}
                   >
-                    {f.desc}
+                    {f.body}
                   </p>
                 </motion.div>
               ))}
@@ -283,78 +528,6 @@ export default function LandingPage() {
           </div>
         )}
       </AnimatePresence>
-    </div>
-  )
-}
-
-// ── Animated mesh gradient background ──────────────────────
-function MeshBackground() {
-  return (
-    <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      {/* Mau Forest orb */}
-      <motion.div
-        animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
-          width: 520, height: 520, top: -120, right: -100,
-          background: 'radial-gradient(circle, rgba(13,61,35,0.35) 0%, transparent 70%)',
-        }}
-      />
-      {/* Savanna Gold orb */}
-      <motion.div
-        animate={{ x: [0, -25, 0], y: [0, 30, 0], scale: [1, 1.05, 1] }}
-        transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-        style={{
-          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
-          width: 380, height: 380, bottom: 60, left: -80,
-          background: 'radial-gradient(circle, rgba(200,146,42,0.14) 0%, transparent 70%)',
-        }}
-      />
-      {/* Indian Ocean orb */}
-      <motion.div
-        animate={{ x: [0, 20, 0], y: [0, 15, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
-        style={{
-          position: 'absolute', borderRadius: '50%', pointerEvents: 'none',
-          width: 260, height: 260, top: '40%', left: '28%',
-          background: 'radial-gradient(circle, rgba(30,92,138,0.12) 0%, transparent 70%)',
-        }}
-      />
-    </div>
-  )
-}
-
-// ── Kenya map SVG silhouette watermark ──────────────────────
-function KenyaMapWatermark() {
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: 'absolute',
-        bottom: 40,
-        right: -20,
-        width: 280,
-        height: 280,
-        opacity: 0.04,
-        pointerEvents: 'none',
-        zIndex: 1,
-      }}
-    >
-      {/* Approximate Kenya outline as a simple SVG path */}
-      <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M100 10 L140 20 L165 45 L175 70 L170 95 L155 115 L160 140 L155 165
-             L140 185 L120 200 L100 210 L85 200 L70 185 L60 165 L55 140 L45 115
-             L30 95 L25 70 L35 45 L55 25 L80 12 Z"
-          fill="#C8922A"
-        />
-        {/* Coast indentation */}
-        <path
-          d="M155 115 L170 110 L185 115 L180 130 L165 135 L155 130 Z"
-          fill="#C8922A"
-        />
-      </svg>
     </div>
   )
 }

@@ -107,20 +107,20 @@ export default function LoginPage() {
         className="w-full flex items-center justify-center gap-3 mb-4"
       >
         {googleLoading ? (
-          <span className="w-4 h-4 border-2 border-[#ccc] border-t-[#4CAF50] rounded-full animate-spin" />
+          <span className="w-4 h-4 border-2 border-[#ccc] border-t-[#1A5C3A] rounded-full animate-spin" />
         ) : (
           <GoogleIcon />
         )}
-        <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.9rem', color: '#37474F' }}>
+        <span style={{ fontFamily: 'Figtree, sans-serif', fontWeight: 600, fontSize: '0.9rem', color: '#37474F' }}>
           Continue with Google
         </span>
       </button>
 
       {/* ── Divider ── */}
       <div className="flex items-center gap-3 my-4">
-        <div className="flex-1 h-px bg-[#E8F5E9]" />
-        <span style={{ fontSize: '0.75rem', color: '#9E9E9E', fontFamily: 'DM Sans, sans-serif' }}>or sign in with email</span>
-        <div className="flex-1 h-px bg-[#E8F5E9]" />
+        <div className="flex-1 h-px bg-[#F7F5EF]" />
+        <span style={{ fontSize: '0.75rem', color: '#7A8C82', fontFamily: 'Figtree, sans-serif' }}>or sign in with email</span>
+        <div className="flex-1 h-px bg-[#F7F5EF]" />
       </div>
 
       {/* ── Email/password form ── */}
@@ -168,7 +168,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowReset(true)}
-                style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ fontFamily: 'Figtree, sans-serif', fontSize: '0.8rem', color: '#1565C0', background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Forgot password?
               </button>
@@ -188,9 +188,9 @@ export default function LoginPage() {
               {isSubmitting ? 'Signing in…' : 'Sign In'}
             </button>
 
-            <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#757575', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+            <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#7A8C82', fontFamily: 'Figtree, sans-serif', marginTop: 12 }}>
               Don't have an account?{' '}
-              <Link to="/register" style={{ color: '#2E7D32', fontWeight: 600 }}>Create one</Link>
+              <Link to="/register" style={{ color: '#0D3D23', fontWeight: 600 }}>Create one</Link>
             </p>
           </motion.form>
         ) : (
@@ -205,7 +205,7 @@ export default function LoginPage() {
             className="space-y-4"
             noValidate
           >
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: '#546E7A', marginBottom: 8 }}>
+            <p style={{ fontFamily: 'Figtree, sans-serif', fontSize: '0.85rem', color: '#546E7A', marginBottom: 8 }}>
               Enter your email and we'll send a reset link.
             </p>
             <FloatingInput
@@ -225,7 +225,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowReset(false)}
-              style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.8rem', color: '#757575', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'center' }}
+              style={{ fontFamily: 'Figtree, sans-serif', fontSize: '0.8rem', color: '#7A8C82', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'center' }}
             >
               ← Back to sign in
             </button>
@@ -239,7 +239,7 @@ export default function LoginPage() {
 // ── Tab Switcher ─────────────────────────────────────────────
 function TabSwitcher({ active }: { active: 'login' | 'register' }) {
   return (
-    <div className="flex mb-5 relative" style={{ borderBottom: '2px solid #E8F5E9' }}>
+    <div className="flex mb-5 relative" style={{ borderBottom: '2px solid #F7F5EF' }}>
       {(['login', 'register'] as const).map((tab) => {
         const isActive = active === tab
         const label = tab === 'login' ? 'Sign In' : 'Create Account'
@@ -250,10 +250,10 @@ function TabSwitcher({ active }: { active: 'login' | 'register' }) {
             to={href}
             style={{
               flex: 1, textAlign: 'center', padding: '10px 0',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Figtree, sans-serif',
               fontWeight: isActive ? 700 : 500,
               fontSize: '0.9rem',
-              color: isActive ? '#2E7D32' : '#9E9E9E',
+              color: isActive ? '#0D3D23' : '#7A8C82',
               textDecoration: 'none',
               transition: 'color 0.2s',
               position: 'relative',
@@ -265,7 +265,7 @@ function TabSwitcher({ active }: { active: 'login' | 'register' }) {
                 layoutId="tab-underline"
                 style={{
                   position: 'absolute', bottom: -2, left: 0, right: 0,
-                  height: 2, background: '#2E7D32', borderRadius: 999,
+                  height: 2, background: '#0D3D23', borderRadius: 999,
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
@@ -303,12 +303,12 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
             width: '100%',
             padding: '18px 14px 8px',
             borderRadius: 10,
-            border: `1.5px solid ${error ? '#E53935' : focused ? '#2E7D32' : '#E0E0E0'}`,
+            border: `1.5px solid ${error ? '#A01F1F' : focused ? '#0D3D23' : '#E0E0E0'}`,
             outline: 'none',
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: 'Figtree, sans-serif',
             fontSize: '0.9rem',
             color: '#37474F',
-            background: focused ? '#fff' : '#FAFAFA',
+            background: focused ? '#fff' : '#F7F5EF',
             transition: 'border 0.2s, background 0.2s',
             boxSizing: 'border-box',
           }}
@@ -321,8 +321,8 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
             top: focused || hasValue ? 6 : '50%',
             transform: focused || hasValue ? 'translateY(0)' : 'translateY(-50%)',
             fontSize: focused || hasValue ? '0.7rem' : '0.88rem',
-            color: error ? '#E53935' : focused ? '#2E7D32' : '#9E9E9E',
-            fontFamily: 'DM Sans, sans-serif',
+            color: error ? '#A01F1F' : focused ? '#0D3D23' : '#7A8C82',
+            fontFamily: 'Figtree, sans-serif',
             fontWeight: focused || hasValue ? 600 : 400,
             transition: 'all 0.2s',
             pointerEvents: 'none',
@@ -335,7 +335,7 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
           <motion.p
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ fontSize: '0.72rem', color: '#E53935', marginTop: 4, fontFamily: 'DM Sans, sans-serif', paddingLeft: 2 }}
+            style={{ fontSize: '0.72rem', color: '#A01F1F', marginTop: 4, fontFamily: 'Figtree, sans-serif', paddingLeft: 2 }}
           >
             <i className="bi-exclamation-circle me-1" />{error}
           </motion.p>
@@ -369,12 +369,12 @@ const googleBtnStyle: React.CSSProperties = {
   boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
 }
 const submitBtnStyle: React.CSSProperties = {
-  background: '#2E7D32',
+  background: '#0D3D23',
   color: '#fff',
   border: 'none',
   borderRadius: 10,
   padding: '13px 0',
-  fontFamily: 'DM Sans, sans-serif',
+  fontFamily: 'Figtree, sans-serif',
   fontWeight: 700,
   fontSize: '0.92rem',
   letterSpacing: '0.03em',

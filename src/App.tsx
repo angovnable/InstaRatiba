@@ -98,14 +98,25 @@ function Root() {
         />
       )}
 
-      {/* ── Toast notifications ─────────────────────────── */}
+      {/* ── Toast notifications — Emil: tight, precise, no noise ── */}
       <Toaster
-        position="top-right"
+        position="bottom-right"
+        offset={60}
         richColors
         closeButton
+        gap={8}
         toastOptions={{
           style: {
-            fontFamily: 'DM Sans, sans-serif',
+            fontFamily: "'Figtree', sans-serif",
+            fontSize: '0.84rem',
+            boxShadow: '0 1px 3px rgba(13,61,35,0.06), 0 4px 16px rgba(13,61,35,0.08)',
+            border: '1px solid #EDE7D9',
+            borderRadius: 10,
+            padding: '10px 14px',
+          },
+          descriptionStyle: {
+            fontFamily: "'Figtree', sans-serif",
+            fontSize: '0.76rem',
           },
         }}
       />

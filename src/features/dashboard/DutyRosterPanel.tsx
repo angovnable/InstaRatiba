@@ -18,7 +18,7 @@ const DAYS   = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 const DUTIES = [
   { key: 'assembly',  label: 'Morning Assembly', icon: 'bi-sunrise',      color: '#1565C0' },
   { key: 'lunch',     label: 'Lunch Supervision', icon: 'bi-cup-hot',     color: '#E65100' },
-  { key: 'gate',      label: 'Gate Duty',          icon: 'bi-door-open',  color: '#2E7D32' },
+  { key: 'gate',      label: 'Gate Duty',          icon: 'bi-door-open',  color: '#0D3D23' },
 ]
 
 interface Props {
@@ -113,7 +113,7 @@ export default function DutyRosterPanel({ timetableId, teachers }: Props) {
           <button
             onClick={handleAutoGenerate}
             disabled={isGenerating || !timetableId}
-            className="text-sm border border-[--color-accent-light] text-[--color-primary] rounded-xl px-4 py-2 hover:bg-green-50 transition-colors disabled:opacity-60"
+            className="text-sm border border-[--color-accent-light] text-[--color-primary] rounded-xl px-4 py-2 hover:bg-[rgba(13,61,35,0.06)] transition-colors disabled:opacity-60"
           >
             {isGenerating
               ? <><i className="bi bi-arrow-repeat animate-spin mr-1.5" />Generating…</>

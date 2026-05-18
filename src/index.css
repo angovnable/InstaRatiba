@@ -2,292 +2,446 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Google Fonts loaded via index.html ── */
+/* ══════════════════════════════════════════════════════════════
+   InstaRatiba — Emil Kowalski Design System
+   Kenyan/EAC palette × obsessive micro-detail
+   ══════════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
-   CSS DESIGN TOKENS — InstaRatiba Kenyan/EAC Theme
-   ═══════════════════════════════════════════════════════════ */
-:root {
-  /* Colour palette */
-  --color-primary:       #0D3D23;   /* Mau Forest */
-  --color-primary-hover: #1A5C3A;
-  --color-gold:          #C8922A;   /* Savanna Gold */
-  --color-gold-hover:    #B57E21;
-  --color-red:           #A01F1F;   /* Rift Red */
-  --color-surface:       #F7F5EF;   /* Kilimanjaro Ivory */
-  --color-dark:          #0F1B14;   /* Nairobi Night */
-  --color-ocean:         #1E5C8A;   /* Indian Ocean */
-  --color-text:          #1C2B22;   /* Charcoal */
-  --color-muted:         #7A8C82;   /* Dust */
-  --color-accent-light:  #EDE7D9;   /* Savanna Mist */
-  --color-white:         #FFFFFF;
+@layer base {
+  :root {
+    /* ── Colour palette ── */
+    --color-primary:      #0D3D23;
+    --color-gold:         #C8922A;
+    --color-red:          #A01F1F;
+    --color-surface:      #F7F5EF;
+    --color-dark:         #0F1B14;
+    --color-ocean:        #1E5C8A;
+    --color-text:         #1C2B22;
+    --color-muted:        #7A8C82;
+    --color-accent-light: #EDE7D9;
+    --color-white:        #FFFFFF;
 
-  /* Semantic aliases */
-  --color-primary-dark:  #0D3D23;
-  --color-mid:           #1A5C3A;
-  --color-bg:            #F7F5EF;
-  --color-error:         #A01F1F;
-  --color-warn:          #C8922A;
-  --color-info:          #1E5C8A;
+    /* Legacy aliases */
+    --color-primary-dark: #062818;
+    --color-mid:          #1A5C3A;
+    --color-warn:         #C8922A;
+    --color-error:        #A01F1F;
+    --color-info:         #1E5C8A;
+    --color-bg:           #F7F5EF;
 
-  /* Typography */
-  --font-display: 'Plus Jakarta Sans', sans-serif;
-  --font-ui:      'Outfit', sans-serif;
-  --font-body:    'Figtree', sans-serif;
-  --font-mono:    'Space Mono', monospace;
+    /* ── Typography ── */
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-ui:      'Outfit', sans-serif;
+    --font-body:    'Figtree', sans-serif;
+    --font-mono:    'Space Mono', monospace;
+    --font-heading: var(--font-display);
 
-  /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
+    /* ── Spacing scale (8pt grid) ── */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  20px;
+    --space-6:  24px;
+    --space-8:  32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
 
-  /* Shadows — green-tinted, not grey */
-  --shadow-sm: 0 1px 3px rgba(13,61,35,0.06);
-  --shadow-md: 0 2px 12px rgba(13,61,35,0.06);
-  --shadow-lg: 0 8px 24px rgba(13,61,35,0.10);
-  --shadow-gold: 0 8px 24px rgba(200,146,42,0.12);
-  --shadow-btn:  0 4px 14px rgba(13,61,35,0.30);
+    /* ── Border radius — Emil uses very tight radii ── */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
 
-  /* Layout */
-  --sidebar-w: 240px;
-  --sidebar-collapsed-w: 64px;
-  --navbar-h:  60px;
-  --footer-h:  52px;
+    /* ── Shadows — precise, tinted, layered ── */
+    --shadow-xs: 0 1px 2px rgba(13,61,35,0.04), 0 1px 6px rgba(13,61,35,0.03);
+    --shadow-sm: 0 1px 3px rgba(13,61,35,0.06), 0 4px 12px rgba(13,61,35,0.05);
+    --shadow-md: 0 2px 8px rgba(13,61,35,0.06), 0 8px 24px rgba(13,61,35,0.08);
+    --shadow-lg: 0 4px 16px rgba(13,61,35,0.08), 0 16px 48px rgba(13,61,35,0.10);
+    --shadow-gold: 0 2px 8px rgba(200,146,42,0.12), 0 8px 24px rgba(200,146,42,0.10);
 
-  --transition: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* ── Easing curves — Emil's signature spring-like easings ── */
+    --ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out:     cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-anticipate: cubic-bezier(0.36, 0, 0.66, -0.56);
+
+    /* ── Transitions ── */
+    --t-fast:   120ms var(--ease-out-expo);
+    --t-base:   200ms var(--ease-out-expo);
+    --t-slow:   320ms var(--ease-out-expo);
+    --t-slower: 500ms var(--ease-out-expo);
+
+    /* ── Layout ── */
+    --sidebar-w: 240px;
+    --navbar-h:  56px;
+    --footer-h:  48px;
+  }
+
+  /* Dark mode */
+  [data-theme="dark"] {
+    --color-surface:      #0E1610;
+    --color-bg:           #0E1610;
+    --color-text:         #E8E4D8;
+    --color-muted:        #6B7B6F;
+    --color-accent-light: rgba(200,146,42,0.12);
+    --color-white:        #141F16;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text);
+    background: var(--color-surface);
+    /* Subtle grain texture — Emil's signature touch */
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 1px 1px, rgba(13,61,35,0.025) 1px, transparent 0);
+    background-size: 200px 200px, 28px 28px;
+  }
+
+  /* Kenyan flag stripe — 4px pinstripe at very top */
+  body::before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right,
+      #1a1a1a 0%   25%,
+      #A01F1F 25%  50%,
+      #0D3D23 50%  75%,
+      #F7F5EF 75% 100%
+    );
+    z-index: 9999;
+    pointer-events: none;
+  }
 }
 
-/* ── Dark mode overrides ── */
-.dark {
-  --color-surface:      #111814;
-  --color-bg:           #111814;
-  --color-white:        #111814;
-  --color-text:         #E8E4D8;
-  --color-muted:        #6B7B6F;
-  --color-accent-light: rgba(200,146,42,0.15);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   BASE RESETS
-   ═══════════════════════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ── Premium dot-grid page texture ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: radial-gradient(circle, #0D3D23 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.03;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SCROLLBAR
-   ═══════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+/* ══════════════════════════════════════════════════════════════
+   SCROLLBAR — ultra-thin, barely there
+   ══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-accent-light); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+::-webkit-scrollbar-thumb {
+  background: rgba(13,61,35,0.12);
+  border-radius: 99px;
+  transition: background var(--t-base);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(200,146,42,0.4); }
 
-/* ═══════════════════════════════════════════════════════════
-   FOCUS RING
-   ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   FOCUS — Emil-style: visible but not ugly
+   ══════════════════════════════════════════════════════════════ */
 :focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(13,61,35,0.12);
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   TYPOGRAPHY SCALE
-   ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   SELECTION
+   ══════════════════════════════════════════════════════════════ */
+::selection {
+  background: rgba(200,146,42,0.2);
+  color: var(--color-text);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ══════════════════════════════════════════════════════════════ */
 .font-display { font-family: var(--font-display); }
 .font-ui      { font-family: var(--font-ui); }
 .font-body    { font-family: var(--font-body); }
 .font-mono    { font-family: var(--font-mono); }
 
-.text-h1 {
+/* ── Text styles — Emil's exact proportions ── */
+.text-display {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2rem;
-  color: var(--color-primary);
-  line-height: 1.2;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
 }
-
+.text-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
 .text-h2 {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--color-primary);
-  line-height: 1.3;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
-
 .text-h3 {
   font-family: var(--font-ui);
   font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--color-text);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
   line-height: 1.4;
 }
-
-.text-body    { font-family: var(--font-body); font-size: 0.95rem; color: var(--color-text); }
-.text-label   { font-family: var(--font-ui); font-size: 0.8rem; font-weight: 500; color: var(--color-muted); }
-.text-caption { font-family: var(--font-body); font-size: 0.75rem; color: var(--color-muted); }
-
-/* ═══════════════════════════════════════════════════════════
-   UTILITY CARD CLASS
-   ═══════════════════════════════════════════════════════════ */
-.ir-card {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--color-accent-light);
+.text-label {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.text-caption {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-muted);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SKELETON SHIMMER — warm Savanna Mist palette
-   ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   CARD — Emil's approach: precise border, no heavy shadow
+   ══════════════════════════════════════════════════════════════ */
+.ir-card {
+  background: white;
+  border: 1px solid var(--color-accent-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+.ir-card-hover {
+  transition: transform var(--t-base), box-shadow var(--t-base), border-color var(--t-base);
+}
+.ir-card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(200,146,42,0.3);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SKELETON — warm ivory shimmer, not cold grey
+   ══════════════════════════════════════════════════════════════ */
 .skeleton {
   background: linear-gradient(
     90deg,
     #EDE7D9 25%,
-    #F5F0E8 50%,
+    #F5F0E6 50%,
     #EDE7D9 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
   border-radius: var(--radius-md);
 }
-
-@keyframes shimmer {
-  to { background-position: -200% 0; }
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PAGE TRANSITIONS (Framer Motion handles JS, these are CSS fallbacks)
-   ═══════════════════════════════════════════════════════════ */
-.page-enter        { opacity: 0; transform: translateY(12px); }
-.page-enter-active { opacity: 1; transform: none; transition: opacity 220ms ease-out, transform 220ms ease-out; }
-.page-exit         { opacity: 1; transform: none; }
-.page-exit-active  { opacity: 0; transform: translateY(-8px); transition: opacity 180ms ease-in, transform 180ms ease-in; }
-
-/* ═══════════════════════════════════════════════════════════
-   SONNER TOAST OVERRIDES
-   ═══════════════════════════════════════════════════════════ */
-[data-sonner-toaster] {
-  font-family: var(--font-body) !important;
-}
-
-[data-sonner-toast] {
-  background: #fff !important;
-  border: none !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: 0 4px 20px rgba(13,61,35,0.10) !important;
-  padding: 12px 16px !important;
-}
-
-[data-sonner-toast][data-type="success"] {
-  border-left: 4px solid var(--color-primary) !important;
-}
-[data-sonner-toast][data-type="error"] {
-  border-left: 4px solid var(--color-red) !important;
-}
-[data-sonner-toast][data-type="warning"] {
-  border-left: 4px solid var(--color-gold) !important;
-}
-[data-sonner-toast][data-type="info"] {
-  border-left: 4px solid var(--color-ocean) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MOBILE BOTTOM TAB BAR
-   ═══════════════════════════════════════════════════════════ */
-.mobile-tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: var(--color-dark);
-  display: flex;
+/* ══════════════════════════════════════════════════════════════
+   BUTTON UTILITIES — Emil's precise tactile feel
+   ══════════════════════════════════════════════════════════════ */
+.btn-base {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-around;
-  z-index: 300;
-  border-top: 1px solid rgba(200,146,42,0.15);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.mobile-tab-bar a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  color: rgba(255,255,255,0.45);
+  justify-content: center;
+  gap: 6px;
   font-family: var(--font-ui);
-  font-size: 9px;
-  font-weight: 500;
-  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  border: none;
+  cursor: pointer;
   position: relative;
-  padding: 6px 12px;
-  transition: color 0.15s;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    transform var(--t-fast),
+    box-shadow var(--t-base),
+    background var(--t-base),
+    color var(--t-base);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
+.btn-base:active { transform: scale(0.975); }
+.btn-base:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.mobile-tab-bar a.active {
-  color: var(--color-gold);
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  box-shadow: 0 1px 2px rgba(13,61,35,0.16), 0 2px 8px rgba(13,61,35,0.12);
 }
-
-.mobile-tab-bar a.active::before {
+.btn-primary::after {
   content: '';
   position: absolute;
-  top: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 3px;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+.btn-primary:hover::after { opacity: 0.06; }
+.btn-primary:hover {
+  box-shadow: 0 2px 4px rgba(13,61,35,0.2), 0 4px 16px rgba(13,61,35,0.16);
+}
+
+.btn-gold {
   background: var(--color-gold);
-  border-radius: 0 0 3px 3px;
+  color: #0F1B14;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  box-shadow: 0 1px 2px rgba(200,146,42,0.2), 0 2px 8px rgba(200,146,42,0.14);
+}
+.btn-gold:hover {
+  filter: brightness(0.94);
+  box-shadow: 0 2px 4px rgba(200,146,42,0.24), 0 4px 16px rgba(200,146,42,0.18);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   KENYAN FLAG STRIPE (landing page top accent)
-   ═══════════════════════════════════════════════════════════ */
-.kenya-flag-stripe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(
-    to right,
-    #000000 0% 25%,
-    #BB0000 25% 50%,
-    #006600 50% 75%,
-    #FFFFFF 75% 100%
-  );
-  z-index: 20;
+.btn-secondary {
+  background: var(--color-accent-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+}
+.btn-secondary:hover { background: #E4DDD0; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-accent-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 18px;
+}
+.btn-ghost:hover {
+  background: var(--color-accent-light);
+  border-color: rgba(13,61,35,0.2);
 }
 
-/* ═══════════════════════════════════════════════════════════
+.btn-danger {
+  background: var(--color-red);
+  color: white;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+}
+.btn-danger:hover { filter: brightness(1.08); }
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-muted);
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  font-size: 1rem;
+}
+.btn-icon:hover {
+  background: var(--color-accent-light);
+  color: var(--color-text);
+  border-color: rgba(13,61,35,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INPUT — Emil's clean, tight form aesthetic
+   ══════════════════════════════════════════════════════════════ */
+.ir-input {
+  width: 100%;
+  background: white;
+  border: 1.5px solid var(--color-accent-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  outline: none;
+}
+.ir-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(13,61,35,0.08);
+}
+.ir-input::placeholder { color: var(--color-muted); }
+.ir-input.error {
+  border-color: var(--color-red);
+  box-shadow: 0 0 0 3px rgba(160,31,31,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PAGE TRANSITIONS — Emil's signature: fast, precise
+   ══════════════════════════════════════════════════════════════ */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: none;
+  transition: opacity 200ms var(--ease-out-expo), transform 200ms var(--ease-out-expo);
+}
+.page-exit { opacity: 1; }
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 140ms var(--ease-in-out);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE BOTTOM NAV
+   ══════════════════════════════════════════════════════════════ */
+.mobile-tab-bar { display: none; }
+@media (max-width: 767px) {
+  .mobile-tab-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
+    background: var(--color-dark);
+    border-top: 1px solid rgba(200,146,42,0.15);
+    z-index: 300;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .sidebar-desktop { display: none !important; }
+  .main-with-sidebar {
+    margin-left: 0 !important;
+    padding-bottom: 72px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SECTION LABEL UTILITY
+   ══════════════════════════════════════════════════════════════ */
+.section-heading {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════
    PRINT
-   ═══════════════════════════════════════════════════════════ */
+   ══════════════════════════════════════════════════════════════ */
 @media print {
   .no-print { display: none !important; }
-  body { background: white; color: black; }
-  body::before { display: none; }
-  .ir-card { box-shadow: none; border: 1px solid #000; }
+  body { background: white; color: black; background-image: none; }
 }

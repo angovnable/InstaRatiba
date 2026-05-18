@@ -9,20 +9,21 @@ import { getSubjectByCode } from '@/lib/cbc/subjects'
 
 // ── §9.2 Subject group colour map ────────────────────────────
 
+// ── New Kenyan palette — semantic category colours ─────────────
 const SUBJECT_COLOURS: Record<string, { bg: string; text: string; border: string }> = {
-  languages:   { bg: '#E3F2FD', text: '#1565C0', border: '#90CAF9' },
-  mathematics: { bg: '#E8F5E9', text: '#2E7D32', border: '#A5D6A7' },
-  sciences:    { bg: '#E0F2F1', text: '#00695C', border: '#80CBC4' },
-  humanities:  { bg: '#F3E5F5', text: '#6A1B9A', border: '#CE93D8' },
-  creative:    { bg: '#FBE9E7', text: '#E65100', border: '#FFAB91' },
-  phe:         { bg: '#FFF8E1', text: '#F57F17', border: '#FFE082' },
-  practical:   { bg: '#F1F8E9', text: '#558B2F', border: '#C5E1A5' },
-  technology:  { bg: '#ECEFF1', text: '#37474F', border: '#B0BEC5' },
-  ppi:         { bg: '#FFFDE7', text: '#F9A825', border: '#FFF176' },
-  assembly:    { bg: '#E8F5E9', text: '#2E7D32', border: '#A5D6A7' },
-  break:       { bg: '#F5F5F5', text: '#9E9E9E', border: '#E0E0E0' },
-  non_formal:  { bg: '#EDE7F6', text: '#512DA8', border: '#CE93D8' },
-  free:        { bg: '#F9FBE7', text: '#827717', border: '#F0F4C3' },
+  languages:   { bg: 'rgba(30,92,138,0.09)',   text: '#1E5C8A', border: 'rgba(30,92,138,0.2)'   }, // Indian Ocean
+  mathematics: { bg: 'rgba(13,61,35,0.09)',    text: '#0D3D23', border: 'rgba(13,61,35,0.2)'    }, // Mau Forest
+  sciences:    { bg: 'rgba(13,61,35,0.07)',    text: '#1A5C3A', border: 'rgba(13,61,35,0.15)'   }, // Mau Forest lighter
+  humanities:  { bg: 'rgba(200,146,42,0.10)',  text: '#9B6E1A', border: 'rgba(200,146,42,0.22)' }, // Savanna Gold
+  creative:    { bg: 'rgba(160,31,31,0.08)',   text: '#A01F1F', border: 'rgba(160,31,31,0.18)'  }, // Rift Red
+  phe:         { bg: 'rgba(200,146,42,0.07)',  text: '#B07A22', border: 'rgba(200,146,42,0.15)' }, // gold lighter
+  practical:   { bg: 'rgba(13,61,35,0.06)',    text: '#2A5C3F', border: 'rgba(13,61,35,0.12)'   }, // forest lighter
+  technology:  { bg: 'rgba(30,92,138,0.07)',   text: '#2A5F82', border: 'rgba(30,92,138,0.15)'  }, // ocean lighter
+  ppi:         { bg: 'rgba(200,146,42,0.09)',  text: '#9B6E1A', border: 'rgba(200,146,42,0.2)'  }, // gold — PPI/Religious
+  assembly:    { bg: 'rgba(13,61,35,0.08)',    text: '#0D3D23', border: 'rgba(13,61,35,0.18)'   }, // forest
+  break:       { bg: 'rgba(200,146,42,0.08)',  text: '#9B6E1A', border: 'rgba(200,146,42,0.18)' }, // gold — break
+  non_formal:  { bg: 'rgba(200,146,42,0.06)',  text: '#9B6E1A', border: 'rgba(200,146,42,0.15)' }, // gold lighter
+  free:        { bg: '#F7F5EF',                text: '#7A8C82', border: '#EDE7D9'                }, // ivory
 }
 
 const SIMILARITY_GROUP_COLOUR: Record<string, keyof typeof SUBJECT_COLOURS> = {

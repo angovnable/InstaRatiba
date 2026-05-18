@@ -1,3 +1,7 @@
+// WizardLayout — Emil Kowalski design language
+// The wizard chrome is invisible — just a wordmark and step indicator.
+// All attention goes to the form content.
+
 import { WIZARD_STEPS } from '@/types'
 import { useUiStore } from '@/store'
 import StepWizard from '@/components/ui/StepWizard'
@@ -8,40 +12,91 @@ export interface WizardLayoutProps {
   title?: string
   subtitle?: string
   maxWidth?: string
-  // Optional props passed by some pages — step is read from store but accepted here
-  step?: number
-  total?: number
-  onBack?: () => void
-  onNext?: () => void
-  nextDisabled?: boolean
-  nextLabel?: string
 }
 
 export default function WizardLayout({
-  children,
-  title,
-  subtitle,
-  maxWidth = '760px',
+  children, title, subtitle, maxWidth = '680px',
 }: WizardLayoutProps) {
   const { activeWizardStep } = useUiStore()
 
   return (
-    <div className="min-h-screen bg-ir-bg flex flex-col">
-      <header className="bg-white border-b border-[#e8eeeb] h-[60px] flex items-center px-6 shrink-0">
-        <span className="font-display font-extrabold text-primary text-lg tracking-tight">
-          InstaRatiba
+    <div style={{
+      minHeight: '100dvh',
+      background: '#F7F5EF',
+      backgroundImage:
+        'radial-gradient(circle at 1px 1px, rgba(13,61,35,0.025) 1px, transparent 0)',
+      backgroundSize: '28px 28px',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      {/* Minimal wizard header */}
+      <header style={{
+        background: 'rgba(247,245,239,0.94)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(13,61,35,0.06)',
+        height: 56,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 24px',
+        gap: 12,
+        flexShrink: 0,
+      }}>
+        <span style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontWeight: 800,
+          fontSize: '1rem',
+          letterSpacing: '-0.022em',
+          lineHeight: 1,
+        }}>
+          <span style={{ color: '#0D3D23' }}>Insta</span>
+          <span style={{ color: '#C8922A' }}>Ratiba</span>
         </span>
-        <span className="ml-2 text-muted/60 text-xs hidden sm:block">— School Setup Wizard</span>
+        <span style={{
+          width: 1, height: 14, background: '#EDE7D9', flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: '0.72rem',
+          color: '#7A8C82',
+          fontWeight: 400,
+        }}>
+          School Setup
+        </span>
       </header>
 
-      <div className="flex-1 flex items-start justify-center py-10 px-4 pb-20">
-        <div className="w-full" style={{ maxWidth }}>
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        padding: '40px 16px 72px',
+      }}>
+        <div style={{ width: '100%', maxWidth }}>
           <StepWizard steps={WIZARD_STEPS} currentStep={activeWizardStep} />
 
           {title && (
-            <div className="mb-6">
-              <h1 className="font-display font-bold text-2xl text-primary-dark">{title}</h1>
-              {subtitle && <p className="text-muted text-sm mt-1">{subtitle}</p>}
+            <div style={{ marginBottom: 24 }}>
+              <h1 style={{
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontWeight: 700,
+                fontSize: 'clamp(1.4rem, 3vw, 1.8rem)',
+                color: '#0D3D23',
+                letterSpacing: '-0.025em',
+                lineHeight: 1.15,
+              }}>
+                {title}
+              </h1>
+              {subtitle && (
+                <p style={{
+                  fontFamily: "'Figtree', sans-serif",
+                  fontSize: '0.875rem',
+                  color: '#7A8C82',
+                  marginTop: 6,
+                  lineHeight: 1.5,
+                }}>
+                  {subtitle}
+                </p>
+              )}
             </div>
           )}
 

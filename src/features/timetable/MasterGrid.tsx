@@ -24,67 +24,94 @@ interface MasterGridProps {
   isEditable: boolean
 }
 
-// A single timetable cell
+// A single timetable cell — redesigned
+// TimetableCell — Emil Kowalski: staggered reveal, precise hover,
+// two-line cell with subject + teacher initial. Conflict = left rule only.
 function TimetableCell({
-  slot,
-  cls: _cls,
-  teacherName,
-  hasConflict,
-  isEditable,
-  onClick,
+  slot, cls: _cls, teacherName, hasConflict, isEditable, onClick, rowIdx, colIdx,
 }: {
-  slot:        TimetableSlot | undefined
-  cls:         SchoolClass // eslint-disable-line @typescript-eslint/no-unused-vars
-  teacherName: string
-  hasConflict: boolean
-  isEditable:  boolean
-  onClick:     () => void
+  slot: TimetableSlot | undefined; cls: SchoolClass; teacherName: string
+  hasConflict: boolean; isEditable: boolean; onClick: () => void
+  rowIdx: number; colIdx: number
 }) {
+  const delay = (rowIdx * 10 + colIdx) * 0.010
+
   if (!slot) {
     return (
-      <td className="border border-gray-100 w-24 h-14 text-center text-xs text-gray-300 bg-white">
-        —
-      </td>
+      <motion.td
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay, duration: 0.14 }}
+        style={{
+          border: '1px solid #EDE7D9',
+          width: 88, height: 52,
+          background: 'white',
+        }}
+      />
     )
   }
 
-  const colour = getCellColour(slot)
-  const label  = getCellLabel(slot)
-  const isFixed = slot.is_assembly || slot.is_break || slot.is_non_formal
+  const colour   = getCellColour(slot)
+  const isFixed  = slot.is_assembly || slot.is_break || slot.is_non_formal
+  const isBreak  = slot.is_break || slot.is_assembly || slot.is_non_formal
+  const editable = isEditable && !isFixed
 
   return (
     <motion.td
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className={[
-        'border w-24 h-14 p-1 text-center text-[10px] leading-tight align-middle',
-        isEditable && !isFixed ? 'cursor-pointer hover:brightness-95 transition-all' : '',
-        hasConflict ? 'ring-2 ring-inset ring-[--color-error]' : '',
-      ].join(' ')}
+      transition={{ delay, duration: 0.14 }}
+      onClick={() => editable && onClick()}
+      title={hasConflict ? 'Conflict — click to resolve' : undefined}
       style={{
-        background:   colour.bg,
-        color:        colour.text,
-        borderColor:  hasConflict ? 'var(--color-error)' : colour.border,
+        border: '1px solid #EDE7D9',
+        borderLeft: hasConflict ? '2px solid #A01F1F' : '1px solid #EDE7D9',
+        width: 88, height: 52,
+        padding: '3px 6px',
+        verticalAlign: 'middle',
+        textAlign: 'center',
+        background: hasConflict
+          ? 'rgba(160,31,31,0.04)'
+          : isBreak
+          ? 'rgba(200,146,42,0.06)'
+          : colour.bg,
+        color: isBreak ? '#9B6E1A' : colour.text,
+        cursor: editable ? 'pointer' : 'default',
+        transition: 'background 120ms',
+        position: 'relative',
       }}
-      onClick={() => !isFixed && isEditable && onClick()}
-      title={hasConflict ? 'Conflict detected — click to edit' : label.top}
+      onMouseEnter={e => {
+        if (editable) (e.currentTarget as HTMLTableCellElement).style.background = 'rgba(200,146,42,0.07)'
+      }}
+      onMouseLeave={e => {
+        if (editable) (e.currentTarget as HTMLTableCellElement).style.background =
+          hasConflict ? 'rgba(160,31,31,0.04)' : isBreak ? 'rgba(200,146,42,0.06)' : colour.bg
+      }}
     >
       {slot.is_assembly ? (
-        <span className="font-semibold">Assembly</span>
+        <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: '0.68rem' }}>Assembly</span>
       ) : slot.is_break ? (
-        <span className="font-semibold">Break</span>
+        <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: '0.68rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+          <i className="bi-cup-hot-fill" style={{ fontSize: '0.6rem' }} /> Break
+        </span>
       ) : slot.is_non_formal ? (
-        <span className="font-semibold">Non-Formal</span>
+        <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: '0.68rem' }}>Non-Formal</span>
       ) : slot.subject_code ? (
-        <div className="flex flex-col items-center justify-center h-full gap-0.5">
-          <span className="font-bold text-[11px]">{getSubjectShortCode(slot.subject_code)}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' }}>
+          <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: '0.68rem', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+            {getSubjectShortCode(slot.subject_code)}
+          </span>
           {teacherName && (
-            <span className="opacity-70 truncate w-full text-center text-[9px]">{teacherName}</span>
+            <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.58rem', opacity: 0.6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+              {teacherName}
+            </span>
           )}
-          {hasConflict && <i className="bi bi-exclamation-circle-fill text-[--color-error] text-[9px]" />}
+          {hasConflict && (
+            <i className="bi-exclamation-circle-fill" style={{ fontSize: '0.55rem', color: '#A01F1F', marginTop: 1 }} />
+          )}
         </div>
       ) : (
-        <span className="opacity-40">—</span>
+        <span style={{ opacity: 0.18, fontSize: '0.7rem' }}>—</span>
       )}
     </motion.td>
   )
@@ -122,17 +149,24 @@ export default function MasterGrid({ slots, classes, conflicts, onCellClick, isE
   return (
     <div className="space-y-3">
       {/* Day tabs */}
-      <div className="flex gap-1 bg-[--color-surface] rounded-xl p-1 w-fit">
+      <div style={{ display: 'flex', gap: 4, background: '#EDE7D9', borderRadius: 12, padding: 4, width: 'fit-content' }}>
         {DAYS.map(day => (
           <button
             key={day}
             onClick={() => setActiveDay(day)}
-            className={[
-              'px-4 py-1.5 rounded-lg text-sm font-semibold transition-all',
-              activeDay === day
-                ? 'bg-white text-[--color-primary] shadow-sm'
-                : 'text-[--color-muted] hover:text-[--color-text]',
-            ].join(' ')}
+            style={{
+              padding: '6px 16px',
+              borderRadius: 8,
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: activeDay === day ? 600 : 500,
+              fontSize: '0.82rem',
+              background: activeDay === day ? 'white' : 'transparent',
+              color: activeDay === day ? '#0D3D23' : '#7A8C82',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: activeDay === day ? '0 1px 4px rgba(13,61,35,0.10)' : 'none',
+              transition: 'all 0.15s ease',
+            }}
           >
             {DAY_LABELS[day]}
           </button>
@@ -140,17 +174,39 @@ export default function MasterGrid({ slots, classes, conflicts, onCellClick, isE
       </div>
 
       {/* Grid: scrollable horizontally */}
-      <div className="overflow-x-auto rounded-xl border border-[--color-accent-light] shadow-sm">
+      <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid #EDE7D9', boxShadow: '0 2px 12px rgba(13,61,35,0.06)' }}>
         <table className="border-collapse text-xs" style={{ minWidth: sortedClasses.length * 96 + 80 }}>
           <thead>
-            <tr className="bg-[--color-surface]">
-              <th className="sticky left-0 z-10 bg-[--color-surface] border border-[--color-accent-light] px-3 py-2 text-left text-[--color-muted] font-semibold w-20 min-w-[80px]">
+            <tr style={{ background: '#0F1B14' }}>
+              <th style={{
+                position: 'sticky', left: 0, zIndex: 10,
+                background: '#0F1B14',
+                border: '1px solid rgba(200,146,42,0.15)',
+                padding: '8px 12px',
+                textAlign: 'left',
+                fontFamily: "'Space Mono', monospace",
+                fontWeight: 400,
+                fontSize: '0.65rem',
+                color: '#C8922A',
+                width: 80,
+                minWidth: 80,
+              }}>
                 Slot
               </th>
               {sortedClasses.map(cls => (
                 <th
                   key={cls.id}
-                  className="border border-[--color-accent-light] px-2 py-2 text-center text-[--color-primary] font-bold w-24 min-w-[96px]"
+                  style={{
+                    border: '1px solid rgba(200,146,42,0.15)',
+                    padding: '8px',
+                    textAlign: 'center',
+                    fontFamily: "'Space Mono', monospace",
+                    fontWeight: 700,
+                    fontSize: '0.65rem',
+                    color: '#C8922A',
+                    width: 96,
+                    minWidth: 96,
+                  }}
                 >
                   {getClassLabel(cls)}
                 </th>
@@ -163,21 +219,27 @@ export default function MasterGrid({ slots, classes, conflicts, onCellClick, isE
               return (
                 <tr
                   key={slot.slot_index}
-                  className={isBreakRow ? 'bg-gray-50' : rowIdx % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}
+                  style={{ background: isBreakRow ? 'rgba(200,146,42,0.04)' : rowIdx % 2 === 0 ? 'white' : '#FDFCF9' }}
                 >
                   {/* Time column */}
-                  <td className="sticky left-0 z-10 bg-inherit border border-[--color-accent-light] px-3 py-1 text-[--color-muted] text-[10px] w-20 min-w-[80px] whitespace-nowrap">
-                    <div className="font-semibold">{slot.start_time}</div>
-                    <div className="opacity-60">{slot.end_time}</div>
+                  <td style={{
+                    position: 'sticky', left: 0, zIndex: 10,
+                    background: 'rgba(13,61,35,0.04)',
+                    border: '1px solid #EDE7D9',
+                    padding: '4px 12px',
+                    width: 80, minWidth: 80,
+                    whiteSpace: 'nowrap',
+                  }}>
+                    <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.62rem', color: '#1C2B22', fontWeight: 700 }}>{slot.start_time}</div>
+                    <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.58rem', color: '#7A8C82' }}>{slot.end_time}</div>
                     {slot.kind === 'lesson' && (
-                      <div className="text-[9px] text-[--color-primary] font-bold">L{slot.lesson_number}</div>
+                      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.55rem', color: '#C8922A', fontWeight: 700 }}>L{slot.lesson_number}</div>
                     )}
                   </td>
 
                   {/* Class columns */}
-                  {sortedClasses.map(cls => {
+                  {sortedClasses.map((cls, colIdx) => {
                     const levelLayout = buildDayLayout(DEFAULT_TIMINGS[gradeToLevel(cls.grade)])
-                    // Find matching slot for this class's level
                     const levelSlot = levelLayout[rowIdx]
                     const cellSlot  = levelSlot
                       ? slotIndex.get(`${cls.id}::${activeDay}::${levelSlot.slot_index}`)
@@ -196,6 +258,8 @@ export default function MasterGrid({ slots, classes, conflicts, onCellClick, isE
                         hasConflict={cellSlot ? conflictSlotIds.has(cellSlot.id) : false}
                         isEditable={isEditable}
                         onClick={() => cellSlot && onCellClick(cellSlot, cls)}
+                        rowIdx={rowIdx}
+                        colIdx={colIdx}
                       />
                     )
                   })}
@@ -206,28 +270,50 @@ export default function MasterGrid({ slots, classes, conflicts, onCellClick, isE
         </table>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-2 pt-1">
+      {/* Legend — updated to new palette */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingTop: 4 }}>
         {[
-          { label: 'Languages',   bg: '#E3F2FD', border: '#90CAF9', text: '#1565C0' },
-          { label: 'Mathematics', bg: '#E8F5E9', border: '#A5D6A7', text: '#2E7D32' },
-          { label: 'Sciences',    bg: '#E0F2F1', border: '#80CBC4', text: '#00695C' },
-          { label: 'Humanities',  bg: '#F3E5F5', border: '#CE93D8', text: '#6A1B9A' },
-          { label: 'Creative',    bg: '#FBE9E7', border: '#FFAB91', text: '#E65100' },
-          { label: 'PHE',         bg: '#FFF8E1', border: '#FFE082', text: '#F57F17' },
-          { label: 'Practical',   bg: '#F1F8E9', border: '#C5E1A5', text: '#558B2F' },
-          { label: 'Technology',  bg: '#ECEFF1', border: '#B0BEC5', text: '#37474F' },
+          { label: 'Languages',   bg: 'rgba(30,92,138,0.10)',   border: 'rgba(30,92,138,0.2)',   text: '#1E5C8A' },
+          { label: 'Sciences',    bg: 'rgba(13,61,35,0.10)',    border: 'rgba(13,61,35,0.2)',    text: '#0D3D23' },
+          { label: 'Humanities',  bg: 'rgba(200,146,42,0.10)', border: 'rgba(200,146,42,0.2)', text: '#9B6E1A' },
+          { label: 'Creative',    bg: 'rgba(160,31,31,0.08)',  border: 'rgba(160,31,31,0.15)', text: '#A01F1F' },
+          { label: 'Break/PPI',   bg: 'rgba(200,146,42,0.08)', border: 'rgba(200,146,42,0.2)', text: '#9B6E1A' },
         ].map(l => (
           <span
             key={l.label}
-            className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium border"
-            style={{ background: l.bg, borderColor: l.border, color: l.text }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '2px 10px',
+              borderRadius: 999,
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 500,
+              fontSize: '0.68rem',
+              background: l.bg,
+              border: `1px solid ${l.border}`,
+              color: l.text,
+            }}
           >
             {l.label}
           </span>
         ))}
-        <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium border border-red-300 bg-red-50 text-red-700">
-          <i className="bi bi-exclamation-circle-fill" /> Conflict
+        <span
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            padding: '2px 10px',
+            borderRadius: 999,
+            fontFamily: "'Outfit', sans-serif",
+            fontWeight: 500,
+            fontSize: '0.68rem',
+            background: 'rgba(160,31,31,0.08)',
+            border: '1px solid rgba(160,31,31,0.25)',
+            color: '#A01F1F',
+          }}
+        >
+          <i className="bi bi-exclamation-circle-fill" style={{ fontSize: '0.6rem' }} /> Conflict
         </span>
       </div>
     </div>

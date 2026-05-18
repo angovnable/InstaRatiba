@@ -99,24 +99,24 @@ export default function TeacherView({ slots, teacher, classes }: TeacherViewProp
       </div>
 
       {/* Grid */}
-      <div className="overflow-x-auto rounded-xl border border-[--color-accent-light] shadow-sm">
+      <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid #EDE7D9', boxShadow: '0 2px 12px rgba(13,61,35,0.06)' }}>
         <table className="border-collapse w-full text-xs">
           <thead>
-            <tr className="bg-[--color-surface]">
-              <th className="border border-[--color-accent-light] px-3 py-2.5 text-left text-[--color-muted] font-semibold w-20 sticky left-0 bg-[--color-surface] z-10">
+            <tr style={{ background: '#0F1B14' }}>
+              <th style={{ border: '1px solid rgba(200,146,42,0.15)', padding: '10px 12px', textAlign: 'left', fontFamily: "'Space Mono', monospace", fontWeight: 400, fontSize: '0.62rem', color: '#C8922A', width: 80, position: 'sticky', left: 0, background: '#0F1B14', zIndex: 10 }}>
                 Slot
               </th>
               {DAYS.map(day => (
-                <th key={day} className="border border-[--color-accent-light] px-2 py-2.5 text-center text-[--color-primary] font-bold min-w-[110px]">
+                <th key={day} style={{ border: '1px solid rgba(200,146,42,0.15)', padding: '10px 8px', textAlign: 'center', fontFamily: "'Space Mono', monospace", fontWeight: 700, fontSize: '0.65rem', color: '#C8922A', minWidth: 110 }}>
                   {DAY_LABELS[day]}
-                  <span className="block text-[9px] font-normal text-[--color-muted]">{lessonsPerDay[day]} lesson{lessonsPerDay[day] !== 1 ? 's' : ''}</span>
+                  <span style={{ display: 'block', fontFamily: "'Figtree', sans-serif", fontWeight: 400, fontSize: '0.58rem', color: 'rgba(200,146,42,0.6)', marginTop: 2 }}>{lessonsPerDay[day]} lesson{lessonsPerDay[day] !== 1 ? 's' : ''}</span>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {layout.map((layoutSlot, rowIdx) => (
-              <tr key={layoutSlot.slot_index} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-[#FAFAFA]'}>
+              <tr key={layoutSlot.slot_index} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-[#FDFCF9]'}>
                 {/* Time */}
                 <td className="border border-[--color-accent-light] px-3 py-1 text-[--color-muted] text-[10px] sticky left-0 bg-inherit z-10 whitespace-nowrap">
                   <div className="font-semibold">{layoutSlot.start_time}</div>
@@ -137,7 +137,7 @@ export default function TeacherView({ slots, teacher, classes }: TeacherViewProp
                       animate={{ opacity: 1 }}
                       transition={{ delay: rowIdx * 0.02 }}
                       className="border border-[--color-accent-light] px-2 py-1.5 text-center min-w-[110px]"
-                      style={colour ? { background: colour.bg, color: colour.text, borderColor: colour.border } : { background: '#F9FBE7', color: '#827717' }}
+                      style={colour ? { background: colour.bg, color: colour.text, borderColor: colour.border } : { background: '#F7F5EF', color: '#7A8C82' }}
                     >
                       {slot ? (
                         <div className="space-y-0.5">

@@ -38,11 +38,11 @@ function scorePassword(pw: string): { score: number; label: string; color: strin
   if (/[^A-Za-z0-9]/.test(pw)) score++
   const map = [
     { label: '', color: '#E0E0E0' },
-    { label: 'Weak', color: '#E53935' },
+    { label: 'Weak', color: '#A01F1F' },
     { label: 'Fair', color: '#FFB300' },
-    { label: 'Good', color: '#4CAF50' },
-    { label: 'Strong', color: '#2E7D32' },
-    { label: 'Very Strong', color: '#1B5E20' },
+    { label: 'Good', color: '#1A5C3A' },
+    { label: 'Strong', color: '#0D3D23' },
+    { label: 'Very Strong', color: '#062818' },
   ]
   return { score, ...map[Math.min(score, 5)] }
 }
@@ -106,15 +106,15 @@ export default function RegisterPage() {
           >
             <div style={{
               width: 64, height: 64, borderRadius: '50%',
-              background: '#E8F5E9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#F7F5EF', display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 16px',
             }}>
-              <i className="bi-envelope-check-fill" style={{ fontSize: 28, color: '#2E7D32' }} />
+              <i className="bi-envelope-check-fill" style={{ fontSize: 28, color: '#0D3D23' }} />
             </div>
-            <h3 style={{ fontFamily: 'Montserrat, sans-serif', fontWeight: 700, color: '#1B5E20', fontSize: '1.1rem', marginBottom: 8 }}>
+            <h3 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, color: '#062818', fontSize: '1.1rem', marginBottom: 8 }}>
               Check your email
             </h3>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.85rem', color: '#546E7A', lineHeight: 1.6 }}>
+            <p style={{ fontFamily: 'Figtree, sans-serif', fontSize: '0.85rem', color: '#546E7A', lineHeight: 1.6 }}>
               We sent a confirmation link to your email. Click it to activate your account, then sign in.
             </p>
             <button
@@ -134,17 +134,17 @@ export default function RegisterPage() {
               className="w-full flex items-center justify-center gap-3 mb-4"
             >
               {googleLoading
-                ? <span className="w-4 h-4 border-2 border-[#ccc] border-t-[#4CAF50] rounded-full animate-spin" />
+                ? <span className="w-4 h-4 border-2 border-[#ccc] border-t-[#1A5C3A] rounded-full animate-spin" />
                 : <GoogleIcon />}
-              <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: '0.9rem', color: '#37474F' }}>
+              <span style={{ fontFamily: 'Figtree, sans-serif', fontWeight: 600, fontSize: '0.9rem', color: '#37474F' }}>
                 Continue with Google
               </span>
             </button>
 
             <div className="flex items-center gap-3 my-4">
-              <div className="flex-1 h-px bg-[#E8F5E9]" />
-              <span style={{ fontSize: '0.75rem', color: '#9E9E9E', fontFamily: 'DM Sans, sans-serif' }}>or create with email</span>
-              <div className="flex-1 h-px bg-[#E8F5E9]" />
+              <div className="flex-1 h-px bg-[#F7F5EF]" />
+              <span style={{ fontSize: '0.75rem', color: '#7A8C82', fontFamily: 'Figtree, sans-serif' }}>or create with email</span>
+              <div className="flex-1 h-px bg-[#F7F5EF]" />
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                       ))}
                     </div>
                     {strength.label && (
-                      <p style={{ fontSize: '0.7rem', color: strength.color, fontFamily: 'DM Sans, sans-serif', fontWeight: 600 }}>
+                      <p style={{ fontSize: '0.7rem', color: strength.color, fontFamily: 'Figtree, sans-serif', fontWeight: 600 }}>
                         {strength.label} password
                       </p>
                     )}
@@ -249,9 +249,9 @@ export default function RegisterPage() {
                 {isSubmitting ? 'Creating account…' : 'Create Account'}
               </button>
 
-              <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#757575', fontFamily: 'DM Sans, sans-serif', marginTop: 12 }}>
+              <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#7A8C82', fontFamily: 'Figtree, sans-serif', marginTop: 12 }}>
                 Already have an account?{' '}
-                <Link to="/login" style={{ color: '#2E7D32', fontWeight: 600 }}>Sign in</Link>
+                <Link to="/login" style={{ color: '#0D3D23', fontWeight: 600 }}>Sign in</Link>
               </p>
             </form>
           </motion.div>
@@ -264,7 +264,7 @@ export default function RegisterPage() {
 // ── Tab Switcher ─────────────────────────────────────────────
 function TabSwitcher({ active }: { active: 'login' | 'register' }) {
   return (
-    <div className="flex mb-5 relative" style={{ borderBottom: '2px solid #E8F5E9' }}>
+    <div className="flex mb-5 relative" style={{ borderBottom: '2px solid #F7F5EF' }}>
       {(['login', 'register'] as const).map((tab) => {
         const isActive = active === tab
         const label = tab === 'login' ? 'Sign In' : 'Create Account'
@@ -275,10 +275,10 @@ function TabSwitcher({ active }: { active: 'login' | 'register' }) {
             to={href}
             style={{
               flex: 1, textAlign: 'center', padding: '10px 0',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Figtree, sans-serif',
               fontWeight: isActive ? 700 : 500,
               fontSize: '0.9rem',
-              color: isActive ? '#2E7D32' : '#9E9E9E',
+              color: isActive ? '#0D3D23' : '#7A8C82',
               textDecoration: 'none',
               transition: 'color 0.2s',
               position: 'relative',
@@ -290,7 +290,7 @@ function TabSwitcher({ active }: { active: 'login' | 'register' }) {
                 layoutId="tab-underline"
                 style={{
                   position: 'absolute', bottom: -2, left: 0, right: 0,
-                  height: 2, background: '#2E7D32', borderRadius: 999,
+                  height: 2, background: '#0D3D23', borderRadius: 999,
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
@@ -324,10 +324,10 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
           style={{
             width: '100%', padding: '18px 14px 8px',
             borderRadius: 10,
-            border: `1.5px solid ${error ? '#E53935' : focused ? '#2E7D32' : '#E0E0E0'}`,
+            border: `1.5px solid ${error ? '#A01F1F' : focused ? '#0D3D23' : '#E0E0E0'}`,
             outline: 'none',
-            fontFamily: 'DM Sans, sans-serif', fontSize: '0.9rem', color: '#37474F',
-            background: focused ? '#fff' : '#FAFAFA',
+            fontFamily: 'Figtree, sans-serif', fontSize: '0.9rem', color: '#37474F',
+            background: focused ? '#fff' : '#F7F5EF',
             transition: 'border 0.2s, background 0.2s',
             boxSizing: 'border-box',
           }}
@@ -340,8 +340,8 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
             top: focused || hasValue ? 6 : '50%',
             transform: focused || hasValue ? 'translateY(0)' : 'translateY(-50%)',
             fontSize: focused || hasValue ? '0.7rem' : '0.88rem',
-            color: error ? '#E53935' : focused ? '#2E7D32' : '#9E9E9E',
-            fontFamily: 'DM Sans, sans-serif',
+            color: error ? '#A01F1F' : focused ? '#0D3D23' : '#7A8C82',
+            fontFamily: 'Figtree, sans-serif',
             fontWeight: focused || hasValue ? 600 : 400,
             transition: 'all 0.2s', pointerEvents: 'none', lineHeight: 1,
           }}
@@ -352,7 +352,7 @@ const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
           <motion.p
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ fontSize: '0.72rem', color: '#E53935', marginTop: 4, fontFamily: 'DM Sans, sans-serif', paddingLeft: 2 }}
+            style={{ fontSize: '0.72rem', color: '#A01F1F', marginTop: 4, fontFamily: 'Figtree, sans-serif', paddingLeft: 2 }}
           >
             <i className="bi-exclamation-circle" style={{ marginRight: 4 }} />{error}
           </motion.p>
@@ -381,9 +381,9 @@ const googleBtnStyle: React.CSSProperties = {
   boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
 }
 const submitBtnStyle: React.CSSProperties = {
-  background: '#2E7D32', color: '#fff', border: 'none', borderRadius: 10,
+  background: '#0D3D23', color: '#fff', border: 'none', borderRadius: 10,
   padding: '13px 0',
-  fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: '0.92rem',
+  fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: '0.92rem',
   letterSpacing: '0.03em', cursor: 'pointer',
   boxShadow: '0 3px 12px rgba(46,125,50,0.25)',
   transition: 'opacity 0.2s, transform 0.15s',

@@ -8,6 +8,7 @@
 // ============================================================
 
 import { useEffect, useState, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore }       from '@/store/authStore'
@@ -26,71 +27,149 @@ import DutyRosterPanel     from './DutyRosterPanel'
 import SubstituteSwapModal from './SubstituteSwapModal'
 import VersioningPanel     from './VersioningPanel'
 
-// ── Stat card ─────────────────────────────────────────────────
+// ── Stat card — redesigned with gold left border + Savanna Gold icon ──
+
+// ── Emil Kowalski StatCard — precise, numbered, quietly premium ──
 function StatCard({
-  icon, label, value, sub, color = '#2E7D32',
+  icon, label, value, sub, idx = 0, color: _c,
 }: {
-  icon: string; label: string; value: string | number; sub?: string; color?: string
+  icon: string; label: string; value: string | number; sub?: string; idx?: number; color?: string
 }) {
   return (
-    <div className="bg-white border border-[--color-accent-light] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-[--color-muted] uppercase tracking-wider mb-1">{label}</p>
-          <p className="text-3xl font-bold" style={{ color }}>{value}</p>
-          {sub && <p className="text-xs text-[--color-muted] mt-1">{sub}</p>}
-        </div>
-        <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-lg"
-          style={{ background: color }}
-        >
-          <i className={icon} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── Level quick-access card ────────────────────────────────────
-function LevelCard({
-  level, grades, count, icon, onClick,
-}: {
-  level: string; grades: string; count: number; icon: string; onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-[--color-surface] border border-[--color-accent-light] rounded-2xl p-5 text-left
-                 hover:border-[--color-primary] hover:shadow-md transition-all group"
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.06, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -1, transition: { type: 'spring', stiffness: 400, damping: 28 } }}
+      style={{
+        background: 'white',
+        border: '1px solid #EDE7D9',
+        borderRadius: 12,
+        padding: '18px 20px',
+        boxShadow: '0 1px 2px rgba(13,61,35,0.04), 0 4px 10px rgba(13,61,35,0.04)',
+        position: 'relative',
+        overflow: 'hidden',
+        cursor: 'default',
+      }}
     >
-      <div className="w-10 h-10 rounded-lg bg-[--color-primary] text-white flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-        <i className={`${icon} text-lg`} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <span style={{
+          fontFamily: "'Outfit', sans-serif", fontWeight: 500, fontSize: '0.68rem',
+          color: '#7A8C82', textTransform: 'uppercase', letterSpacing: '0.07em',
+        }}>
+          {label}
+        </span>
+        <div style={{
+          width: 28, height: 28, borderRadius: 7, background: 'rgba(200,146,42,0.08)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <i className={icon} style={{ fontSize: '0.82rem', color: '#C8922A' }} />
+        </div>
       </div>
-      <h3 className="font-semibold text-[--color-text] text-sm">{level}</h3>
-      <p className="text-xs text-[--color-muted] mt-0.5">{grades}</p>
-      <div className="mt-3 pt-3 border-t border-[--color-accent-light]">
-        <span className="text-lg font-bold text-[--color-primary]">{count}</span>
-        <span className="text-xs text-[--color-muted] ml-1">classes</span>
-      </div>
-    </button>
+      <p style={{
+        fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '2rem', fontWeight: 800,
+        color: '#0D3D23', lineHeight: 1, letterSpacing: '-0.03em',
+      }}>
+        {value}
+      </p>
+      {sub && (
+        <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.72rem', color: '#7A8C82', marginTop: 5 }}>
+          {sub}
+        </p>
+      )}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, borderRadius: '0 0 12px 12px',
+        background: 'linear-gradient(90deg, #C8922A, transparent)',
+      }} />
+    </motion.div>
   )
 }
 
-// ── Activity row ───────────────────────────────────────────────
+// ── LevelCard — tight, spring hover ──
+function LevelCard({
+  level, grades, count, icon, onClick, idx = 0,
+}: {
+  level: string; grades: string; count: number; icon: string; onClick: () => void; idx?: number
+}) {
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.07 + 0.1, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ y: -1, transition: { type: 'spring', stiffness: 400, damping: 28 } }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      style={{
+        background: '#F7F5EF', border: '1px solid #EDE7D9', borderRadius: 12,
+        padding: '18px 20px', textAlign: 'left', cursor: 'pointer', width: '100%',
+        transition: 'border-color 150ms, box-shadow 150ms', position: 'relative',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLButtonElement
+        el.style.borderColor = 'rgba(200,146,42,0.35)'
+        el.style.boxShadow = '0 2px 8px rgba(200,146,42,0.08)'
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLButtonElement
+        el.style.borderColor = '#EDE7D9'
+        el.style.boxShadow = 'none'
+      }}
+    >
+      <div style={{
+        width: 32, height: 32, borderRadius: 8, background: '#0D3D23',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14,
+      }}>
+        <i className={icon} style={{ color: 'white', fontSize: '0.85rem' }} />
+      </div>
+      <h3 style={{
+        fontFamily: "'Outfit', sans-serif", fontWeight: 600, fontSize: '0.845rem',
+        color: '#1C2B22', letterSpacing: '-0.01em', marginBottom: 2,
+      }}>
+        {level}
+      </h3>
+      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.7rem', color: '#7A8C82' }}>{grades}</p>
+      <div style={{
+        display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 14,
+        paddingTop: 12, borderTop: '1px solid #EDE7D9',
+      }}>
+        <span style={{
+          fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1.4rem', fontWeight: 800,
+          color: '#0D3D23', letterSpacing: '-0.03em',
+        }}>
+          {count}
+        </span>
+        <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.7rem', color: '#7A8C82' }}>classes</span>
+      </div>
+    </motion.button>
+  )
+}
+
+// ── ActivityRow — clean list item ──
 function ActivityRow({ icon, label, time, color }: {
   icon: string; label: string; time: string; color: string
 }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-[--color-surface] last:border-0">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0"
-           style={{ background: color }}>
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0',
+      borderBottom: '1px solid #F7F5EF',
+    }}>
+      <div style={{
+        width: 26, height: 26, borderRadius: 7, background: color,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: 'white', fontSize: '0.7rem', flexShrink: 0,
+      }}>
         <i className={icon} />
       </div>
-      <span className="text-sm text-[--color-text] flex-1">{label}</span>
-      <span className="text-xs text-[--color-muted] flex-shrink-0">{time}</span>
+      <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '0.84rem', color: '#1C2B22', flex: 1, letterSpacing: '-0.005em' }}>
+        {label}
+      </span>
+      <span style={{ fontFamily: "'Space Mono', monospace", fontSize: '0.65rem', color: '#7A8C82', flexShrink: 0 }}>
+        {time}
+      </span>
     </div>
   )
 }
+
 
 // ── Status badge ───────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
@@ -231,15 +310,15 @@ export default function DashboardPage() {
 
       {/* ── Stats grid ─────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon="bi-people-fill"       label="Teachers"          value={totalTeachers}  sub="on staff" />
-        <StatCard icon="bi-collection-fill"   label="Classes"           value={totalClasses}   sub="streams"  color="#1565C0" />
-        <StatCard icon="bi-journal-text"      label="Lessons / Week"    value={totalLessons}   sub="scheduled" color="#00695C" />
+        <StatCard icon="bi-people-fill"       label="Teachers"          value={totalTeachers}  sub="on staff"          idx={0} />
+        <StatCard icon="bi-collection-fill"   label="Classes"           value={totalClasses}   sub="streams"  idx={1} />
+        <StatCard icon="bi-journal-text"      label="Lessons / Week"    value={totalLessons}   sub="scheduled" idx={2} />
         <StatCard
           icon="bi-exclamation-triangle-fill"
           label="Hard Conflicts"
           value={hardConflicts}
           sub={hardConflicts === 0 ? 'all clear ✓' : 'need fixing'}
-          color={hardConflicts === 0 ? '#2E7D32' : '#E53935'}
+          color={hardConflicts === 0 ? '#0D3D23' : '#A01F1F'}
         />
       </div>
 
@@ -251,7 +330,7 @@ export default function DashboardPage() {
             onClick={() => setActiveTab(tab)}
             className={`pb-2.5 text-sm font-medium capitalize border-b-2 transition-colors ${
               activeTab === tab
-                ? 'border-[--color-primary] text-[--color-primary]'
+                ? 'border-[#C8922A] text-[#C8922A]'
                 : 'border-transparent text-[--color-muted] hover:text-[--color-text]'
             }`}
           >
@@ -352,7 +431,7 @@ function TermPlanner() {
           </div>
           <span className="text-[--color-muted]">{t.dates}</span>
           <span className={`text-xs px-2 py-0.5 rounded-full ${
-            t.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+            t.status === 'active' ? 'bg-[#EDE7D9] text-[#0D3D23]' : 'bg-[#EDE7D9] text-[#7A8C82]'
           }`}>{t.status}</span>
         </div>
       ))}
@@ -366,7 +445,7 @@ function RecentActivity({ timetables }: { timetables: Timetable[] }) {
     icon: tt.status === 'published' ? 'bi-check-lg' : tt.status === 'pending' ? 'bi-hourglass-split' : 'bi-pencil',
     label: `${tt.name} — ${tt.status}`,
     time: new Date(tt.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'short' }),
-    color: tt.status === 'published' ? '#2E7D32' : tt.status === 'pending' ? '#FFB300' : '#1565C0',
+    color: tt.status === 'published' ? '#0D3D23' : tt.status === 'pending' ? '#FFB300' : '#1565C0',
   }))
 
   if (activities.length === 0) {
