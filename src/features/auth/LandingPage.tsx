@@ -118,7 +118,6 @@ function MagneticButton({
     <motion.button
       ref={ref}
       onMouseMove={onMove}
-      onMouseLeave={onLeave}
       whileTap={{ scale: 0.96 }}
       style={{
         x: springX,
@@ -151,6 +150,7 @@ function MagneticButton({
         }
       }}
       onMouseLeave={e => {
+        onLeave()
         if (isGold) {
           (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)'
         } else {

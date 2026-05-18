@@ -114,10 +114,6 @@ function Root() {
             borderRadius: 10,
             padding: '10px 14px',
           },
-          descriptionStyle: {
-            fontFamily: "'Figtree', sans-serif",
-            fontSize: '0.76rem',
-          },
         }}
       />
 

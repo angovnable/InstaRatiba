@@ -12,6 +12,14 @@ export interface WizardLayoutProps {
   title?: string
   subtitle?: string
   maxWidth?: string
+  // Legacy props passed by feature pages — step is now driven by the store,
+  // but we accept (and ignore) these so TypeScript stays happy.
+  step?: number
+  total?: number
+  onBack?: () => void
+  onNext?: () => void
+  nextDisabled?: boolean
+  nextLabel?: string
 }
 
 export default function WizardLayout({
