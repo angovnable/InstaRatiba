@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS public.teachers (
   tsc_no               TEXT,
   email                TEXT,
   phone                TEXT,
+  gender               TEXT CHECK (gender IN ('Male', 'Female')),
   max_lessons_day      INT NOT NULL DEFAULT 6,
   max_lessons_week     INT,
   max_consecutive      INT NOT NULL DEFAULT 3,

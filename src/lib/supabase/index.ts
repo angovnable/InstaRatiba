@@ -8,6 +8,7 @@ export { fetchClasses, upsertClass, deleteClass } from './classes'
 export * from './rooms'
 export * from './teachers'
 export * from './allocations'
+export * from './students'
 
 // Timetable — exclude share tokens (canonical in settings.ts)
 export {

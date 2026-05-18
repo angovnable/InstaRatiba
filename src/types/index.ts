@@ -101,6 +101,7 @@ export interface Teacher {
   tsc_no?: string
   email?: string
   phone?: string
+  gender?: 'Male' | 'Female'
   max_lessons_day: number    // default 6
   max_lessons_week?: number
   max_consecutive: number    // default 3 (soft constraint)
